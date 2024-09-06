@@ -1,0 +1,35 @@
+[gd_scene load_steps=3 format=3 uid="uid://c7ftdk55r810x"]
+
+[ext_resource type="Texture2D" uid="uid://c4pjdx1dag458" path="res://tile.png" id="1_ib4yh"]
+
+[sub_resource type="GDScript" id="GDScript_u8at7"]
+script/source = "extends Sprite2D
+
+var letter
+var words_array
+
+# Called when the node enters the scene tree for the first time.
+func _ready() -> void:
+	pass # Replace with function body.
+
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(delta: float) -> void:
+	pass
+"
+
+[node name="tile" type="Sprite2D"]
+scale = Vector2(0.4, 0.4)
+texture = ExtResource("1_ib4yh")
+centered = false
+script = SubResource("GDScript_u8at7")
+
+[node name="Label" type="Label" parent="."]
+offset_right = 250.0
+offset_bottom = 250.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 125
+text = "M"
+horizontal_alignment = 1
+vertical_alignment = 1
