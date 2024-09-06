@@ -1,0 +1,34 @@
+{
+  "today": {
+	"grid": [
+	  ["A", "B", "C", "D"],
+	  ["E", "F", "G", "H"],
+	  ["I", "J", "K", "L"],
+	  ["M", "N", "O", "P"]
+	],
+	"n_words": 5,
+	"words": [
+	  "stocazzo",
+	  "pippo",
+	  "giovanni",
+	  "francesco",
+	  "gianfrancesco"
+	]
+  },
+  "yesterday": {
+	"grid": [
+	  ["A", "B", "C", "D"],
+	  ["E", "F", "G", "H"],
+	  ["I", "J", "K", "L"],
+	  ["M", "N", "O", "P"]
+	],
+	"n_words": 5,
+	"words": [
+	  "stocazzo",
+	  "pippo",
+	  "giovanni",
+	  "francesco",
+	  "gianfrancesco"
+	]
+  }
+}
