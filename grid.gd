@@ -6,6 +6,8 @@ const tile_spacing := 10.0
 
 const grid_size := 4
 
+var valid_clic = false
+
 #node_tile.scale.x = tile_size / node_tile.texture.get_width()
 
 # Called when the node enters the scene tree for the first time.
