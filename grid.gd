@@ -26,8 +26,8 @@ func generate_grid():
 	#serve un controllo sulla corretta costruzione del file json_as_dict
 
 	#posiziono le tile
-	for x in range(grid_size):
-		for y in range(grid_size):
+	for y in range(grid_size):
+		for x in range(grid_size):
 			var tile = node_tile.instantiate()
 			add_child(tile)
 			#ridimensiono in un tile_size x tile_size e posiziono
