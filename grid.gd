@@ -6,7 +6,8 @@ const tile_spacing := 10.0
 
 const grid_size := 4
 
-var valid_clic = false
+var valid_clic: bool = false #lo utilizzo per capire se ho iniziato a cliccare una
+#tile, dal momento che le tile successive vengono selezionate solo col passaggio del mouse
 
 #node_tile.scale.x = tile_size / node_tile.texture.get_width()
 
@@ -32,11 +33,24 @@ func generate_grid():
 		for x in range(grid_size):
 			var tile = node_tile.instantiate()
 			add_child(tile)
+			tile.grid_x = x
+			tile.grid_y = y
 			#ridimensiono in un tile_size x tile_size e posiziono
 			tile.scale.x = tile_size / tile.texture.get_width()
 			tile.scale.y = tile_size / tile.texture.get_height()
 			tile.position = Vector2((tile_size + tile_spacing) * x + tile_spacing / 2, (tile_size + tile_spacing) * y + tile_spacing / 2)
 			
 			#assegno le lettere
-			var letter_obj = tile.get_child(0)
+			var letter_obj = tile.get_node("Label")
 			letter_obj.text = json_as_dict.today.grid[y][x]
+			tile.selection.connect(on_tile_selection)
+
+func _input(event):
+	if event is InputEventMouseButton:
+		if event.is_action_released("clic"):
+			valid_clic = false
+
+func on_tile_selection(grid_x, grid_y, letter):
+	valid_clic = true
+	print("selection " + letter)
+	print("position: " + str(grid_x) + ", " + str(grid_y))
