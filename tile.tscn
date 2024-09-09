@@ -7,12 +7,15 @@
 scale = Vector2(0.4, 0.4)
 texture = ExtResource("1_ib4yh")
 centered = false
+offset = Vector2(-125, -125)
 script = ExtResource("2_3njg7")
 
 [node name="Label" type="Label" parent="."]
 z_index = 2
-offset_right = 250.0
-offset_bottom = 250.0
+offset_left = -125.0
+offset_top = -125.0
+offset_right = 125.0
+offset_bottom = 125.0
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_font_sizes/font_size = 100

@@ -58,4 +58,4 @@ func on_tile_selection(grid_x, grid_y, letter):
 	print("position: " + str(grid_x) + ", " + str(grid_y))
 
 func elaborate_tile_coordinate(grid_x: int, grid_y: int) -> Vector2:
-	return Vector2((tile_size + tile_spacing) * grid_x + tile_spacing / 2, (tile_size + tile_spacing) * grid_y + tile_spacing / 2)
+	return Vector2((tile_size + tile_spacing) * (grid_x + 1.0/2), (tile_size + tile_spacing) * (grid_y + 1.0/2))

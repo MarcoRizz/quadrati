@@ -20,7 +20,7 @@ func _process(delta: float) -> void:
 		if get_parent().valid_clic and get_rect().has_point(get_local_mouse_position()):
 			if not state_selected:
 				selection.emit(grid_x, grid_y, get_node("Label").text)
-				self.modulate = Color(255, 255, 0)
+				self.modulate = Color(1, 1, 0.6)
 				state_selected = true
 			
 
