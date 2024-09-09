@@ -38,7 +38,7 @@ func generate_grid():
 			#ridimensiono in un tile_size x tile_size e posiziono
 			tile.scale.x = tile_size / tile.texture.get_width()
 			tile.scale.y = tile_size / tile.texture.get_height()
-			tile.position = Vector2((tile_size + tile_spacing) * x + tile_spacing / 2, (tile_size + tile_spacing) * y + tile_spacing / 2)
+			tile.position = elaborate_tile_coordinate(x, y)
 			
 			#assegno le lettere
 			var letter_obj = tile.get_node("Label")
@@ -49,8 +49,13 @@ func _input(event):
 	if event is InputEventMouseButton:
 		if event.is_action_released("clic"):
 			valid_clic = false
+			get_node("Line2D").clear_points()
 
 func on_tile_selection(grid_x, grid_y, letter):
 	valid_clic = true
+	get_node("Line2D").add_point(elaborate_tile_coordinate(grid_x, grid_y))
 	print("selection " + letter)
 	print("position: " + str(grid_x) + ", " + str(grid_y))
+
+func elaborate_tile_coordinate(grid_x: int, grid_y: int) -> Vector2:
+	return Vector2((tile_size + tile_spacing) * grid_x + tile_spacing / 2, (tile_size + tile_spacing) * grid_y + tile_spacing / 2)
