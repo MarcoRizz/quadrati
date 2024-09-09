@@ -1,14 +1,20 @@
 extends Node2D
 
 const node_tile = preload("res://tile.tscn")
-const tile_size := 90.0
-const tile_spacing := 10.0
+const myenums = preload("res://enum.gd")
+
+@export var tile_size := 90.0
+@export var tile_spacing := 10.0
 
 const grid_size := 4
+@onready var path: Line2D = $Path/Line2D
 
-var valid_clic: bool = false #lo utilizzo per capire se ho iniziato a cliccare una
-#tile, dal momento che le tile successive vengono selezionate solo col passaggio del mouse
+var tiles = [[node_tile, node_tile, node_tile, node_tile],
+			 [node_tile, node_tile, node_tile, node_tile],
+			 [node_tile, node_tile, node_tile, node_tile],
+			 [node_tile, node_tile, node_tile, node_tile]]
 
+var attempt = {"letter": [], "xy": []}
 #node_tile.scale.x = tile_size / node_tile.texture.get_width()
 
 # Called when the node enters the scene tree for the first time.
@@ -31,31 +37,66 @@ func generate_grid():
 	#posiziono le tile
 	for y in range(grid_size):
 		for x in range(grid_size):
-			var tile = node_tile.instantiate()
-			add_child(tile)
-			tile.grid_x = x
-			tile.grid_y = y
+			tiles[x][y] = node_tile.instantiate()
+			add_child(tiles[x][y])
+			tiles[x][y].grid_x = x
+			tiles[x][y].grid_y = y
 			#ridimensiono in un tile_size x tile_size e posiziono
-			tile.scale.x = tile_size / tile.texture.get_width()
-			tile.scale.y = tile_size / tile.texture.get_height()
-			tile.position = elaborate_tile_coordinate(x, y)
+			tiles[x][y].scale.x = tile_size / tiles[x][y].texture.get_width()
+			tiles[x][y].scale.y = tile_size / tiles[x][y].texture.get_height()
+			tiles[x][y].position = elaborate_tile_coordinate(x, y)
 			
 			#assegno le lettere
-			var letter_obj = tile.get_node("Label")
+			var letter_obj = tiles[x][y].get_node("Label")
 			letter_obj.text = json_as_dict.today.grid[y][x]
-			tile.selection.connect(on_tile_selection)
+			tiles[x][y].selection.connect(on_tile_selection)
 
 func _input(event):
 	if event is InputEventMouseButton:
 		if event.is_action_released("clic"):
-			valid_clic = false
-			get_node("Line2D").clear_points()
+			path.clear_points()
+			print(attempt)
+			attempt.letter.clear()
+			attempt.xy.clear()
 
 func on_tile_selection(grid_x, grid_y, letter):
-	valid_clic = true
-	get_node("Line2D").add_point(elaborate_tile_coordinate(grid_x, grid_y))
 	print("selection " + letter)
 	print("position: " + str(grid_x) + ", " + str(grid_y))
+	
+	#capisco se sto tornando indietro o progredendo
+	var attempt_len = len(attempt.xy)
+	if len(attempt.xy) > 1 and attempt.xy[-2].x == grid_x and attempt.xy[-2].y == grid_y:
+		#undo ultima selezione
+		path.remove_point(path.get_point_count() - 1)
+		i_tile_from_attempt(-1).undo()
+		i_tile_from_attempt(-1).state = Constants.state.SELECTABLE
+		attempt.letter.resize(attempt_len - 1)
+		attempt.xy.resize(attempt_len - 1)
+		i_tile_from_attempt(-1).state = Constants.state.SELECTED
+		if len(attempt.xy) > 1:
+			i_tile_from_attempt(-2).state = Constants.state.SELECTABLE
+	else:
+		#aggiungo selezione
+		if len(attempt.xy) > 0:
+			i_tile_from_attempt(-1).state = Constants.state.SELECTABLE
+		if len(attempt.xy) > 1:
+			i_tile_from_attempt(-2).state = Constants.state.SELECTED
+		path.add_point(elaborate_tile_coordinate(grid_x, grid_y))
+		attempt.letter.append(letter)
+		attempt.xy.append(Vector2(grid_x, grid_y))
+	
+	#riassegno gli stati alle tile
+	if len(attempt.xy) > 1:
+		i_tile_from_attempt(-2).state = Constants.state.SELECTABLE #il penultimo deve diventare selezionabile per l'undo
+	for y in range(grid_size):
+		for x in range(grid_size):
+			if x - grid_x <= 1 and x - grid_x >= -1 and y - grid_y <= 1 and y - grid_y >= -1 and not tiles[x][y].state == Constants.state.SELECTED:
+				tiles[x][y].state = Constants.state.SELECTABLE
+			elif not tiles[x][y].state == Constants.state.SELECTED:
+				tiles[x][y].state = Constants.state.UNSELECTABLE
 
 func elaborate_tile_coordinate(grid_x: int, grid_y: int) -> Vector2:
 	return Vector2((tile_size + tile_spacing) * (grid_x + 1.0/2), (tile_size + tile_spacing) * (grid_y + 1.0/2))
+
+func i_tile_from_attempt(i: int) -> Sprite2D:
+	return tiles[attempt.xy[i].x][attempt.xy[i].y]

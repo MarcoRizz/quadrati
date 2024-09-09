@@ -5,9 +5,9 @@
 [node name="Grid" type="Node2D"]
 script = ExtResource("1_bmk3s")
 
-[node name="Node2D" type="Node2D" parent="."]
+[node name="Path" type="Node2D" parent="."]
 
-[node name="Line2D" type="Line2D" parent="."]
+[node name="Line2D" type="Line2D" parent="Path"]
 z_index = 1
 width = 30.0
 default_color = Color(1, 1, 0, 1)
