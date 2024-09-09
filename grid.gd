@@ -3,10 +3,10 @@ extends Node2D
 const node_tile = preload("res://tile.tscn")
 const myenums = preload("res://enum.gd")
 
+const grid_size := 4
 @export var tile_size := 90.0
 @export var tile_spacing := 10.0
 
-const grid_size := 4
 @onready var path: Line2D = $Path/Line2D
 
 var tiles = [[node_tile, node_tile, node_tile, node_tile],
@@ -68,11 +68,10 @@ func on_tile_selection(grid_x, grid_y, letter):
 	if len(attempt.xy) > 1 and attempt.xy[-2].x == grid_x and attempt.xy[-2].y == grid_y:
 		#undo ultima selezione
 		path.remove_point(path.get_point_count() - 1)
-		i_tile_from_attempt(-1).undo()
+		i_tile_from_attempt(-1).remodulate()
 		i_tile_from_attempt(-1).state = Constants.state.SELECTABLE
 		attempt.letter.resize(attempt_len - 1)
 		attempt.xy.resize(attempt_len - 1)
-		i_tile_from_attempt(-1).state = Constants.state.SELECTED
 		if len(attempt.xy) > 1:
 			i_tile_from_attempt(-2).state = Constants.state.SELECTABLE
 	else:
@@ -86,8 +85,6 @@ func on_tile_selection(grid_x, grid_y, letter):
 		attempt.xy.append(Vector2(grid_x, grid_y))
 	
 	#riassegno gli stati alle tile
-	if len(attempt.xy) > 1:
-		i_tile_from_attempt(-2).state = Constants.state.SELECTABLE #il penultimo deve diventare selezionabile per l'undo
 	for y in range(grid_size):
 		for x in range(grid_size):
 			if x - grid_x <= 1 and x - grid_x >= -1 and y - grid_y <= 1 and y - grid_y >= -1 and not tiles[x][y].state == Constants.state.SELECTED:

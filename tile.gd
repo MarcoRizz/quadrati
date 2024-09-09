@@ -33,5 +33,5 @@ func _input(event):
 			self.modulate = origin_modulate
 			state = Constants.state.UNSELECTABLE
 
-func undo() -> void:
+func remodulate() -> void:
 	self.modulate = origin_modulate
