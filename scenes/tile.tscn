@@ -1,14 +1,14 @@
 [gd_scene load_steps=3 format=3 uid="uid://c7ftdk55r810x"]
 
-[ext_resource type="Texture2D" uid="uid://c4pjdx1dag458" path="res://tile.png" id="1_ib4yh"]
-[ext_resource type="Script" path="res://tile.gd" id="2_3njg7"]
+[ext_resource type="Texture2D" uid="uid://c4pjdx1dag458" path="res://assets/tile.png" id="1_cngsq"]
+[ext_resource type="Script" path="res://scripts/tile.gd" id="2_kmar1"]
 
 [node name="tile" type="Sprite2D"]
 scale = Vector2(0.36, 0.36)
-texture = ExtResource("1_ib4yh")
+texture = ExtResource("1_cngsq")
 centered = false
 offset = Vector2(-125, -125)
-script = ExtResource("2_3njg7")
+script = ExtResource("2_kmar1")
 
 [node name="Label" type="Label" parent="."]
 z_index = 2

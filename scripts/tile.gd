@@ -1,6 +1,6 @@
 extends Sprite2D
 
-const myenums = preload("res://enum.gd")
+const myenums = preload("res://scripts/enum.gd")
 
 signal selection(grid_x, grid_y, letter)
 

@@ -1,7 +1,7 @@
 extends Node2D
 
-const node_tile = preload("res://tile.tscn")
-const myenums = preload("res://enum.gd")
+const node_tile = preload("res://scenes/tile.tscn")
+const myenums = preload("res://scripts/enum.gd")
 
 const grid_size := 4
 @export var tile_size := 90.0
