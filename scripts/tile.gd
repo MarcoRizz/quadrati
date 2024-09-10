@@ -8,6 +8,7 @@ signal selection(grid_x, grid_y, letter)
 @export var grid_y:int = 0
 @export var state: Constants.state = Constants.state.UNSELECTABLE
 @export var circle_r := 80
+@export var sel_area_reduc_xside := -30 #quanti pixel bisogna entrare nella tile per selezionarla
 
 var circle = false
 
@@ -21,7 +22,7 @@ func _ready() -> void:
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
-		if get_rect().has_point(get_local_mouse_position()) and state == Constants.state.SELECTABLE:
+		if get_rect().grow(sel_area_reduc_xside).has_point(get_local_mouse_position()) and state == Constants.state.SELECTABLE:
 			self.modulate = Color(1, 1, 0.6)
 			state = Constants.state.SELECTED
 			queue_redraw()
@@ -30,7 +31,7 @@ func _process(delta: float) -> void:
 func _input(event):
 	if event is InputEventMouseButton:
 		if event.is_action_pressed("clic"):
-			if get_rect().has_point(get_local_mouse_position()):
+			if get_rect().grow(sel_area_reduc_xside).has_point(get_local_mouse_position()):
 				state = Constants.state.SELECTABLE
 				
 		if event.is_action_released("clic"):
