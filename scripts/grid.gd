@@ -7,7 +7,7 @@ const grid_size := 4
 @export var tile_size := 90.0
 @export var tile_spacing := 10.0
 
-@onready var path: Line2D = $Path/Line2D
+@onready var path: Line2D = $Path
 
 var tiles = [[node_tile, node_tile, node_tile, node_tile],
 			 [node_tile, node_tile, node_tile, node_tile],
@@ -20,7 +20,6 @@ var attempt = {"letter": [], "xy": []}
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	generate_grid()
-
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
@@ -68,8 +67,8 @@ func on_tile_selection(grid_x, grid_y, letter):
 	if len(attempt.xy) > 1 and attempt.xy[-2].x == grid_x and attempt.xy[-2].y == grid_y:
 		#undo ultima selezione
 		path.remove_point(path.get_point_count() - 1)
-		i_tile_from_attempt(-1).remodulate()
 		i_tile_from_attempt(-1).state = Constants.state.SELECTABLE
+		i_tile_from_attempt(-1).remodulate()
 		attempt.letter.resize(attempt_len - 1)
 		attempt.xy.resize(attempt_len - 1)
 		if len(attempt.xy) > 1:
