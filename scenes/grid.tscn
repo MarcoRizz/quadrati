@@ -1,11 +1,123 @@
-[gd_scene load_steps=2 format=3 uid="uid://knuk1qdilmis"]
+[gd_scene load_steps=3 format=3 uid="uid://knuk1qdilmis"]
 
 [ext_resource type="Script" path="res://scripts/grid.gd" id="1_bmk3s"]
+[ext_resource type="PackedScene" uid="uid://c7ftdk55r810x" path="res://scenes/tile.tscn" id="2_ayh7i"]
 
 [node name="Grid" type="Node2D"]
 script = ExtResource("1_bmk3s")
+
+[node name="Node2D" type="Node2D" parent="."]
+
+[node name="tile00" parent="Node2D" instance=ExtResource("2_ayh7i")]
+position = Vector2(50, 50)
+
+[node name="tile10" parent="Node2D" instance=ExtResource("2_ayh7i")]
+position = Vector2(150, 50)
+grid_x = 1
+
+[node name="tile20" parent="Node2D" instance=ExtResource("2_ayh7i")]
+position = Vector2(250, 50)
+grid_x = 2
+
+[node name="tile30" parent="Node2D" instance=ExtResource("2_ayh7i")]
+position = Vector2(350, 50)
+grid_x = 3
+
+[node name="tile01" parent="Node2D" instance=ExtResource("2_ayh7i")]
+position = Vector2(50, 150)
+grid_y = 1
+
+[node name="tile11" parent="Node2D" instance=ExtResource("2_ayh7i")]
+position = Vector2(150, 150)
+grid_x = 1
+grid_y = 1
+
+[node name="tile21" parent="Node2D" instance=ExtResource("2_ayh7i")]
+position = Vector2(250, 150)
+grid_x = 2
+grid_y = 1
+
+[node name="tile31" parent="Node2D" instance=ExtResource("2_ayh7i")]
+position = Vector2(350, 150)
+grid_x = 3
+grid_y = 1
+
+[node name="tile02" parent="Node2D" instance=ExtResource("2_ayh7i")]
+position = Vector2(50, 250)
+grid_y = 2
+
+[node name="tile12" parent="Node2D" instance=ExtResource("2_ayh7i")]
+position = Vector2(150, 250)
+grid_x = 1
+grid_y = 2
+
+[node name="tile22" parent="Node2D" instance=ExtResource("2_ayh7i")]
+position = Vector2(250, 250)
+grid_x = 2
+grid_y = 2
+
+[node name="tile32" parent="Node2D" instance=ExtResource("2_ayh7i")]
+position = Vector2(350, 250)
+grid_x = 3
+grid_y = 2
+
+[node name="tile03" parent="Node2D" instance=ExtResource("2_ayh7i")]
+position = Vector2(50, 350)
+grid_y = 3
+
+[node name="tile13" parent="Node2D" instance=ExtResource("2_ayh7i")]
+position = Vector2(150, 350)
+grid_x = 1
+grid_y = 3
+
+[node name="tile23" parent="Node2D" instance=ExtResource("2_ayh7i")]
+position = Vector2(250, 350)
+grid_x = 2
+grid_y = 3
+
+[node name="tile33" parent="Node2D" instance=ExtResource("2_ayh7i")]
+position = Vector2(350, 350)
+grid_x = 3
+grid_y = 3
 
 [node name="Path" type="Line2D" parent="."]
 z_index = 1
 width = 30.0
 default_color = Color(1, 1, 0, 1)
+
+[node name="Polygon2D" type="Polygon2D" parent="."]
+color = Color(0.87451, 0.87451, 0.87451, 0.576471)
+polygon = PackedVector2Array(0, 0, 400, 0, 400, 400, 0, 400)
+
+[connection signal="attempt_result" from="." to="Node2D/tile00" method="_on_grid_attempt_result"]
+[connection signal="attempt_result" from="." to="Node2D/tile10" method="_on_grid_attempt_result"]
+[connection signal="attempt_result" from="." to="Node2D/tile20" method="_on_grid_attempt_result"]
+[connection signal="attempt_result" from="." to="Node2D/tile30" method="_on_grid_attempt_result"]
+[connection signal="attempt_result" from="." to="Node2D/tile01" method="_on_grid_attempt_result"]
+[connection signal="attempt_result" from="." to="Node2D/tile11" method="_on_grid_attempt_result"]
+[connection signal="attempt_result" from="." to="Node2D/tile21" method="_on_grid_attempt_result"]
+[connection signal="attempt_result" from="." to="Node2D/tile31" method="_on_grid_attempt_result"]
+[connection signal="attempt_result" from="." to="Node2D/tile02" method="_on_grid_attempt_result"]
+[connection signal="attempt_result" from="." to="Node2D/tile12" method="_on_grid_attempt_result"]
+[connection signal="attempt_result" from="." to="Node2D/tile22" method="_on_grid_attempt_result"]
+[connection signal="attempt_result" from="." to="Node2D/tile32" method="_on_grid_attempt_result"]
+[connection signal="attempt_result" from="." to="Node2D/tile03" method="_on_grid_attempt_result"]
+[connection signal="attempt_result" from="." to="Node2D/tile13" method="_on_grid_attempt_result"]
+[connection signal="attempt_result" from="." to="Node2D/tile23" method="_on_grid_attempt_result"]
+[connection signal="attempt_result" from="." to="Node2D/tile33" method="_on_grid_attempt_result"]
+[connection signal="selection_attempt" from="Node2D/tile00" to="." method="_on_tile_selection"]
+[connection signal="selection_attempt" from="Node2D/tile10" to="." method="_on_tile_selection"]
+[connection signal="selection_attempt" from="Node2D/tile20" to="." method="_on_tile_selection"]
+[connection signal="selection_attempt" from="Node2D/tile30" to="." method="_on_tile_selection"]
+[connection signal="selection_attempt" from="Node2D/tile01" to="." method="_on_tile_selection"]
+[connection signal="selection_attempt" from="Node2D/tile11" to="." method="_on_tile_selection"]
+[connection signal="selection_attempt" from="Node2D/tile21" to="." method="_on_tile_selection"]
+[connection signal="selection_attempt" from="Node2D/tile31" to="." method="_on_tile_selection"]
+[connection signal="selection_attempt" from="Node2D/tile02" to="." method="_on_tile_selection"]
+[connection signal="selection_attempt" from="Node2D/tile12" to="." method="_on_tile_selection"]
+[connection signal="selection_attempt" from="Node2D/tile22" to="." method="_on_tile_selection"]
+[connection signal="selection_attempt" from="Node2D/tile32" to="." method="_on_tile_selection"]
+[connection signal="selection_attempt" from="Node2D/tile03" to="." method="_on_tile_selection"]
+[connection signal="selection_attempt" from="Node2D/tile13" to="." method="_on_tile_selection"]
+[connection signal="selection_attempt" from="Node2D/tile23" to="." method="_on_tile_selection"]
+[connection signal="selection_attempt" from="Node2D/tile33" to="." method="_on_tile_selection"]
