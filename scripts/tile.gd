@@ -28,36 +28,35 @@ func _process(delta: float) -> void:
 
 func _input(event):
 	if event is InputEventMouseButton:
-		if event.is_action_pressed("clic"):
+		if event.is_action_pressed("click") and $"../..".ready_for_attempt:
 			if get_rect().grow(sel_area_reduc_xside).has_point(get_local_mouse_position()): #todo: sostituire con Area2D click
 				selection_attempt.emit(Vector2(grid_x, grid_y), selected, get_node("Label").text)
-				
-		if event.is_action_released("clic") and selected:
-			remove_selection()
 
 func remove_selection() -> void:
 	selected = false
 	look_forward = Vector2(0, 0)
 	self.modulate = origin_modulate
-	queue_redraw()
 
-func _draw() -> void:
-	if selected:
-		draw_circle(Vector2(0, 0), 80, Color("ffff00"))
-
-func _on_grid_attempt_result(result: Variant) -> void:
-	self.modulate = origin_modulate
-	#da inserire timer e colore in funzione di result
+func _on_grid_attempt_result(word_finded: bool, word: String) -> void:
+	#da inserire colore in funzione di result e contatore parole
+	pass
 
 
 func _on_area_2d_mouse_entered() -> void:
 	if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
-			#self.modulate = Color(1, 1, 0.6)
-			#state = Constants.state.SELECTED
-			#queue_redraw()
-			selection_attempt.emit(Vector2(grid_x, grid_y), selected, get_node("Label").text)
+		#self.modulate = Color(1, 1, 0.6)
+		#state = Constants.state.SELECTED
+		selection_attempt.emit(Vector2(grid_x, grid_y), selected, get_node("Label").text)
 			
 func selection_ok() -> void:
 	selected = true
 	self.modulate = Color(1, 1, 0.6)
-	queue_redraw()
+
+
+func _on_timer_timeout() -> void:
+	self.modulate = origin_modulate
+	print("timer timout")
+
+
+func _on_grid_clear_grid() -> void:
+	remove_selection()

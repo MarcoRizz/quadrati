@@ -1,10 +1,20 @@
-[gd_scene load_steps=3 format=3 uid="uid://knuk1qdilmis"]
+[gd_scene load_steps=4 format=3 uid="uid://knuk1qdilmis"]
 
 [ext_resource type="Script" path="res://scripts/grid.gd" id="1_bmk3s"]
+[ext_resource type="Script" path="res://scripts/path.gd" id="2_03yts"]
 [ext_resource type="PackedScene" uid="uid://c7ftdk55r810x" path="res://scenes/tile.tscn" id="2_ayh7i"]
 
 [node name="Grid" type="Node2D"]
 script = ExtResource("1_bmk3s")
+
+[node name="Path" type="Line2D" parent="."]
+z_index = 1
+width = 30.0
+default_color = Color(1, 1, 0, 1)
+script = ExtResource("2_03yts")
+
+[node name="Polygon2D" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(0, 0, 400, 0, 400, 400, 0, 400)
 
 [node name="Node2D" type="Node2D" parent="."]
 
@@ -80,14 +90,9 @@ position = Vector2(350, 350)
 grid_x = 3
 grid_y = 3
 
-[node name="Path" type="Line2D" parent="."]
-z_index = 1
-width = 30.0
-default_color = Color(1, 1, 0, 1)
-
-[node name="Polygon2D" type="Polygon2D" parent="."]
-color = Color(0.87451, 0.87451, 0.87451, 0.576471)
-polygon = PackedVector2Array(0, 0, 400, 0, 400, 400, 0, 400)
+[node name="Timer" type="Timer" parent="."]
+wait_time = 0.5
+one_shot = true
 
 [connection signal="attempt_result" from="." to="Node2D/tile00" method="_on_grid_attempt_result"]
 [connection signal="attempt_result" from="." to="Node2D/tile10" method="_on_grid_attempt_result"]
@@ -105,6 +110,22 @@ polygon = PackedVector2Array(0, 0, 400, 0, 400, 400, 0, 400)
 [connection signal="attempt_result" from="." to="Node2D/tile13" method="_on_grid_attempt_result"]
 [connection signal="attempt_result" from="." to="Node2D/tile23" method="_on_grid_attempt_result"]
 [connection signal="attempt_result" from="." to="Node2D/tile33" method="_on_grid_attempt_result"]
+[connection signal="clear_grid" from="." to="Node2D/tile00" method="_on_grid_clear_grid"]
+[connection signal="clear_grid" from="." to="Node2D/tile10" method="_on_grid_clear_grid"]
+[connection signal="clear_grid" from="." to="Node2D/tile20" method="_on_grid_clear_grid"]
+[connection signal="clear_grid" from="." to="Node2D/tile30" method="_on_grid_clear_grid"]
+[connection signal="clear_grid" from="." to="Node2D/tile01" method="_on_grid_clear_grid"]
+[connection signal="clear_grid" from="." to="Node2D/tile11" method="_on_grid_clear_grid"]
+[connection signal="clear_grid" from="." to="Node2D/tile21" method="_on_grid_clear_grid"]
+[connection signal="clear_grid" from="." to="Node2D/tile31" method="_on_grid_clear_grid"]
+[connection signal="clear_grid" from="." to="Node2D/tile02" method="_on_grid_clear_grid"]
+[connection signal="clear_grid" from="." to="Node2D/tile12" method="_on_grid_clear_grid"]
+[connection signal="clear_grid" from="." to="Node2D/tile22" method="_on_grid_clear_grid"]
+[connection signal="clear_grid" from="." to="Node2D/tile32" method="_on_grid_clear_grid"]
+[connection signal="clear_grid" from="." to="Node2D/tile03" method="_on_grid_clear_grid"]
+[connection signal="clear_grid" from="." to="Node2D/tile13" method="_on_grid_clear_grid"]
+[connection signal="clear_grid" from="." to="Node2D/tile23" method="_on_grid_clear_grid"]
+[connection signal="clear_grid" from="." to="Node2D/tile33" method="_on_grid_clear_grid"]
 [connection signal="selection_attempt" from="Node2D/tile00" to="." method="_on_tile_selection"]
 [connection signal="selection_attempt" from="Node2D/tile10" to="." method="_on_tile_selection"]
 [connection signal="selection_attempt" from="Node2D/tile20" to="." method="_on_tile_selection"]
@@ -121,3 +142,4 @@ polygon = PackedVector2Array(0, 0, 400, 0, 400, 400, 0, 400)
 [connection signal="selection_attempt" from="Node2D/tile13" to="." method="_on_tile_selection"]
 [connection signal="selection_attempt" from="Node2D/tile23" to="." method="_on_tile_selection"]
 [connection signal="selection_attempt" from="Node2D/tile33" to="." method="_on_tile_selection"]
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
