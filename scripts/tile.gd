@@ -6,7 +6,6 @@ signal selection_attempt(grid_vector, selected, letter)
 
 @export var grid_x: int = 0
 @export var grid_y: int = 0
-#@export var state: Constants.state = Constants.state.UNSELECTABLE
 @export var circle_r := 80
 @export var sel_area_reduc_xside := -30 #quanti pixel bisogna entrare nella tile per selezionarla
 
@@ -44,8 +43,6 @@ func _on_grid_attempt_result(word_finded: bool, word: String) -> void:
 
 func _on_area_2d_mouse_entered() -> void:
 	if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
-		#self.modulate = Color(1, 1, 0.6)
-		#state = Constants.state.SELECTED
 		selection_attempt.emit(Vector2(grid_x, grid_y), selected, $Lettera.text)
 			
 func selection_ok() -> void:

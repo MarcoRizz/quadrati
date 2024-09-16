@@ -1,7 +1,5 @@
 extends Node2D
 
-#const node_tile = preload("res://scenes/tile.tscn")
-const myenums = preload("res://scripts/enum.gd")
 const grid_size := 4
 
 signal attempt_result(word_finded: bool, word: String)
@@ -15,14 +13,13 @@ signal show_number(show: bool)
 @onready var path: Line2D = $Path
 
 @onready var tiles = [[$Node2D/tile00, $Node2D/tile01, $Node2D/tile02, $Node2D/tile03],
-			 [$Node2D/tile10, $Node2D/tile11, $Node2D/tile12, $Node2D/tile13],
-			 [$Node2D/tile20, $Node2D/tile21, $Node2D/tile22, $Node2D/tile23],
-			 [$Node2D/tile30, $Node2D/tile31, $Node2D/tile32, $Node2D/tile33]]
+					  [$Node2D/tile10, $Node2D/tile11, $Node2D/tile12, $Node2D/tile13],
+					  [$Node2D/tile20, $Node2D/tile21, $Node2D/tile22, $Node2D/tile23],
+					  [$Node2D/tile30, $Node2D/tile31, $Node2D/tile32, $Node2D/tile33]]
 
 var attempt = {"letter": [], "xy": []}
 var ready_for_attempt = true
 var number_shown = false
-#node_tile.scale.x = tile_size / node_tile.texture.get_width()
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -39,7 +36,7 @@ func connect_grid():
 	var json_as_text = FileAccess.get_file_as_string(file)
 	var json_as_dict = JSON.parse_string(json_as_text)
 
-	#serve un controllo sulla corretta costruzione del file json_as_dict
+	#controllo sulla corretta costruzione del file json_as_dict?
 
 	#posiziono le tile
 	for y in range(grid_size):
