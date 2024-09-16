@@ -19,7 +19,7 @@ signal show_number(show: bool)
 
 var attempt = {"letter": [], "xy": []}
 var ready_for_attempt = true
-var number_shown = false
+var number_shown = true
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -41,6 +41,9 @@ func assegna_lettere(json_data) -> void:
 		for x in range(grid_size):
 			#assegno le lettere
 			tiles[x][y].get_node("Lettera").text = json_data.today.grid[y][x]
+			for i_parola in json_data.today.grid_links[y][x]:
+				tiles[x][y].words_array.append(json_data.today.words[i_parola])
+			tiles[x][y].words_array_update()
 
 func elaborate_tile_coordinate(grid_vector: Vector2) -> Vector2:
 	return Vector2((tile_size + tile_spacing) * (grid_vector.x + 1.0/2), (tile_size + tile_spacing) * (grid_vector.y + 1.0/2))

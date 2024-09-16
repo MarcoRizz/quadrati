@@ -6,13 +6,11 @@ signal selection_attempt(grid_vector, selected, letter)
 
 @export var grid_x: int = 0
 @export var grid_y: int = 0
-@export var circle_r := 80
-@export var sel_area_reduc_xside := -30 #quanti pixel bisogna entrare nella tile per selezionarla
 
 var selected: bool = false
 var look_forward = Vector2(0, 0)
 
-var words_array #la userò per segnare quante parole possono passare per la singola lettera
+var words_array = [] #la uso per archiviare le parole che possono passare per la tile
 var origin_modulate: Color = modulate
 
 @onready var grid = $"../.."
@@ -25,11 +23,8 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	pass
 
-func _input(event):
-	if event is InputEventMouseButton:
-		if event.is_action_pressed("click") and grid.ready_for_attempt:
-			if get_rect().grow(sel_area_reduc_xside).has_point(get_local_mouse_position()): #todo: sostituire con Area2D click
-				selection_attempt.emit(Vector2(grid_x, grid_y), selected, $Lettera.text)
+func words_array_update() -> void:
+	$Numero.text = str(len(words_array))
 
 func selection_ok() -> void:
 	selected = true
@@ -39,6 +34,7 @@ func remove_selection() -> void:
 	selected = false
 	look_forward = Vector2(0, 0)
 	modulate = origin_modulate
+	words_array_update()
 
 func _on_grid_attempt_result(word_finded: bool, word: String) -> void:
 	#da inserire colore in funzione di result e contatore parole
@@ -47,11 +43,15 @@ func _on_grid_attempt_result(word_finded: bool, word: String) -> void:
 func _on_grid_clear_grid() -> void:
 	remove_selection()
 
-func _on_grid_show_number(show: bool) -> void:
-	if grid.number_shown:
+func _on_grid_show_number(to_show: bool) -> void:
+	if to_show:
 		$Numero.show()
 	else:
 		$Numero.hide()
+
+func _on_area_2d_input_event(viewport: Node, event: InputEvent, shape_idx: int) -> void:
+	if event.is_action_pressed("click") and grid.ready_for_attempt:
+		selection_attempt.emit(Vector2(grid_x, grid_y), selected, $Lettera.text)
 
 func _on_area_2d_mouse_entered() -> void:
 	if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
