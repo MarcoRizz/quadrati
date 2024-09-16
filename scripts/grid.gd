@@ -23,14 +23,6 @@ var number_shown = false
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	connect_grid()
-	show_number.emit(number_shown)
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
-	pass
-
-func connect_grid():
 	#leggo il file json di oggi
 	var file = "res://daily_map.json"
 	var json_as_text = FileAccess.get_file_as_string(file)
@@ -47,6 +39,23 @@ func connect_grid():
 			connect("clear_grid", tiles[x][y]._on_grid_clear_grid)
 			connect("show_number", tiles[x][y]._on_grid_show_number)
 			tiles[x][y].connect("selection_attempt", _on_tile_selection_attempt)
+	show_number.emit(number_shown)
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(delta: float) -> void:
+	pass
+
+func elaborate_tile_coordinate(grid_vector: Vector2) -> Vector2:
+	return Vector2((tile_size + tile_spacing) * (grid_vector.x + 1.0/2), (tile_size + tile_spacing) * (grid_vector.y + 1.0/2))
+
+func i_tile_from_attempt(i: int) -> Sprite2D:
+	return tiles[attempt.xy[i].x][attempt.xy[i].y]
+
+func _on_main_attempt_result(word_finded: bool, word: String) -> void:
+	attempt_result.emit(word_finded, word)
+	print(attempt)
+	ready_for_attempt = false
+	$Timer.start()
 
 func _on_tile_selection_attempt(recived_vector, selected, letter):
 	print("selection " + letter)
@@ -63,7 +72,6 @@ func _on_tile_selection_attempt(recived_vector, selected, letter):
 		if attempt_len > 0:
 			i_tile_from_attempt(-2).look_forward = attempt.xy[-1] - attempt.xy[-2]
 
-	
 	if selected and attempt_len > 1:
 		if recived_vector - attempt.xy[-1] == - i_tile_from_attempt(-2).look_forward:
 			#undo ultima selezione
@@ -71,27 +79,12 @@ func _on_tile_selection_attempt(recived_vector, selected, letter):
 			i_tile_from_attempt(-1).remove_selection()
 			attempt.letter.resize(attempt_len - 1)
 			attempt.xy.resize(attempt_len - 1)
-		
 	
 	#attivo il segnale attempt_changed
 	var nuova_parola: String
 	for each_letter in attempt.letter:
 		nuova_parola += each_letter
 	attempt_changed.emit(nuova_parola)
-
-func elaborate_tile_coordinate(grid_vector: Vector2) -> Vector2:
-	return Vector2((tile_size + tile_spacing) * (grid_vector.x + 1.0/2), (tile_size + tile_spacing) * (grid_vector.y + 1.0/2))
-
-func i_tile_from_attempt(i: int) -> Sprite2D:
-	return tiles[attempt.xy[i].x][attempt.xy[i].y]
-
-
-func _on_main_attempt_result(word_finded: bool, word: String) -> void:
-	attempt_result.emit(word_finded, word)
-	print(attempt)
-	ready_for_attempt = false
-	$Timer.start()
-
 
 func _on_timer_timeout() -> void:
 	path.mod_clear_points()

@@ -31,6 +31,10 @@ func _input(event):
 			if get_rect().grow(sel_area_reduc_xside).has_point(get_local_mouse_position()): #todo: sostituire con Area2D click
 				selection_attempt.emit(Vector2(grid_x, grid_y), selected, $Lettera.text)
 
+func selection_ok() -> void:
+	selected = true
+	self.modulate = Color(1, 1, 0.6)
+
 func remove_selection() -> void:
 	selected = false
 	look_forward = Vector2(0, 0)
@@ -40,21 +44,6 @@ func _on_grid_attempt_result(word_finded: bool, word: String) -> void:
 	#da inserire colore in funzione di result e contatore parole
 	pass
 
-
-func _on_area_2d_mouse_entered() -> void:
-	if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
-		selection_attempt.emit(Vector2(grid_x, grid_y), selected, $Lettera.text)
-			
-func selection_ok() -> void:
-	selected = true
-	self.modulate = Color(1, 1, 0.6)
-
-
-func _on_timer_timeout() -> void:
-	self.modulate = origin_modulate
-	print("timer timout")
-
-
 func _on_grid_clear_grid() -> void:
 	remove_selection()
 
@@ -63,3 +52,7 @@ func _on_grid_show_number(show: bool) -> void:
 		$Numero.show()
 	else:
 		$Numero.hide()
+
+func _on_area_2d_mouse_entered() -> void:
+	if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+		selection_attempt.emit(Vector2(grid_x, grid_y), selected, $Lettera.text)
