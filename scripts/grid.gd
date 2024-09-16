@@ -23,27 +23,24 @@ var number_shown = false
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	#leggo il file json di oggi
-	var file = "res://daily_map.json"
-	var json_as_text = FileAccess.get_file_as_string(file)
-	var json_as_dict = JSON.parse_string(json_as_text)
-
-	#controllo sulla corretta costruzione del file json_as_dict?
-
-	#posiziono le tile
 	for y in range(grid_size):
 		for x in range(grid_size):
-			#assegno le lettere
-			tiles[x][y].get_node("Lettera").text = json_as_dict.today.grid[y][x]
+			#automatizzo i collegamenti
 			connect("attempt_result", tiles[x][y]._on_grid_attempt_result)
 			connect("clear_grid", tiles[x][y]._on_grid_clear_grid)
 			connect("show_number", tiles[x][y]._on_grid_show_number)
 			tiles[x][y].connect("selection_attempt", _on_tile_selection_attempt)
-	show_number.emit(number_shown)
+	show_number.emit(number_shown) #todo: dovrà variare se carico una partita già cominciata
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	pass
+
+func assegna_lettere(json_data) -> void:
+	for y in range(grid_size):
+		for x in range(grid_size):
+			#assegno le lettere
+			tiles[x][y].get_node("Lettera").text = json_data.today.grid[y][x]
 
 func elaborate_tile_coordinate(grid_vector: Vector2) -> Vector2:
 	return Vector2((tile_size + tile_spacing) * (grid_vector.x + 1.0/2), (tile_size + tile_spacing) * (grid_vector.y + 1.0/2))
