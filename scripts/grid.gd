@@ -7,6 +7,7 @@ const grid_size := 4
 signal attempt_result(word_finded: bool, word: String)
 signal attempt_changed(word: String)
 signal clear_grid
+signal show_number(show: bool)
 
 @export var tile_size := 90.0 #deprecated
 @export var tile_spacing := 10.0 #deprecated
@@ -20,17 +21,19 @@ signal clear_grid
 
 var attempt = {"letter": [], "xy": []}
 var ready_for_attempt = true
+var number_shown = false
 #node_tile.scale.x = tile_size / node_tile.texture.get_width()
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	generate_grid()
+	connect_grid()
+	show_number.emit(number_shown)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	pass
 
-func generate_grid():
+func connect_grid():
 	#leggo il file json di oggi
 	var file = "res://daily_map.json"
 	var json_as_text = FileAccess.get_file_as_string(file)
@@ -42,7 +45,10 @@ func generate_grid():
 	for y in range(grid_size):
 		for x in range(grid_size):
 			#assegno le lettere
-			tiles[x][y].get_node("Label").text = json_as_dict.today.grid[y][x]
+			tiles[x][y].get_node("Lettera").text = json_as_dict.today.grid[y][x]
+			connect("attempt_result", tiles[x][y]._on_grid_attempt_result)
+			connect("clear_grid", tiles[x][y]._on_grid_clear_grid)
+			connect("show_number", tiles[x][y]._on_grid_show_number)
 
 func _on_tile_selection(recived_vector, selected, letter):
 	print("selection " + letter)

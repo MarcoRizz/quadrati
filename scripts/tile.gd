@@ -16,7 +16,7 @@ var look_forward = Vector2(0, 0)
 var words_array #la userò per segnare quante parole possono passare per la singola lettera
 var origin_modulate: Color = self.modulate
 
-#@onready var grid = $"../.."
+@onready var grid = $"../.."
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -28,9 +28,9 @@ func _process(delta: float) -> void:
 
 func _input(event):
 	if event is InputEventMouseButton:
-		if event.is_action_pressed("click") and $"../..".ready_for_attempt:
+		if event.is_action_pressed("click") and grid.ready_for_attempt:
 			if get_rect().grow(sel_area_reduc_xside).has_point(get_local_mouse_position()): #todo: sostituire con Area2D click
-				selection_attempt.emit(Vector2(grid_x, grid_y), selected, get_node("Label").text)
+				selection_attempt.emit(Vector2(grid_x, grid_y), selected, $Lettera.text)
 
 func remove_selection() -> void:
 	selected = false
@@ -46,7 +46,7 @@ func _on_area_2d_mouse_entered() -> void:
 	if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
 		#self.modulate = Color(1, 1, 0.6)
 		#state = Constants.state.SELECTED
-		selection_attempt.emit(Vector2(grid_x, grid_y), selected, get_node("Label").text)
+		selection_attempt.emit(Vector2(grid_x, grid_y), selected, $Lettera.text)
 			
 func selection_ok() -> void:
 	selected = true
@@ -60,3 +60,9 @@ func _on_timer_timeout() -> void:
 
 func _on_grid_clear_grid() -> void:
 	remove_selection()
+
+func _on_grid_show_number(show: bool) -> void:
+	if grid.number_shown:
+		$Numero.show()
+	else:
+		$Numero.hide()

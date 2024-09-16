@@ -13,6 +13,5 @@ func _process(delta: float) -> void:
 func _on_grid_attempt_changed(word: String) -> void:
 	self.text = word
 
-func _input(event):
-		if event.is_action_released("clic"):
-			self.text = ""
+func _on_grid_clear_grid() -> void:
+	self.text = ""
