@@ -49,8 +49,9 @@ func connect_grid():
 			connect("attempt_result", tiles[x][y]._on_grid_attempt_result)
 			connect("clear_grid", tiles[x][y]._on_grid_clear_grid)
 			connect("show_number", tiles[x][y]._on_grid_show_number)
+			tiles[x][y].connect("selection_attempt", _on_tile_selection_attempt)
 
-func _on_tile_selection(recived_vector, selected, letter):
+func _on_tile_selection_attempt(recived_vector, selected, letter):
 	print("selection " + letter)
 	print("position: " + str(recived_vector.x) + ", " + str(recived_vector.y))
 	

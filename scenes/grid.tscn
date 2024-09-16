@@ -94,20 +94,4 @@ grid_y = 3
 wait_time = 0.5
 one_shot = true
 
-[connection signal="selection_attempt" from="Node2D/tile00" to="." method="_on_tile_selection"]
-[connection signal="selection_attempt" from="Node2D/tile10" to="." method="_on_tile_selection"]
-[connection signal="selection_attempt" from="Node2D/tile20" to="." method="_on_tile_selection"]
-[connection signal="selection_attempt" from="Node2D/tile30" to="." method="_on_tile_selection"]
-[connection signal="selection_attempt" from="Node2D/tile01" to="." method="_on_tile_selection"]
-[connection signal="selection_attempt" from="Node2D/tile11" to="." method="_on_tile_selection"]
-[connection signal="selection_attempt" from="Node2D/tile21" to="." method="_on_tile_selection"]
-[connection signal="selection_attempt" from="Node2D/tile31" to="." method="_on_tile_selection"]
-[connection signal="selection_attempt" from="Node2D/tile02" to="." method="_on_tile_selection"]
-[connection signal="selection_attempt" from="Node2D/tile12" to="." method="_on_tile_selection"]
-[connection signal="selection_attempt" from="Node2D/tile22" to="." method="_on_tile_selection"]
-[connection signal="selection_attempt" from="Node2D/tile32" to="." method="_on_tile_selection"]
-[connection signal="selection_attempt" from="Node2D/tile03" to="." method="_on_tile_selection"]
-[connection signal="selection_attempt" from="Node2D/tile13" to="." method="_on_tile_selection"]
-[connection signal="selection_attempt" from="Node2D/tile23" to="." method="_on_tile_selection"]
-[connection signal="selection_attempt" from="Node2D/tile33" to="." method="_on_tile_selection"]
 [connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
