@@ -18,4 +18,9 @@ func _ready() -> void:
 
 func _input(event: InputEvent) -> void:
 	if event.is_action_released("click"):
-		attempt_result.emit(true, $Parola.text)
+		var word_finded = false
+		if len($Parola.text) > 3:
+			word_finded = randi_range(0, 1)
+		else:
+			print("Parola troppo corta") #todo: da inserire nei messaggi ingame
+		attempt_result.emit(word_finded, $Parola.text)

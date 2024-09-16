@@ -52,6 +52,10 @@ func i_tile_from_attempt(i: int) -> Sprite2D:
 	return tiles[attempt.xy[i].x][attempt.xy[i].y]
 
 func _on_main_attempt_result(word_finded: bool, word: String) -> void:
+	if word_finded:
+		$Path.modulate = Color(0.6, 1, 0.6)
+	else:
+		$Path.modulate = Color(1, 0.6, 0.6)
 	attempt_result.emit(word_finded, word)
 	print(attempt)
 	ready_for_attempt = false
@@ -90,5 +94,6 @@ func _on_timer_timeout() -> void:
 	path.mod_clear_points()
 	attempt.letter.clear()
 	attempt.xy.clear()
+	$Path.modulate = $Path.default_color
 	clear_grid.emit()
 	ready_for_attempt = true

@@ -37,8 +37,13 @@ func remove_selection() -> void:
 	words_array_update()
 
 func _on_grid_attempt_result(word_finded: bool, word: String) -> void:
-	#da inserire colore in funzione di result e contatore parole
-	pass
+	if selected:
+		if word_finded:
+			modulate = Color(0.6, 1, 0.6)
+		else:
+			modulate = Color(1, 0.6, 0.6)
+	if words_array.has(word):
+		words_array.erase(word)
 
 func _on_grid_clear_grid() -> void:
 	remove_selection()

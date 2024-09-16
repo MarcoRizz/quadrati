@@ -13,7 +13,7 @@ width = 30.0
 default_color = Color(1, 1, 0, 1)
 script = ExtResource("2_03yts")
 
-[node name="Polygon2D" type="Polygon2D" parent="."]
+[node name="Background" type="Polygon2D" parent="."]
 polygon = PackedVector2Array(0, 0, 400, 0, 400, 400, 0, 400)
 
 [node name="Node2D" type="Node2D" parent="."]

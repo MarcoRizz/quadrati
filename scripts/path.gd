@@ -1,5 +1,7 @@
 extends Line2D
 
+@export var r_circle := 35
+
 func mod_add_point(coords: Vector2) -> void:
 	add_point(coords)
 	queue_redraw()
@@ -13,5 +15,5 @@ func mod_clear_points() -> void:
 	queue_redraw()
 	
 func _draw() -> void:
-	for coords in self.points:
-		draw_circle(coords, 35, Color("ffff00"))
+	for coords in points:
+		draw_circle(coords, r_circle, default_color)
