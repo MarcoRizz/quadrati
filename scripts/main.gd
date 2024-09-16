@@ -9,8 +9,10 @@ func _ready() -> void:
 	var json_as_dict = JSON.parse_string(json_as_text)
 	
 	#controllo sulla corretta costruzione del file json_as_dict?
-	if json_as_dict == null:
+	if not json_as_dict.has("today"):
 		printerr("NO DATA")
+		push_error("NO DATA")
+		get_tree().quit()
 	else:
 		$Grid.assegna_lettere(json_as_dict)
 

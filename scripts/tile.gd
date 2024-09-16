@@ -13,7 +13,7 @@ var selected: bool = false
 var look_forward = Vector2(0, 0)
 
 var words_array #la userò per segnare quante parole possono passare per la singola lettera
-var origin_modulate: Color = self.modulate
+var origin_modulate: Color = modulate
 
 @onready var grid = $"../.."
 
@@ -33,12 +33,12 @@ func _input(event):
 
 func selection_ok() -> void:
 	selected = true
-	self.modulate = Color(1, 1, 0.6)
+	modulate = Color(1, 1, 0.6)
 
 func remove_selection() -> void:
 	selected = false
 	look_forward = Vector2(0, 0)
-	self.modulate = origin_modulate
+	modulate = origin_modulate
 
 func _on_grid_attempt_result(word_finded: bool, word: String) -> void:
 	#da inserire colore in funzione di result e contatore parole
