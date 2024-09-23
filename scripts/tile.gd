@@ -10,7 +10,8 @@ signal selection_attempt(grid_vector, selected, letter)
 var selected: bool = false
 var look_forward = Vector2(0, 0)
 
-var words_array = [] #la uso per archiviare le parole che possono passare per la tile
+var passingWords = [] #archivio le parole che possono passare per la tile
+var startingWords = [] #archivio le parole che possono iniziare adlla tile
 var origin_modulate: Color = modulate
 
 @onready var grid = $"../.."
@@ -23,8 +24,13 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	pass
 
-func words_array_update() -> void:
-	$Numero.text = str(len(words_array))
+func number_update() -> void:
+	var new_number = len(startingWords);
+	$Numero.text = str(new_number)
+	if not new_number:
+		$Numero.hide()
+	if not len(passingWords):
+		modulate = Color(1, 1, 1, 0.4)
 
 func selection_ok() -> void:
 	selected = true
@@ -34,7 +40,6 @@ func remove_selection() -> void:
 	selected = false
 	look_forward = Vector2(0, 0)
 	modulate = origin_modulate
-	words_array_update()
 
 func _on_grid_attempt_result(word_finded: bool, word: String) -> void:
 	if selected:
@@ -42,11 +47,14 @@ func _on_grid_attempt_result(word_finded: bool, word: String) -> void:
 			modulate = Color(0.6, 1, 0.6)
 		else:
 			modulate = Color(1, 0.6, 0.6)
-	if words_array.has(word):
-		words_array.erase(word)
+	if passingWords.has(word):
+		passingWords.erase(word)
+	if startingWords.has(word):
+		startingWords.erase(word)
 
 func _on_grid_clear_grid() -> void:
 	remove_selection()
+	number_update()
 
 func _on_grid_show_number(to_show: bool) -> void:
 	if to_show:

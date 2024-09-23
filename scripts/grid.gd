@@ -37,29 +37,23 @@ func _process(delta: float) -> void:
 	pass
 
 func assegna_lettere(json_data) -> void:
+	var index = 0
+	for i_tile in json_data.startingLinks:
+		tiles[i_tile[0]][i_tile[1]].startingWords.append(json_data.words[index])
+		index += 1
 	for y in range(grid_size):
 		for x in range(grid_size):
 			#assegno le lettere
-			tiles[x][y].get_node("Lettera").text = json_data.today.grid[y][x]
-			for i_parola in json_data.today.grid_links[y][x]:
-				tiles[x][y].words_array.append(json_data.today.words[i_parola])
-			tiles[x][y].words_array_update()
+			tiles[x][y].get_node("Lettera").text = json_data.grid[x][y]
+			for i_parola in json_data.passingLinks[x][y]:
+				tiles[x][y].passingWords.append(json_data.words[i_parola])
+			tiles[x][y].number_update()
 
 func elaborate_tile_coordinate(grid_vector: Vector2) -> Vector2:
 	return Vector2((tile_size + tile_spacing) * (grid_vector.x + 1.0/2), (tile_size + tile_spacing) * (grid_vector.y + 1.0/2))
 
 func i_tile_from_attempt(i: int) -> Sprite2D:
 	return tiles[attempt.xy[i].x][attempt.xy[i].y]
-
-func _on_main_attempt_result(word_finded: bool, word: String) -> void:
-	if word_finded:
-		$Path.modulate = Color(0.6, 1, 0.6)
-	else:
-		$Path.modulate = Color(1, 0.6, 0.6)
-	attempt_result.emit(word_finded, word)
-	print(attempt)
-	ready_for_attempt = false
-	$Timer.start()
 
 func _on_tile_selection_attempt(recived_vector, selected, letter):
 	print("selection " + letter)
@@ -89,6 +83,16 @@ func _on_tile_selection_attempt(recived_vector, selected, letter):
 	for each_letter in attempt.letter:
 		nuova_parola += each_letter
 	attempt_changed.emit(nuova_parola)
+
+func _on_main_attempt_result(word_finded: bool, word: String) -> void:
+	if word_finded:
+		$Path.modulate = Color(0.6, 1, 0.6)
+	else:
+		$Path.modulate = Color(1, 0.6, 0.6)
+	attempt_result.emit(word_finded, word)
+	print(attempt)
+	ready_for_attempt = false
+	$Timer.start()
 
 func _on_timer_timeout() -> void:
 	path.mod_clear_points()
