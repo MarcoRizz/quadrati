@@ -1,23 +1,32 @@
-[gd_scene load_steps=4 format=3 uid="uid://ca2u80vmcdd0c"]
+[gd_scene load_steps=5 format=3 uid="uid://ca2u80vmcdd0c"]
 
 [ext_resource type="PackedScene" uid="uid://knuk1qdilmis" path="res://scenes/grid.tscn" id="1_uubdm"]
 [ext_resource type="Script" path="res://scripts/main.gd" id="1_woek1"]
 [ext_resource type="Script" path="res://scripts/parola.gd" id="3_2dkqv"]
+[ext_resource type="Script" path="res://scripts/progress_bar.gd" id="4_gwx55"]
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_woek1")
 
 [node name="Grid" parent="." instance=ExtResource("1_uubdm")]
-position = Vector2(0, 50)
+position = Vector2(0, 70)
 
 [node name="Parola" type="Label" parent="."]
+offset_top = 20.0
 offset_right = 400.0
-offset_bottom = 50.0
+offset_bottom = 70.0
 theme_override_font_sizes/font_size = 35
 horizontal_alignment = 1
 vertical_alignment = 1
 script = ExtResource("3_2dkqv")
 
+[node name="ProgressBar" type="ProgressBar" parent="."]
+offset_right = 400.0
+offset_bottom = 20.0
+show_percentage = false
+script = ExtResource("4_gwx55")
+
 [connection signal="attempt_result" from="." to="Grid" method="_on_main_attempt_result"]
+[connection signal="attempt_result" from="." to="ProgressBar" method="_on_main_attempt_result"]
 [connection signal="attempt_changed" from="Grid" to="Parola" method="_on_grid_attempt_changed"]
 [connection signal="clear_grid" from="Grid" to="Parola" method="_on_grid_clear_grid"]

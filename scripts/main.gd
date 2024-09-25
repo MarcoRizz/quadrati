@@ -14,6 +14,7 @@ func _ready() -> void:
 	if json_as_dict.has("grid") and json_as_dict.has("words") and json_as_dict.has("passingLinks") and json_as_dict.has("startingLinks"):
 		for i_parola in json_as_dict.words:
 			remainingWords.append(i_parola)
+			$ProgressBar.max_value += len(i_parola)
 		$Grid.assegna_lettere(json_as_dict)
 	else:
 		printerr("NO DATA")
