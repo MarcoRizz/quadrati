@@ -27,6 +27,18 @@ max_value = 0.0
 show_percentage = false
 script = ExtResource("4_gwx55")
 
+[node name="Caricamento" type="Label" parent="."]
+visible = false
+modulate = Color(0, 0, 0, 1)
+offset_top = 230.0
+offset_right = 400.0
+offset_bottom = 280.0
+theme_override_font_sizes/font_size = 35
+text = "Caricamento..."
+horizontal_alignment = 1
+vertical_alignment = 1
+script = ExtResource("3_2dkqv")
+
 [connection signal="attempt_result" from="." to="Grid" method="_on_main_attempt_result"]
 [connection signal="attempt_result" from="." to="ProgressBar" method="_on_main_attempt_result"]
 [connection signal="attempt_changed" from="Grid" to="Parola" method="_on_grid_attempt_changed"]

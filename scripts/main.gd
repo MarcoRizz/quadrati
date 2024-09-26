@@ -12,6 +12,10 @@ func _ready() -> void:
 	var http_request = HTTPRequest.new()
 	add_child(http_request)
 	http_request.request_completed.connect(self._http_request_completed)
+	$Grid.hide()
+	$Parola.hide()
+	$ProgressBar.hide()
+	$Caricamento.show()
 
 	# Perform a GET request. The URL below returns JSON as of writing.
 	var error = http_request.request(http_json_source)
@@ -35,6 +39,10 @@ func _http_request_completed(result, response_code, headers, body):
 			remainingWords.append(i_parola)
 			$ProgressBar.max_value += len(i_parola)
 		$Grid.assegna_lettere(json_as_dict)
+		$Grid.show()
+		$Parola.show()
+		$ProgressBar.show()
+		$Caricamento.hide()
 	else:
 		printerr("NO DATA")
 		push_error("NO DATA")
