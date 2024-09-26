@@ -2,7 +2,7 @@ extends Node2D
 
 const grid_size := 4
 
-signal attempt_result(word_finded: bool, word: String)
+signal attempt_result(word_finded: int, word: String, color: Color)
 signal attempt_changed(word: String)
 signal clear_grid
 signal show_number(show: bool)
@@ -19,7 +19,7 @@ signal show_number(show: bool)
 
 var attempt = {"letter": [], "xy": []}
 var ready_for_attempt = true
-var number_shown = true
+var number_shown = false
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -30,7 +30,7 @@ func _ready() -> void:
 			connect("clear_grid", tiles[x][y]._on_grid_clear_grid)
 			connect("show_number", tiles[x][y]._on_grid_show_number)
 			tiles[x][y].connect("selection_attempt", _on_tile_selection_attempt)
-	show_number.emit(number_shown) #todo: dovrà variare se carico una partita già cominciata
+	show_number.emit(number_shown)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
@@ -84,12 +84,18 @@ func _on_tile_selection_attempt(recived_vector, selected, letter):
 		nuova_parola += each_letter
 	attempt_changed.emit(nuova_parola)
 
-func _on_main_attempt_result(word_finded: bool, word: String) -> void:
-	if word_finded:
-		$Path.modulate = Color(0.6, 1, 0.6)
-	else:
-		$Path.modulate = Color(1, 0.6, 0.6)
-	attempt_result.emit(word_finded, word)
+func _on_main_attempt_result(result: int, word: String) -> void:
+	var color
+	match result:
+		0:
+			color = Color(1, 0.6, 0.6)
+		1:
+			color = Color(0.6, 1, 0.6)
+		2:
+			color = Color(0.6, 0.6, 0.6)
+	
+	$Path.modulate = color
+	attempt_result.emit(result, word, color)
 	print(attempt)
 	ready_for_attempt = false
 	$Timer.start()
@@ -100,4 +106,6 @@ func _on_timer_timeout() -> void:
 	attempt.xy.clear()
 	$Path.modulate = $Path.default_color
 	clear_grid.emit()
+	show_number.emit(number_shown)
+		
 	ready_for_attempt = true

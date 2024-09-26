@@ -8,10 +8,10 @@ signal selection_attempt(grid_vector, selected, letter)
 @export var grid_y: int = 0
 
 var selected: bool = false
-var look_forward = Vector2(0, 0)
+var look_forward = Vector2(0, 0) #durante un tentativo indica la tile successiva
 
 var passingWords = [] #archivio le parole che possono passare per la tile
-var startingWords = [] #archivio le parole che possono iniziare adlla tile
+var startingWords = [] #archivio le parole che possono iniziare dalla tile
 var origin_modulate: Color = modulate
 
 @onready var grid = $"../.."
@@ -41,16 +41,14 @@ func remove_selection() -> void:
 	look_forward = Vector2(0, 0)
 	modulate = origin_modulate
 
-func _on_grid_attempt_result(word_finded: bool, word: String) -> void:
+func _on_grid_attempt_result(attempt_result: int, word: String, color: Color) -> void:
 	if selected:
-		if word_finded:
-			modulate = Color(0.6, 1, 0.6)
-		else:
-			modulate = Color(1, 0.6, 0.6)
-	if passingWords.has(word):
-		passingWords.erase(word)
-	if startingWords.has(word):
-		startingWords.erase(word)
+		modulate = color
+	if attempt_result == 1:
+		if passingWords.has(word):
+			passingWords.erase(word)
+		if startingWords.has(word):
+			startingWords.erase(word)
 
 func _on_grid_clear_grid() -> void:
 	remove_selection()

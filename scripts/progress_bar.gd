@@ -1,5 +1,9 @@
 extends ProgressBar
 
+signal FINE
+signal over_1_4_signal
+
+var over_1_4 = false
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -11,6 +15,13 @@ func _process(delta: float) -> void:
 	pass
 
 
-func _on_main_attempt_result(word_finded: bool, word: String) -> void:
-	if word_finded:
+func _on_main_attempt_result(result: int, word: String) -> void:
+	if result == 1:
 		value += len(word)
+	
+	if not over_1_4 and value * 4.0 > max_value * 1.0:
+		over_1_4 = true
+		over_1_4_signal.emit()
+	
+	if value >= max_value:
+		FINE.emit()

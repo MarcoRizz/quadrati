@@ -27,7 +27,7 @@ max_value = 0.0
 show_percentage = false
 script = ExtResource("4_gwx55")
 
-[node name="Caricamento" type="Label" parent="."]
+[node name="MidText" type="Label" parent="."]
 visible = false
 modulate = Color(0, 0, 0, 1)
 offset_top = 230.0
@@ -43,3 +43,5 @@ script = ExtResource("3_2dkqv")
 [connection signal="attempt_result" from="." to="ProgressBar" method="_on_main_attempt_result"]
 [connection signal="attempt_changed" from="Grid" to="Parola" method="_on_grid_attempt_changed"]
 [connection signal="clear_grid" from="Grid" to="Parola" method="_on_grid_clear_grid"]
+[connection signal="FINE" from="ProgressBar" to="." method="_on_progress_bar_fine"]
+[connection signal="over_1_4_signal" from="ProgressBar" to="." method="_on_progress_bar_over_1_4_signal"]
