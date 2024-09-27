@@ -55,7 +55,7 @@ func _on_grid_clear_grid() -> void:
 	number_update()
 
 func _on_grid_show_number(to_show: bool) -> void:
-	if to_show:
+	if to_show and len(startingWords) != 0:
 		$Numero.show()
 	else:
 		$Numero.hide()
