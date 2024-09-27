@@ -38,11 +38,14 @@ func _http_request_completed(result, response_code, headers, body):
 			words.append(i_parola)
 			$ProgressBar.max_value += len(i_parola)
 		
+		#carico le parole odierne
+		$Grid.assegna_lettere(json_as_dict)
+		
+		#se trovo un file salvato odierno, carico le parole già trovate
 		words_finded = load_results()
 		for i_parola in words_finded:
 			attempt_result.emit(1, i_parola)
 		
-		$Grid.assegna_lettere(json_as_dict)
 		$Grid.show()
 		$Parola.show()
 		$ProgressBar.show()
