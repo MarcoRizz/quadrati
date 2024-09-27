@@ -94,7 +94,7 @@ func _on_main_attempt_result(result: int, word: String) -> void:
 		2:
 			color = Color(0.6, 0.6, 0.6)
 	
-	$Path.modulate = color
+	$Path.default_color = color
 	attempt_result.emit(result, word, color)
 	print(attempt)
 	ready_for_attempt = false
@@ -104,7 +104,7 @@ func _on_timer_timeout() -> void:
 	path.mod_clear_points()
 	attempt.letter.clear()
 	attempt.xy.clear()
-	$Path.modulate = $Path.default_color
+	$Path.default_color = Color(1, 1, 0)
 	clear_grid.emit()
 	show_number.emit(number_shown)
 		

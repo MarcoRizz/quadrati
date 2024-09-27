@@ -75,9 +75,7 @@ func _input(event: InputEvent) -> void:
 
 func _on_progress_bar_FINE() -> void:
 	$MidText.text = "Complimenti, hai vinto!"
-	var new_sb = StyleBoxFlat.new()
-	new_sb.bg_color = Color.WHITE_SMOKE
-	$MidText.add_stylebox_override("normal", new_sb)
+	$MidText/Background.self_modulate = Color.SKY_BLUE
 	$MidText.show()
 
 

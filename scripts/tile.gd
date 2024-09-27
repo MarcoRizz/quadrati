@@ -12,7 +12,6 @@ var look_forward = Vector2(0, 0) #durante un tentativo indica la tile successiva
 
 var passingWords = [] #archivio le parole che possono passare per la tile
 var startingWords = [] #archivio le parole che possono iniziare dalla tile
-var origin_modulate: Color = modulate
 
 @onready var grid = $"../.."
 
@@ -30,20 +29,20 @@ func number_update() -> void:
 	if not new_number:
 		$Numero.hide()
 	if not len(passingWords):
-		modulate = Color(1, 1, 1, 0.4)
+		self_modulate = Color(1, 1, 1, 0.4)
 
 func selection_ok() -> void:
 	selected = true
-	modulate = Color(1, 1, 0.6)
+	self_modulate = Color(1, 1, 0.6)
 
 func remove_selection() -> void:
 	selected = false
 	look_forward = Vector2(0, 0)
-	modulate = origin_modulate
+	self_modulate = Color(1, 1, 1)
 
 func _on_grid_attempt_result(attempt_result: int, word: String, color: Color) -> void:
 	if selected:
-		modulate = color
+		self_modulate = color
 	if attempt_result == 1:
 		if passingWords.has(word):
 			passingWords.erase(word)

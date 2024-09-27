@@ -29,7 +29,8 @@ script = ExtResource("4_gwx55")
 
 [node name="MidText" type="Label" parent="."]
 visible = false
-modulate = Color(0, 0, 0, 1)
+self_modulate = Color(0, 0, 0, 1)
+z_index = 3
 offset_top = 230.0
 offset_right = 400.0
 offset_bottom = 280.0
@@ -38,6 +39,11 @@ text = "Caricamento..."
 horizontal_alignment = 1
 vertical_alignment = 1
 script = ExtResource("3_2dkqv")
+
+[node name="Background" type="Polygon2D" parent="MidText"]
+z_index = -1
+color = Color(0.808998, 0.808998, 0.808998, 1)
+polygon = PackedVector2Array(0, 0, 400, 0, 400, 50, 0, 50)
 
 [connection signal="attempt_result" from="." to="Grid" method="_on_main_attempt_result"]
 [connection signal="attempt_result" from="." to="ProgressBar" method="_on_main_attempt_result"]
