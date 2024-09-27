@@ -4,6 +4,7 @@ const http_json_source = "https://script.google.com/macros/s/AKfycby6N9vEbuGpOp5
 
 signal attempt_result(word_finded: int, word: String)
 
+var todaysNum  #todo: qui salvo il numero di file JSON caricato
 var words = [] #colleziono tutte le parole
 var words_finded = [] #colleziono le parole trovate
 
@@ -28,17 +29,19 @@ func _http_request_completed(result, response_code, headers, body):
 	var json = JSON.new()
 	json.parse(body.get_string_from_utf8())
 	var response = json.get_data()
-	
-	#var file = "res://quadrati#1.json"
-	#var json_as_text = FileAccess.get_file_as_string(file)
-	#var json_as_dict = JSON.parse_string(json_as_text)
 	var json_as_dict = response;
 	
 	#controllo sulla corretta costruzione del file json_as_dict?
-	if json_as_dict.has("grid") and json_as_dict.has("words") and json_as_dict.has("passingLinks") and json_as_dict.has("startingLinks"):
+	if json_as_dict.has("grid") and json_as_dict.has("words") and json_as_dict.has("passingLinks") and json_as_dict.has("startingLinks") and json_as_dict.has("todaysNum"):
+		todaysNum = json_as_dict.todaysNum
 		for i_parola in json_as_dict.words:
 			words.append(i_parola)
 			$ProgressBar.max_value += len(i_parola)
+		
+		words_finded = load_results()
+		for i_parola in words_finded:
+			attempt_result.emit(1, i_parola)
+		
 		$Grid.assegna_lettere(json_as_dict)
 		$Grid.show()
 		$Parola.show()
@@ -59,6 +62,8 @@ func _input(event: InputEvent) -> void:
 		elif words.has(word_guessed):
 			result = 1  #parola nuova trovata
 			words_finded.append(word_guessed)
+			
+			save_results()
 		else:
 			result = 0  #parola non troata
 			#todo: messaggio paroal non trovata
@@ -75,3 +80,19 @@ func _on_progress_bar_FINE() -> void:
 
 func _on_progress_bar_over_1_4_signal() -> void:
 	$Grid.number_shown = true
+
+func save_results():
+	var save_file = FileAccess.open("user://savegame.save", FileAccess.WRITE)
+	var save_dict = {"todaysNum" = todaysNum, "wordsFinded" = words_finded}
+	var json_string = JSON.stringify(save_dict)
+	save_file.store_line(json_string)
+
+func load_results() -> Array:
+	if not FileAccess.file_exists("user://savegame.save"):
+		return [] # Error! We don't have a save to load.
+	var json_as_text = FileAccess.get_file_as_string("user://savegame.save")
+	var json_as_dict = JSON.parse_string(json_as_text)
+	if json_as_dict.todaysNum == todaysNum:
+		return json_as_dict.wordsFinded
+	else:
+		return []
