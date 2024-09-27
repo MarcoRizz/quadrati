@@ -29,7 +29,8 @@ func number_update() -> void:
 	if not new_number:
 		$Numero.hide()
 	if not len(passingWords):
-		self_modulate = Color(1, 1, 1, 0.4)
+		self_modulate = Color(1, 1, 1)
+		modulate = Color(1, 1, 1, 0.4)
 
 func selection_ok() -> void:
 	selected = true
