@@ -1,6 +1,5 @@
 extends ProgressBar
 
-signal FINE
 signal over_1_4_signal
 
 var over_1_4 = false
@@ -22,6 +21,3 @@ func _on_main_attempt_result(result: int, word: String) -> void:
 	if not over_1_4 and value * 4.0 > max_value * 1.0:
 		over_1_4 = true
 		over_1_4_signal.emit()
-	
-	if value >= max_value:
-		FINE.emit()

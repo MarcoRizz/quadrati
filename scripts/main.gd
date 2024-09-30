@@ -73,7 +73,11 @@ func _input(event: InputEvent) -> void:
 		
 		attempt_result.emit(result, $Parola.text)
 
-func _on_progress_bar_FINE() -> void:
+func _on_grid_clear_grid() -> void:
+	if $ProgressBar.value >= $ProgressBar.max_value:
+		FINE()
+
+func FINE() -> void:
 	$MidText.text = "Complimenti, hai vinto!"
 	$MidText/Background.self_modulate = Color.SKY_BLUE
 	$MidText.show()
