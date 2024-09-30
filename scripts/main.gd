@@ -22,17 +22,35 @@ func _ready() -> void:
 	# Perform a GET request. The URL below returns JSON as of writing.
 	var error = http_request.request(http_json_source)
 	if error != OK:
-		push_error("An error occurred in the HTTP request.")
+		print("An error occurred in the HTTP request.")
+		if FileAccess.file_exists("user://savejson.save"):
+			var json_as_text = FileAccess.get_file_as_string("user://savejson.save")
+			var json_as_dict = JSON.parse_string(json_as_text)
+			load_data(json_as_dict, false)
 
 # Called when the HTTP request is completed.
 func _http_request_completed(result, response_code, headers, body):
-	var json = JSON.new()
-	json.parse(body.get_string_from_utf8())
-	var response = json.get_data()
-	var json_as_dict = response;
+	if result == 0:
+		var json = JSON.new()
+		json.parse(body.get_string_from_utf8())
+		var json_as_dict = json.get_data()
+		load_data(json_as_dict, true)
+	else:
+		print("An error occurred in the HTTP request, error " + str(result))
+		if FileAccess.file_exists("user://savejson.save"):
+			var json_as_text = FileAccess.get_file_as_string("user://savejson.save")
+			var json2_as_dict = JSON.parse_string(json_as_text)
+			load_data(json2_as_dict, false)
 	
+	
+func load_data(json_as_dict, willSave):
 	#controllo sulla corretta costruzione del file json_as_dict?
 	if json_as_dict.has("grid") and json_as_dict.has("words") and json_as_dict.has("passingLinks") and json_as_dict.has("startingLinks") and json_as_dict.has("todaysNum"):
+		if willSave:
+			#salvo il json in locale
+			var save_file = FileAccess.open("user://savejson.save", FileAccess.WRITE)
+			save_file.store_line(JSON.stringify(json_as_dict))
+		
 		todaysNum = json_as_dict.todaysNum
 		for i_parola in json_as_dict.words:
 			words.append(i_parola)

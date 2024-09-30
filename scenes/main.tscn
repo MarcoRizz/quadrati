@@ -9,7 +9,8 @@
 script = ExtResource("1_woek1")
 
 [node name="Grid" parent="." instance=ExtResource("1_uubdm")]
-position = Vector2(0, 70)
+position = Vector2(20, 70)
+scale = Vector2(0.9, 0.9)
 
 [node name="Parola" type="Label" parent="."]
 offset_top = 20.0
