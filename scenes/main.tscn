@@ -1,9 +1,10 @@
-[gd_scene load_steps=5 format=3 uid="uid://ca2u80vmcdd0c"]
+[gd_scene load_steps=6 format=3 uid="uid://ca2u80vmcdd0c"]
 
 [ext_resource type="PackedScene" uid="uid://knuk1qdilmis" path="res://scenes/grid.tscn" id="1_uubdm"]
 [ext_resource type="Script" path="res://scripts/main.gd" id="1_woek1"]
 [ext_resource type="Script" path="res://scripts/parola.gd" id="3_2dkqv"]
 [ext_resource type="Script" path="res://scripts/progress_bar.gd" id="4_gwx55"]
+[ext_resource type="PackedScene" uid="uid://cbbhu4y4ff6ye" path="res://scenes/panel.tscn" id="5_o0gvf"]
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_woek1")
@@ -46,8 +47,15 @@ z_index = -1
 color = Color(0.808998, 0.808998, 0.808998, 1)
 polygon = PackedVector2Array(0, 0, 400, 0, 400, 50, 0, 50)
 
+[node name="Panel" parent="." instance=ExtResource("5_o0gvf")]
+offset_left = 10.0
+offset_top = 440.0
+offset_right = 387.0
+offset_bottom = 557.0
+
 [connection signal="attempt_result" from="." to="Grid" method="_on_main_attempt_result"]
 [connection signal="attempt_result" from="." to="ProgressBar" method="_on_main_attempt_result"]
+[connection signal="attempt_result" from="." to="Panel" method="_on_main_attempt_result"]
 [connection signal="attempt_changed" from="Grid" to="Parola" method="_on_grid_attempt_changed"]
 [connection signal="clear_grid" from="Grid" to="." method="_on_grid_clear_grid"]
 [connection signal="clear_grid" from="Grid" to="Parola" method="_on_grid_clear_grid"]
