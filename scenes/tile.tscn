@@ -31,10 +31,10 @@ polygon = PackedVector2Array(-95, -95, -95, 95, 95, 95, 95, -95)
 [node name="Numero" type="Label" parent="."]
 modulate = Color(0.2, 0.2, 0.2, 1)
 offset_left = -110.0
-offset_top = 50.0
+offset_top = 45.0
 offset_right = -70.0
-offset_bottom = 111.0
-theme_override_font_sizes/font_size = 44
+offset_bottom = 115.0
+theme_override_font_sizes/font_size = 50
 text = "0"
 horizontal_alignment = 1
 vertical_alignment = 1
