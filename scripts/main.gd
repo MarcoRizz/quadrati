@@ -19,9 +19,17 @@ func _ready() -> void:
 	$ProgressBar.hide()
 	$Panel.hide()
 	$MidText.show()
-
+	
+	# Ottieni informazioni del client
+	var user_ip = IP.get_local_addresses()[-1]  # Ottiene l'ultima interfaccia di rete (IP?)
+	var user_agent = OS.get_name()  # Ad esempio, restituisce il nome del sistema operativo
+	var user_locale = OS.get_locale()  # Ottiene la localizzazione dell'utente
+	
+	# Costruisci l'URL con i parametri
+	var params = "?userIp=%s&userAgent=%s&userLocale=%s" % [user_ip, user_agent, user_locale]
+	
 	# Perform a GET request. The URL below returns JSON as of writing.
-	var error = http_request.request(http_json_source)
+	var error = http_request.request(http_json_source + params)
 	if error != OK:
 		print("An error occurred in the HTTP request.")
 		if FileAccess.file_exists("user://savejson.save"):
