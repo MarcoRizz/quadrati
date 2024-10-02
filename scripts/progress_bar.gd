@@ -1,8 +1,8 @@
 extends ProgressBar
 
-signal over_1_4_signal
+signal initials_threshold_signal
 
-var over_1_4 = false
+var initials_threshold = false
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -18,6 +18,6 @@ func _on_main_attempt_result(result: int, word: String) -> void:
 	if result == 1:
 		value += len(word)
 	
-	if not over_1_4 and value * 4.0 > max_value * 1.0:
-		over_1_4 = true
-		over_1_4_signal.emit()
+	if not initials_threshold and value * 3.0 > max_value * 1.0:
+		initials_threshold = true
+		initials_threshold_signal.emit()

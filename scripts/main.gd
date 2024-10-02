@@ -105,7 +105,7 @@ func FINE() -> void:
 	$MidText.show()
 
 
-func _on_progress_bar_over_1_4_signal() -> void:
+func _on_progress_bar_initials_threshold_signal() -> void:
 	$Grid.number_shown = true
 
 func save_results():

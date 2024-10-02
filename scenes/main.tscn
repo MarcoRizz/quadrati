@@ -59,4 +59,4 @@ offset_bottom = 557.0
 [connection signal="attempt_changed" from="Grid" to="Parola" method="_on_grid_attempt_changed"]
 [connection signal="clear_grid" from="Grid" to="." method="_on_grid_clear_grid"]
 [connection signal="clear_grid" from="Grid" to="Parola" method="_on_grid_clear_grid"]
-[connection signal="over_1_4_signal" from="ProgressBar" to="." method="_on_progress_bar_over_1_4_signal"]
+[connection signal="initials_threshold_signal" from="ProgressBar" to="." method="_on_progress_bar_initials_threshold_signal"]
