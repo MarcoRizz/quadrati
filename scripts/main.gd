@@ -90,7 +90,7 @@ func load_data(json_as_dict, willSave):
 		get_tree().quit()
 
 func _input(event: InputEvent) -> void:
-	if event.is_action_released("click"):
+	if event.is_action_released("click") and $Grid.is_visible_in_tree():
 		if $Grid.valid_attempt:
 			var word_guessed = $Parola.text
 			var result
