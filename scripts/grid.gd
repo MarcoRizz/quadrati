@@ -96,6 +96,8 @@ func _on_tile_selection_attempt(recived_vector, selected, letter):
 	print("selection " + letter)
 	print("position: " + str(recived_vector.x) + ", " + str(recived_vector.y))
 	
+	valid_attempt= true
+	
 	var attempt_len = len(attempt.xy)
 	#capisco se sto tornando indietro o progredendo
 	if not selected and (len(attempt.xy) == 0 or recived_vector.distance_to(attempt.xy[-1]) < 1.5):

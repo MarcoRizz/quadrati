@@ -91,21 +91,24 @@ func load_data(json_as_dict, willSave):
 
 func _input(event: InputEvent) -> void:
 	if event.is_action_released("click"):
-		var word_guessed = $Parola.text
-		var result
-		if words_finded.has(word_guessed):
-			result = 2  #parola già trovata
-			#todo: messaggio parola ripetuta
-		elif words.has(word_guessed):
-			result = 1  #parola nuova trovata
-			words_finded.append(word_guessed)
+		if $Grid.valid_attempt:
+			var word_guessed = $Parola.text
+			var result
+			if words_finded.has(word_guessed):
+				result = 2  #parola già trovata
+				#todo: messaggio parola ripetuta
+			elif words.has(word_guessed):
+				result = 1  #parola nuova trovata
+				words_finded.append(word_guessed)
+				
+				save_results()
+			else:
+				result = 0  #parola non troata
+				#todo: messaggio paroal non trovata
 			
-			save_results()
+			attempt_result.emit(result, $Parola.text)
 		else:
-			result = 0  #parola non troata
-			#todo: messaggio paroal non trovata
-		
-		attempt_result.emit(result, $Parola.text)
+			$Grid._on_timer_timeout()  #se non era un tentativo valido anticipo il reset della griglia
 
 func _on_grid_clear_grid() -> void:
 	if $ProgressBar.value >= $ProgressBar.max_value:

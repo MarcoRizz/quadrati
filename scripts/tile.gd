@@ -62,7 +62,6 @@ func _on_grid_show_number(to_show: bool) -> void:
 
 func _on_area_2d_input_event(viewport: Node, event: InputEvent, shape_idx: int) -> void:
 	if event.is_action_pressed("click") and grid.ready_for_attempt:
-		grid.valid_attempt = true
 		selection_attempt.emit(Vector2(grid_x, grid_y), selected, $Lettera.text)
 
 func _on_area_2d_mouse_entered() -> void:
