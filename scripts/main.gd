@@ -18,6 +18,8 @@ func _ready() -> void:
 	$Parola.hide()
 	$ProgressBar.hide()
 	$Panel.hide()
+	$RotateClockwise.hide()
+	$RotateCounterClockwise.hide()
 	$MidText.show()
 	
 	# Ottieni informazioni del client
@@ -79,6 +81,8 @@ func load_data(json_as_dict, willSave):
 		$Parola.show()
 		$ProgressBar.show()
 		$Panel.show()
+		$RotateClockwise.show()
+		$RotateCounterClockwise.show()
 		$MidText.hide()
 	else:
 		printerr("NO DATA")

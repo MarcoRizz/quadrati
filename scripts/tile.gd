@@ -13,7 +13,7 @@ var look_forward = Vector2(0, 0) #durante un tentativo indica la tile successiva
 var passingWords = [] #archivio le parole che possono passare per la tile
 var startingWords = [] #archivio le parole che possono iniziare dalla tile
 
-@onready var grid = $"../.."
+@onready var grid = $".."
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -62,8 +62,9 @@ func _on_grid_show_number(to_show: bool) -> void:
 
 func _on_area_2d_input_event(viewport: Node, event: InputEvent, shape_idx: int) -> void:
 	if event.is_action_pressed("click") and grid.ready_for_attempt:
+		grid.valid_attempt = true
 		selection_attempt.emit(Vector2(grid_x, grid_y), selected, $Lettera.text)
 
 func _on_area_2d_mouse_entered() -> void:
-	if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+	if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT) and grid.valid_attempt:
 		selection_attempt.emit(Vector2(grid_x, grid_y), selected, $Lettera.text)

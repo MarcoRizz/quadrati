@@ -12,14 +12,21 @@ signal show_number(show: bool)
 
 @onready var path: Line2D = $Path
 
-@onready var tiles = [[$Node2D/tile00, $Node2D/tile01, $Node2D/tile02, $Node2D/tile03],
-					  [$Node2D/tile10, $Node2D/tile11, $Node2D/tile12, $Node2D/tile13],
-					  [$Node2D/tile20, $Node2D/tile21, $Node2D/tile22, $Node2D/tile23],
-					  [$Node2D/tile30, $Node2D/tile31, $Node2D/tile32, $Node2D/tile33]]
+@onready var tiles = [[$tile00, $tile01, $tile02, $tile03],
+					  [$tile10, $tile11, $tile12, $tile13],
+					  [$tile20, $tile21, $tile22, $tile23],
+					  [$tile30, $tile31, $tile32, $tile33]]
 
 var attempt = {"letter": [], "xy": []}
 var ready_for_attempt = true
+var valid_attempt = false
 var number_shown = false
+
+var rot_on = 0 #comando di rotazione: -1 antiorario, 0 fermo, +1 orario
+var rot_pos = 0 #ultimo angolo statico [0, 270]
+var rot_speed = 2.0
+var rot_angle = 0.0
+
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -32,9 +39,33 @@ func _ready() -> void:
 			tiles[x][y].connect("selection_attempt", _on_tile_selection_attempt)
 	show_number.emit(number_shown)
 
+
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	pass
+	if rot_on != 0:
+		rot_angle += delta * rot_speed * rot_on
+		
+		var rotation_limit = rot_pos + (PI / 2 * rot_on)
+		
+		# Verifica se l'angolo ha superato il limite
+		if (rot_on == 1 and rot_angle > rotation_limit) or (rot_on == -1 and rot_angle < rotation_limit):
+			# Correggi l'angolo
+			rot_angle = rotation_limit
+			rot_pos = rot_angle
+			ready_for_attempt = true;
+			rot_on = 0  # Ferma la rotazione
+			
+			# Applica la rotazione corretta ai tile usando il valore ridotto di rotazione
+			for y in range(grid_size):
+				for x in range(grid_size):
+					tiles[x][y].position = elaborate_tile_coordinate(Vector2(x, y))  #corregge gli errori causati dalla chiamata di position.rotated
+
+		else:
+			# Aggiorna la posizione delle tile ruotandole normalmente
+			for y in range(grid_size):
+				for x in range(grid_size):
+					tiles[x][y].position = tiles[x][y].position.rotated(delta * rot_speed * rot_on)
+
 
 func assegna_lettere(json_data) -> void:
 	var index = 0
@@ -49,11 +80,17 @@ func assegna_lettere(json_data) -> void:
 				tiles[x][y].passingWords.append(json_data.words[i_parola])
 			tiles[x][y].number_update()
 
+
 func elaborate_tile_coordinate(grid_vector: Vector2) -> Vector2:
-	return Vector2((tile_size + tile_spacing) * (grid_vector.x + 1.0/2), (tile_size + tile_spacing) * (grid_vector.y + 1.0/2))
+	return Vector2(
+		(tile_size + tile_spacing) * (grid_vector.x - 1.5),
+		(tile_size + tile_spacing) * (grid_vector.y - 1.5)
+	).rotated(rot_pos)
+
 
 func i_tile_from_attempt(i: int) -> Sprite2D:
 	return tiles[attempt.xy[i].x][attempt.xy[i].y]
+
 
 func _on_tile_selection_attempt(recived_vector, selected, letter):
 	print("selection " + letter)
@@ -84,6 +121,7 @@ func _on_tile_selection_attempt(recived_vector, selected, letter):
 		nuova_parola += each_letter
 	attempt_changed.emit(nuova_parola)
 
+
 func _on_main_attempt_result(result: int, word: String) -> void:
 	var color
 	match result:
@@ -98,7 +136,9 @@ func _on_main_attempt_result(result: int, word: String) -> void:
 	attempt_result.emit(result, word, color)
 	print(attempt)
 	ready_for_attempt = false
+	valid_attempt = false
 	$Timer.start()
+
 
 func _on_timer_timeout() -> void:
 	path.mod_clear_points()
@@ -109,3 +149,13 @@ func _on_timer_timeout() -> void:
 	show_number.emit(number_shown)
 		
 	ready_for_attempt = true
+
+
+func _on_rotate_clockwise_pressed() -> void:
+	rot_on = 1 if rot_on == 0 else rot_on;
+	ready_for_attempt = false;
+
+
+func _on_rotate_counter_clockwise_pressed() -> void:
+	rot_on = -1 if rot_on == 0 else rot_on;
+	ready_for_attempt = false;

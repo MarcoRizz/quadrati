@@ -13,81 +13,75 @@ width = 30.0
 default_color = Color(1, 1, 0, 1)
 script = ExtResource("2_03yts")
 
-[node name="Background" type="Polygon2D" parent="."]
-color = Color(0.3, 0.3, 0.3, 1)
-polygon = PackedVector2Array(0, 0, 400, 0, 400, 400, 0, 400)
+[node name="tile00" parent="." instance=ExtResource("2_ayh7i")]
+position = Vector2(-150, -150)
 
-[node name="Node2D" type="Node2D" parent="."]
+[node name="tile10" parent="." instance=ExtResource("2_ayh7i")]
+position = Vector2(-50, -150)
+grid_x = 1
 
-[node name="tile00" parent="Node2D" instance=ExtResource("2_ayh7i")]
+[node name="tile20" parent="." instance=ExtResource("2_ayh7i")]
+position = Vector2(50, -150)
+grid_x = 2
+
+[node name="tile30" parent="." instance=ExtResource("2_ayh7i")]
+position = Vector2(150, -150)
+grid_x = 3
+
+[node name="tile01" parent="." instance=ExtResource("2_ayh7i")]
+position = Vector2(-150, -50)
+grid_y = 1
+
+[node name="tile11" parent="." instance=ExtResource("2_ayh7i")]
+position = Vector2(-50, -50)
+grid_x = 1
+grid_y = 1
+
+[node name="tile21" parent="." instance=ExtResource("2_ayh7i")]
+position = Vector2(50, -50)
+grid_x = 2
+grid_y = 1
+
+[node name="tile31" parent="." instance=ExtResource("2_ayh7i")]
+position = Vector2(150, -50)
+grid_x = 3
+grid_y = 1
+
+[node name="tile02" parent="." instance=ExtResource("2_ayh7i")]
+position = Vector2(-150, 50)
+grid_y = 2
+
+[node name="tile12" parent="." instance=ExtResource("2_ayh7i")]
+position = Vector2(-50, 50)
+grid_x = 1
+grid_y = 2
+
+[node name="tile22" parent="." instance=ExtResource("2_ayh7i")]
 position = Vector2(50, 50)
+grid_x = 2
+grid_y = 2
 
-[node name="tile10" parent="Node2D" instance=ExtResource("2_ayh7i")]
+[node name="tile32" parent="." instance=ExtResource("2_ayh7i")]
 position = Vector2(150, 50)
-grid_x = 1
-
-[node name="tile20" parent="Node2D" instance=ExtResource("2_ayh7i")]
-position = Vector2(250, 50)
-grid_x = 2
-
-[node name="tile30" parent="Node2D" instance=ExtResource("2_ayh7i")]
-position = Vector2(350, 50)
 grid_x = 3
+grid_y = 2
 
-[node name="tile01" parent="Node2D" instance=ExtResource("2_ayh7i")]
+[node name="tile03" parent="." instance=ExtResource("2_ayh7i")]
+position = Vector2(-150, 150)
+grid_y = 3
+
+[node name="tile13" parent="." instance=ExtResource("2_ayh7i")]
+position = Vector2(-50, 150)
+grid_x = 1
+grid_y = 3
+
+[node name="tile23" parent="." instance=ExtResource("2_ayh7i")]
 position = Vector2(50, 150)
-grid_y = 1
+grid_x = 2
+grid_y = 3
 
-[node name="tile11" parent="Node2D" instance=ExtResource("2_ayh7i")]
+[node name="tile33" parent="." instance=ExtResource("2_ayh7i")]
 position = Vector2(150, 150)
-grid_x = 1
-grid_y = 1
-
-[node name="tile21" parent="Node2D" instance=ExtResource("2_ayh7i")]
-position = Vector2(250, 150)
-grid_x = 2
-grid_y = 1
-
-[node name="tile31" parent="Node2D" instance=ExtResource("2_ayh7i")]
-position = Vector2(350, 150)
-grid_x = 3
-grid_y = 1
-
-[node name="tile02" parent="Node2D" instance=ExtResource("2_ayh7i")]
-position = Vector2(50, 250)
-grid_y = 2
-
-[node name="tile12" parent="Node2D" instance=ExtResource("2_ayh7i")]
-position = Vector2(150, 250)
-grid_x = 1
-grid_y = 2
-
-[node name="tile22" parent="Node2D" instance=ExtResource("2_ayh7i")]
-position = Vector2(250, 250)
-grid_x = 2
-grid_y = 2
-
-[node name="tile32" parent="Node2D" instance=ExtResource("2_ayh7i")]
-position = Vector2(350, 250)
-grid_x = 3
-grid_y = 2
-
-[node name="tile03" parent="Node2D" instance=ExtResource("2_ayh7i")]
-position = Vector2(50, 350)
-grid_y = 3
-
-[node name="tile13" parent="Node2D" instance=ExtResource("2_ayh7i")]
-position = Vector2(150, 350)
-grid_x = 1
-grid_y = 3
-
-[node name="tile23" parent="Node2D" instance=ExtResource("2_ayh7i")]
-position = Vector2(250, 350)
-grid_x = 2
-grid_y = 3
-
-[node name="tile33" parent="Node2D" instance=ExtResource("2_ayh7i")]
-position = Vector2(350, 350)
 grid_x = 3
 grid_y = 3
 
