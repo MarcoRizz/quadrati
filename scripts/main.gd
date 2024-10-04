@@ -23,12 +23,28 @@ func _ready() -> void:
 	$MidText.show()
 	
 	# Ottieni informazioni del client
-	var user_ip = IP.get_local_addresses()[-1]  # Ottiene l'ultima interfaccia di rete (IP?)
-	var user_agent = OS.get_name()  # Ad esempio, restituisce il nome del sistema operativo
+	var ip_adress :String
+	if OS.has_feature("windows"):
+		if OS.has_environment("COMPUTERNAME"):
+			ip_adress =  IP.resolve_hostname(str(OS.get_environment("COMPUTERNAME")),1)
+	elif OS.has_feature("Android"):
+		var ip_addresses = IP.get_local_addresses()
+		for ip in ip_addresses:
+			# Salta gli indirizzi IP di loopback (localhost)
+			if ip != "127.0.0.1":
+				ip_adress = ip
+	elif OS.has_feature("x11"):
+		if OS.has_environment("HOSTNAME"):
+			ip_adress =  IP.resolve_hostname(str(OS.get_environment("HOSTNAME")),1)
+	elif OS.has_feature("OSX"):
+		if OS.has_environment("HOSTNAME"):
+			ip_adress =  IP.resolve_hostname(str(OS.get_environment("HOSTNAME")),1)
+	
+	var user_agent = OS.get_name()  # Ottiene il nome del sistema operativo
 	var user_locale = OS.get_locale()  # Ottiene la localizzazione dell'utente
 	
 	# Costruisci l'URL con i parametri
-	var params = "?userIp=%s&userAgent=%s&userLocale=%s" % [user_ip, user_agent, user_locale]
+	var params = "?userIp=%s&userAgent=%s&userLocale=%s" % [ip_adress, user_agent, user_locale]
 	
 	# Perform a GET request. The URL below returns JSON as of writing.
 	var error = http_request.request(http_json_source + params)
