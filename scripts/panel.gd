@@ -60,12 +60,12 @@ func _on_main_attempt_result(word_finded: int, word: String) -> void:
 				current_label.text = String("\n").join(lines)  # Usa String().join() per unire l'Array
 
 				# Aggiorna il conteggio delle parole trovate
-				var n = lunghezza_parole[chiave]["n"]
+				var n = lunghezza_parole[chiave]["n"] + 1
 				var n_max = lunghezza_parole[chiave]["n_max"]
-				lunghezza_parole[chiave]["n"] = ++n
+				lunghezza_parole[chiave]["n"] = n
 				lunghezza_parole[chiave]["title"].text = chiave + ": " + str(n) + "/" + str(n_max)
 				if n >= n_max:
-					lunghezza_parole[size]["title"].set("theme_override_colors/font_color", Color.AQUAMARINE)
+					lunghezza_parole[chiave]["title"].set("theme_override_colors/font_color", Color.AQUAMARINE)
 
 func assegna_lettere(json_data) -> void:
 	for i_parola in json_data.words:
