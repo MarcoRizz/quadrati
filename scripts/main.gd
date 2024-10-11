@@ -85,8 +85,7 @@ func load_data(json_as_dict, willSave):
 		
 		#carico le parole odierne
 		$Grid.assegna_lettere(json_as_dict)
-		$Panel.assegna_lettere(json_as_dict)
-		$Panel.display()
+		$Panel.instantiate(json_as_dict)
 		
 		#se trovo un file salvato odierno, carico le parole già trovate
 		words_finded = load_results()

@@ -4,84 +4,98 @@ extends Panel
 @onready var scroll_container = $ScrollContainer
 
 var lunghezza_parole = {
-	"4-lettere": {"n": 0, "n_max": 0, "title": Label.new(), "label": Label.new()},
-	"5-lettere": {"n": 0, "n_max": 0, "title": Label.new(), "label": Label.new()},
-	"6-lettere": {"n": 0, "n_max": 0, "title": Label.new(), "label": Label.new()},
-	"7-lettere": {"n": 0, "n_max": 0, "title": Label.new(), "label": Label.new()},
-	"8-lettere": {"n": 0, "n_max": 0, "title": Label.new(), "label": Label.new()},
-	"9-lettere": {"n": 0, "n_max": 0, "title": Label.new(), "label": Label.new()},
-	"10-lettere": {"n": 0, "n_max": 0, "title": Label.new(), "label": Label.new()},
-	"11-lettere": {"n": 0, "n_max": 0, "title": Label.new(), "label": Label.new()},
-	"12-lettere": {"n": 0, "n_max": 0, "title": Label.new(), "label": Label.new()},
-	"13-lettere": {"n": 0, "n_max": 0, "title": Label.new(), "label": Label.new()},
-	"14-lettere": {"n": 0, "n_max": 0, "title": Label.new(), "label": Label.new()},
-	"15-lettere": {"n": 0, "n_max": 0, "title": Label.new(), "label": Label.new()},
-	"16-lettere": {"n": 0, "n_max": 0, "title": Label.new(), "label": Label.new()}
+	"4-lettere": {"n": 0, "n_max": 0, "title": Label.new(), "containers": []},
+	"5-lettere": {"n": 0, "n_max": 0, "title": Label.new(), "containers": []},
+	"6-lettere": {"n": 0, "n_max": 0, "title": Label.new(), "containers": []},
+	"7-lettere": {"n": 0, "n_max": 0, "title": Label.new(), "containers": []},
+	"8-lettere": {"n": 0, "n_max": 0, "title": Label.new(), "containers": []},
+	"9-lettere": {"n": 0, "n_max": 0, "title": Label.new(), "containers": []},
+	"10-lettere": {"n": 0, "n_max": 0, "title": Label.new(), "containers": []},
+	"11-lettere": {"n": 0, "n_max": 0, "title": Label.new(), "containers": []},
+	"12-lettere": {"n": 0, "n_max": 0, "title": Label.new(), "containers": []},
+	"13-lettere": {"n": 0, "n_max": 0, "title": Label.new(), "containers": []},
+	"14-lettere": {"n": 0, "n_max": 0, "title": Label.new(), "containers": []},
+	"15-lettere": {"n": 0, "n_max": 0, "title": Label.new(), "containers": []},
+	"16-lettere": {"n": 0, "n_max": 0, "title": Label.new(), "containers": []}
 }
 
+var font #salvo il font per calcolare le lunghezze delle stringhe
+var h_label
+var w_container
+var dash_string = "-"
+var w_dash_label
+
 func _ready() -> void:
-	# Imposta la larghezza massima per i label in base alla larghezza dello ScrollContainer
-	var max_width = $ScrollContainer.size.x
-	for size in lunghezza_parole.keys():
-		lunghezza_parole[size]["title"].set("theme_override_colors/font_color", Color.BLANCHED_ALMOND)
-		lunghezza_parole[size]["label"].custom_minimum_size.x = max_width
+	#imposto le variabili statiche
+	# Ottieni il font del Label (assicurati che sia definito un font, altrimenti usa il font di default)
+	font = Label.new().get_theme_font("font")  # Recupera il font dal tema
+	if font == null:
+		font = Label.new().get_font("CustomFont")  # Prova a ottenere il font personalizzato se esiste
+	h_label = font.get_string_size(dash_string).y
+	w_container = scroll_container.size.x
+	w_dash_label = font.get_string_size(dash_string).x
+	
+	# Impostazioni dei Nodi di lunghezza_parole
+	for size_n in lunghezza_parole.keys():
+		lunghezza_parole[size_n]["title"].set("theme_override_colors/font_color", Color.BLANCHED_ALMOND)
+		# Aggiungi il primo HBoxContainer vuoto
+		var hbox = HBoxContainer.new()
+		hbox.custom_minimum_size.x = w_container
+		hbox.custom_minimum_size.y = h_label
+		lunghezza_parole[size_n]["containers"].append(hbox)
 
 func _on_main_attempt_result(word_finded: int, word: String) -> void:
 	var lunghezza = word.length()
 	
 	if word_finded == 1:
-		# Verifica la chiave corrispondente alla lunghezza della parola
-		for chiave in lunghezza_parole:
-			if str(lunghezza) + "-lettere" == chiave:
-				var current_label = lunghezza_parole[chiave]["label"]
-				var current_text = current_label.text
+		# Verifica la size_n corrispondente alla lunghezza della parola
+		for size_n in lunghezza_parole:
+			if str(lunghezza) + "-lettere" == size_n:
+				var n = lunghezza_parole[size_n]["n"]
+				var n_max = lunghezza_parole[size_n]["n_max"]
+				var current_containers = lunghezza_parole[size_n]["containers"]
+				var last_container = current_containers[-1]  # Ottieni l'ultimo HBoxContainer
 
-				# Suddividi il testo già presente in righe
-				var lines = current_text.split("\n")
-				var last_line = lines[-1] if lines.size() > 0 else ""
+				# Crea un nuovo Label per la parola
+				var word_label = Label.new()
+				word_label.text = word
 				
-				# Misura la larghezza della riga attuale con la nuova parola
-				var new_text = last_line + ("" if last_line == "" else " - ") + word
+				if n > 0:
+					# Se la nuova parola non ci sta nell'ultimo container, crea un nuovo HBoxContainer (vai a capo)
+					var last_label = last_container.get_child(-1)
+					if last_label.position.x + last_label.size.x + w_dash_label + font.get_string_size(word).x + 8 > last_container.get_combined_minimum_size().x:
+						var new_container = HBoxContainer.new()
+						new_container.custom_minimum_size.x = w_container
+						new_container.custom_minimum_size.y = h_label
+						current_containers.append(new_container)
+						last_container.add_sibling(new_container)
+						last_container = new_container
+					else:
+						# Aggiungi il trattino "-" se non è la prima parola nel container
+						var dash_label = Label.new()
+						dash_label.text = dash_string
+						last_container.add_child(dash_label)
 				
-				# Ottieni il font del Label (assicurati che sia definito un font, altrimenti usa il font di default)
-				var font = current_label.get_theme_font("font")  # recupera il font dal tema
-				if font == null:
-					font = current_label.get_font("CustomFont")  # prova a ottenere il font personalizzato se esiste
-				
-				var new_text_width = font.get_string_size(new_text).x  # calcola la larghezza del testo
-
-				# Se la nuova parola non ci sta nella riga attuale, vai a capo
-				if new_text_width > current_label.custom_minimum_size.x:
-					lines.append(word)  # Vai a capo e aggiungi la parola senza trattino
-				else:
-					lines[-1] = new_text  # Aggiorna l'ultima riga con la nuova parola e il trattino
-
-				# Unisci le righe in una singola stringa con "\n"
-				current_label.text = String("\n").join(lines)  # Usa String().join() per unire l'Array
+				# Aggiungi la parola all'ultimo HBoxContainer
+				last_container.add_child(word_label)
 
 				# Aggiorna il conteggio delle parole trovate
-				var n = lunghezza_parole[chiave]["n"] + 1
-				var n_max = lunghezza_parole[chiave]["n_max"]
-				lunghezza_parole[chiave]["n"] = n
-				lunghezza_parole[chiave]["title"].text = chiave + ": " + str(n) + "/" + str(n_max)
+				n +=1
+				lunghezza_parole[size_n]["n"] = n
+				lunghezza_parole[size_n]["title"].text = size_n + ": " + str(n) + "/" + str(n_max)
 				if n >= n_max:
-					lunghezza_parole[chiave]["title"].set("theme_override_colors/font_color", Color.AQUAMARINE)
+					lunghezza_parole[size_n]["title"].set("theme_override_colors/font_color", Color.AQUAMARINE)
 
-func assegna_lettere(json_data) -> void:
+func instantiate(json_data) -> void:
 	for i_parola in json_data.words:
 		var lunghezza = i_parola.length()
 		lunghezza_parole[str(lunghezza) + "-lettere"].n_max += 1
-
-func display() -> void:
-	var keys_to_remove = []
 	
-	for size in lunghezza_parole.keys():
-		if lunghezza_parole[size]["n_max"] == 0:
-			keys_to_remove.append(size)
+	for size_n in lunghezza_parole.keys():
+		if lunghezza_parole[size_n]["n_max"] == 0:
+			lunghezza_parole.erase(size_n)
 		else:
-			lunghezza_parole[size]["title"].text = size + ": " + str(lunghezza_parole[size]["n"]) + "/" + str(lunghezza_parole[size]["n_max"])
-			vbox.add_child(lunghezza_parole[size]["title"])
-			vbox.add_child(lunghezza_parole[size]["label"])
-	
-	for key in keys_to_remove:
-		lunghezza_parole.erase(key)
+			vbox.add_child(lunghezza_parole[size_n]["title"])
+			# Aggiungi tutti gli HBoxContainer per la specifica lunghezza di parole
+			for container in lunghezza_parole[size_n]["containers"]:
+				vbox.add_child(container)
