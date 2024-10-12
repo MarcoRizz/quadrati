@@ -62,8 +62,12 @@ func _on_main_attempt_result(word_finded: int, word: String) -> void:
 				
 				if n > 0:
 					# Se la nuova parola non ci sta nell'ultimo container, crea un nuovo HBoxContainer (vai a capo)
-					var last_label = last_container.get_child(-1)
-					if last_label.position.x + last_label.size.x + w_dash_label + font.get_string_size(word).x + 8 > last_container.get_combined_minimum_size().x:
+					#var last_label = last_container.get_child(-1)
+					var x_pos = 0
+					for each_label in last_container.get_children():
+						x_pos += font.get_string_size(each_label.text).x + 4
+						
+					if x_pos + w_dash_label + font.get_string_size(word).x + 8 > last_container.get_combined_minimum_size().x: #last_label.position.x + last_label.size.x + w_dash_label + font.get_string_size(word).x + 8 > last_container.get_combined_minimum_size().x:
 						var new_container = HBoxContainer.new()
 						new_container.custom_minimum_size.x = w_container
 						new_container.custom_minimum_size.y = h_label
@@ -95,7 +99,9 @@ func instantiate(json_data) -> void:
 		if lunghezza_parole[size_n]["n_max"] == 0:
 			lunghezza_parole.erase(size_n)
 		else:
+			lunghezza_parole[size_n]["title"].text = size_n + ": 0/" + str(lunghezza_parole[size_n]["n_max"])
 			vbox.add_child(lunghezza_parole[size_n]["title"])
+			
 			# Aggiungi tutti gli HBoxContainer per la specifica lunghezza di parole
 			for container in lunghezza_parole[size_n]["containers"]:
 				vbox.add_child(container)
