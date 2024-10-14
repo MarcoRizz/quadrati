@@ -30,6 +30,7 @@ offset_left = 5.0
 offset_top = -45.0
 offset_right = 50.0
 pivot_offset = Vector2(22.5, 22.5)
+focus_mode = 0
 text = "^"
 
 [connection signal="pressed" from="Button" to="." method="_on_button_pressed"]

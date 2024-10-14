@@ -75,7 +75,7 @@ func assegna_lettere(json_data) -> void:
 	for y in range(grid_size):
 		for x in range(grid_size):
 			#assegno le lettere
-			tiles[x][y].get_node("Lettera").text = json_data.grid[x][y]
+			tiles[x][y].get_node("Sprite2D").get_node("Lettera").text = json_data.grid[x][y]
 			for i_parola in json_data.passingLinks[x][y]:
 				tiles[x][y].passingWords.append(json_data.words[i_parola])
 			tiles[x][y].number_update()
@@ -88,7 +88,7 @@ func elaborate_tile_coordinate(grid_vector: Vector2) -> Vector2:
 	).rotated(rot_pos)
 
 
-func i_tile_from_attempt(i: int) -> Sprite2D:
+func i_tile_from_attempt(i: int) -> Node2D:
 	return tiles[attempt.xy[i].x][attempt.xy[i].y]
 
 

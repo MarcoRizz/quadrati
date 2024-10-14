@@ -55,6 +55,7 @@ offset_top = 437.0
 offset_right = 400.0
 offset_bottom = 510.0
 scale = Vector2(0.6, 0.6)
+focus_mode = 0
 icon = ExtResource("6_va4aj")
 
 [node name="RotateCounterClockwise" type="Button" parent="."]
@@ -63,6 +64,7 @@ offset_top = 437.0
 offset_right = 344.0
 offset_bottom = 510.0
 scale = Vector2(0.6, 0.6)
+focus_mode = 0
 icon = ExtResource("7_j0vcn")
 
 [node name="WordPanel" parent="." instance=ExtResource("5_o0gvf")]
