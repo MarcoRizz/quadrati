@@ -49,12 +49,6 @@ z_index = -1
 color = Color(0.808998, 0.808998, 0.808998, 1)
 polygon = PackedVector2Array(0, 0, 400, 0, 400, 50, 0, 50)
 
-[node name="Panel" parent="." instance=ExtResource("5_o0gvf")]
-offset_left = 10.0
-offset_top = 490.0
-offset_right = 387.0
-offset_bottom = 607.0
-
 [node name="RotateClockwise" type="Button" parent="."]
 offset_left = 327.0
 offset_top = 437.0
@@ -70,6 +64,12 @@ offset_right = 344.0
 offset_bottom = 510.0
 scale = Vector2(0.6, 0.6)
 icon = ExtResource("7_j0vcn")
+
+[node name="Panel" parent="." instance=ExtResource("5_o0gvf")]
+offset_left = 10.0
+offset_top = 490.0
+offset_right = 387.0
+offset_bottom = 607.0
 
 [connection signal="attempt_result" from="." to="Grid" method="_on_main_attempt_result"]
 [connection signal="attempt_result" from="." to="ProgressBar" method="_on_main_attempt_result"]
