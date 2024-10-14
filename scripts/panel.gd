@@ -19,13 +19,13 @@ var lunghezza_parole = {
 	"16-lettere": {"n": 0, "n_max": 0, "title": Label.new(), "containers": []}
 }
 
-var tween
-var last_size_was_original = true
-# Dimensioni originali e estese del Panel
-var original_size = Vector2(377, 117)
-var extended_size = Vector2(377, 350)
-var original_position = Vector2(10, 490)
-var extended_position = Vector2(10, 490 - (extended_size.y - original_size.y))
+# Variabili per l'espansione animata
+var original_size_y = 117
+var extended_size_y = 350
+var original_position_y = 490
+var delta_y_base = 490 + original_size_y
+var moving_vel = 500.0
+var moving_up = false
 
 var font #salvo il font per calcolare le lunghezze delle stringhe
 var h_label
@@ -51,6 +51,16 @@ func _ready() -> void:
 		hbox.custom_minimum_size.x = w_container
 		hbox.custom_minimum_size.y = h_label
 		lunghezza_parole[size_n]["containers"].append(hbox)
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(delta: float) -> void:
+	var target_size_y = original_size_y if moving_up else extended_size_y
+	
+	# Aggiorna size.y e clamp
+	size.y = clamp(size.y + moving_vel * delta * (1 if moving_up else -1), original_size_y, extended_size_y)
+	
+	# Aggiorna la posizione solo se size.y cambia
+	position.y = delta_y_base - size.y
 	
 func _on_main_attempt_result(word_finded: int, word: String) -> void:
 	var lunghezza = word.length()
@@ -116,41 +126,20 @@ func instantiate(json_data) -> void:
 
 
 func _on_button_pressed() -> void:
-	if tween:
-		tween.kill()
-	tween = create_tween().set_parallel(true)
-	if self.size == original_size:
-		tween.tween_property(self, "size", extended_size, 0.5)#.set_trans(Tween.TRANS_LINEAR).set_ease(Tween.EASE_IN_OUT)
-		tween.tween_property(self, "position", extended_position, 0.5)#.set_trans(Tween.TRANS_LINEAR).set_ease(Tween.EASE_IN_OUT)
-		tween.finished.connect(self._on_tween_end)
-	else:
-		tween.tween_property(self, "size", original_size, 0.5)#.set_trans(Tween.TRANS_LINEAR).set_ease(Tween.EASE_IN_OUT)
-		tween.tween_property(self, "position", original_position, 0.5)#.set_trans(Tween.TRANS_LINEAR).set_ease(Tween.EASE_IN_OUT)
-		tween.finished.connect(self._on_tween_end)
+	$Button.rotation = 0 if moving_up else PI
+	moving_up = not moving_up
+	
 
 	# Gestisci i clic fuori dal Panel
 func _input(event):
-	if self.size == extended_size and event.is_action_pressed("click"):
-		# Controlla se il clic è avvenuto fuori dal Panel
-		var mouse_pos = get_global_mouse_position()
-		var panel_rect = Rect2(global_position, self.size)
-		# Usa la trasformazione globale per verificare la posizione del mouse rispetto al Button
-		var button_global_transform = $Button.get_global_transform()
-		var button_rect = Rect2(button_global_transform.origin, $Button.size)
+	if size.y == extended_size_y and event is InputEventMouseButton and not event.pressed:
+			# Controlla se il clic è avvenuto fuori dal Panel
+			var mouse_pos = get_global_mouse_position()
+			var panel_rect = Rect2(global_position, size)
+			# Usa la trasformazione globale per verificare la posizione del mouse rispetto al Button
+			var button_global_position = $Button.get_global_position()
+			var button_rect = Rect2(button_global_position - (Vector2() if $Button.rotation == 0 else $Button.size), $Button.size)
 
-		if not panel_rect.has_point(mouse_pos) and not button_rect.has_point(mouse_pos):
-			if tween:
-				tween.kill()
-			tween = create_tween().set_parallel(true)
-			tween.tween_property(self, "size", original_size, 0.5)#.set_trans(Tween.TRANS_LINEAR).set_ease(Tween.EASE_IN_OUT)
-			tween.tween_property(self, "position", original_position, 0.5)#.set_trans(Tween.TRANS_LINEAR).set_ease(Tween.EASE_IN_OUT)
-			tween.finished.connect(self._on_tween_end)
-
-func _on_tween_end():
-	if last_size_was_original:
-		self.size = extended_size
-		$Button.rotation = PI
-	else:
-		self.size = original_size
-		$Button.rotation = 0
-	last_size_was_original = not last_size_was_original
+			if not panel_rect.has_point(mouse_pos) and not button_rect.has_point(mouse_pos):
+				$Button.rotation = 0
+				moving_up = false

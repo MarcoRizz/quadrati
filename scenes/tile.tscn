@@ -11,7 +11,7 @@ offset = Vector2(-125, -125)
 script = ExtResource("2_kmar1")
 
 [node name="Lettera" type="Label" parent="."]
-z_index = 2
+z_index = 1
 offset_left = -125.0
 offset_top = -125.0
 offset_right = 125.0
@@ -23,11 +23,6 @@ text = "M"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Area2D" type="Area2D" parent="."]
-
-[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Area2D"]
-polygon = PackedVector2Array(-95, -95, -95, 95, 95, 95, 95, -95)
-
 [node name="Numero" type="Label" parent="."]
 modulate = Color(0.2, 0.2, 0.2, 1)
 offset_left = -110.0
@@ -38,6 +33,11 @@ theme_override_font_sizes/font_size = 50
 text = "0"
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="Area2D" type="Area2D" parent="."]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Area2D"]
+polygon = PackedVector2Array(-95, -95, -95, 95, 95, 95, 95, -95)
 
 [connection signal="input_event" from="Area2D" to="." method="_on_area_2d_input_event"]
 [connection signal="mouse_entered" from="Area2D" to="." method="_on_area_2d_mouse_entered"]

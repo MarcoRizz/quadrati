@@ -3,6 +3,7 @@
 [ext_resource type="Script" path="res://scripts/panel.gd" id="1_trugh"]
 
 [node name="Panel" type="Panel"]
+z_index = 1
 offset_right = 250.0
 offset_bottom = 60.0
 script = ExtResource("1_trugh")
