@@ -8,12 +8,6 @@ var initials_threshold = false
 func _ready() -> void:
 	pass # Replace with function body.
 
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
-	pass
-
-
 func _on_main_attempt_result(result: int, word: String) -> void:
 	if result == 1:
 		value += len(word)

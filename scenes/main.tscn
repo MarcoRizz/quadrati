@@ -65,15 +65,15 @@ offset_bottom = 510.0
 scale = Vector2(0.6, 0.6)
 icon = ExtResource("7_j0vcn")
 
-[node name="Panel" parent="." instance=ExtResource("5_o0gvf")]
+[node name="WordPanel" parent="." instance=ExtResource("5_o0gvf")]
 offset_left = 10.0
 offset_top = 490.0
-offset_right = 387.0
-offset_bottom = 607.0
+offset_right = 390.0
+offset_bottom = 610.0
 
 [connection signal="attempt_result" from="." to="Grid" method="_on_main_attempt_result"]
 [connection signal="attempt_result" from="." to="ProgressBar" method="_on_main_attempt_result"]
-[connection signal="attempt_result" from="." to="Panel" method="_on_main_attempt_result"]
+[connection signal="attempt_result" from="." to="WordPanel" method="_on_main_attempt_result"]
 [connection signal="attempt_changed" from="Grid" to="Parola" method="_on_grid_attempt_changed"]
 [connection signal="clear_grid" from="Grid" to="." method="_on_grid_clear_grid"]
 [connection signal="clear_grid" from="Grid" to="Parola" method="_on_grid_clear_grid"]

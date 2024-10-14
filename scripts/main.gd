@@ -17,7 +17,7 @@ func _ready() -> void:
 	$Grid.hide()
 	$Parola.hide()
 	$ProgressBar.hide()
-	$Panel.hide()
+	$WordPanel.hide()
 	$RotateClockwise.hide()
 	$RotateCounterClockwise.hide()
 	$MidText.show()
@@ -26,7 +26,7 @@ func _ready() -> void:
 	var ip_adress :String
 	if OS.has_feature("windows"):
 		if OS.has_environment("COMPUTERNAME"):
-			ip_adress =  IP.resolve_hostname(str(OS.get_environment("COMPUTERNAME")),1)
+			ip_adress =  IP.resolve_hostname(str(OS.get_environment("COMPUTERNAME")),IP.TYPE_IPV4)
 	elif OS.has_feature("Android"):
 		var ip_addresses = IP.get_local_addresses()
 		for ip in ip_addresses:
@@ -35,10 +35,10 @@ func _ready() -> void:
 				ip_adress = ip
 	elif OS.has_feature("x11"):
 		if OS.has_environment("HOSTNAME"):
-			ip_adress =  IP.resolve_hostname(str(OS.get_environment("HOSTNAME")),1)
+			ip_adress =  IP.resolve_hostname(str(OS.get_environment("HOSTNAME")),IP.TYPE_IPV4)
 	elif OS.has_feature("OSX"):
 		if OS.has_environment("HOSTNAME"):
-			ip_adress =  IP.resolve_hostname(str(OS.get_environment("HOSTNAME")),1)
+			ip_adress =  IP.resolve_hostname(str(OS.get_environment("HOSTNAME")),IP.TYPE_IPV4)
 	
 	var user_agent = OS.get_name()  # Ottiene il nome del sistema operativo
 	var user_locale = OS.get_locale()  # Ottiene la localizzazione dell'utente
@@ -85,7 +85,7 @@ func load_data(json_as_dict, willSave):
 		
 		#carico le parole odierne
 		$Grid.assegna_lettere(json_as_dict)
-		$Panel.instantiate(json_as_dict)
+		$WordPanel.instantiate(json_as_dict)
 		
 		#se trovo un file salvato odierno, carico le parole già trovate
 		words_finded = load_results()
@@ -95,7 +95,7 @@ func load_data(json_as_dict, willSave):
 		$Grid.show()
 		$Parola.show()
 		$ProgressBar.show()
-		$Panel.show()
+		$WordPanel.show()
 		$RotateClockwise.show()
 		$RotateCounterClockwise.show()
 		$MidText.hide()

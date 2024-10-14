@@ -118,7 +118,7 @@ func _on_tile_selection_attempt(recived_vector, selected, letter):
 			attempt.xy.resize(attempt_len - 1)
 	
 	#attivo il segnale attempt_changed
-	var nuova_parola: String
+	var nuova_parola: String = ""
 	for each_letter in attempt.letter:
 		nuova_parola += each_letter
 	attempt_changed.emit(nuova_parola)

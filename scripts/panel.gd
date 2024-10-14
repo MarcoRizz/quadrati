@@ -20,9 +20,8 @@ var lunghezza_parole = {
 }
 
 # Variabili per l'espansione animata
-var original_size_y = 117
+var original_size_y = size.y
 var extended_size_y = 350
-var original_position_y = 490
 var delta_y_base = 490 + original_size_y
 var moving_vel = 500.0
 var moving_up = false
@@ -54,8 +53,6 @@ func _ready() -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	var target_size_y = original_size_y if moving_up else extended_size_y
-	
 	# Aggiorna size.y e clamp
 	size.y = clamp(size.y + moving_vel * delta * (1 if moving_up else -1), original_size_y, extended_size_y)
 	
@@ -126,7 +123,7 @@ func instantiate(json_data) -> void:
 
 
 func _on_button_pressed() -> void:
-	$Button.rotation = 0 if moving_up else PI
+	$Button.rotation = (0.0 if moving_up else PI)
 	moving_up = not moving_up
 	
 

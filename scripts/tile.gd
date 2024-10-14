@@ -19,10 +19,6 @@ var startingWords = [] #archivio le parole che possono iniziare dalla tile
 func _ready() -> void:
 	pass
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
-	pass
-
 func number_update() -> void:
 	var new_number = len(startingWords);
 	$Numero.text = str(new_number)
