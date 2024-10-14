@@ -56,9 +56,10 @@ func _on_grid_show_number(to_show: bool) -> void:
 	else:
 		$Numero.hide()
 
-func _on_area_2d_input_event(viewport: Node, event: InputEvent, shape_idx: int) -> void:
+func _input(event):
 	if event.is_action_pressed("click") and grid.ready_for_attempt:
-		selection_attempt.emit(Vector2(grid_x, grid_y), selected, $Lettera.text)
+		if is_pixel_opaque(get_local_mouse_position()):
+			selection_attempt.emit(Vector2(grid_x, grid_y), selected, $Lettera.text)
 
 func _on_area_2d_mouse_entered() -> void:
 	if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT) and grid.valid_attempt:
