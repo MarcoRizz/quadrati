@@ -129,7 +129,7 @@ func _on_button_pressed() -> void:
 
 	# Gestisci i clic fuori dal Panel
 func _input(event):
-	if size.y == extended_size_y and event is InputEventMouseButton and not event.pressed:
+	if size.y == extended_size_y and event is InputEventMouseButton and event.pressed:
 			# Controlla se il clic è avvenuto fuori dal Panel
 			var mouse_pos = get_global_mouse_position()
 			var panel_rect = Rect2(global_position, size)
