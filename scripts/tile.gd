@@ -17,7 +17,8 @@ var startingWords = [] #archivio le parole che possono iniziare dalla tile
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	pass
+	$Sprite2D/Button.mouse_filter = Control.MOUSE_FILTER_PASS
+
 
 func number_update() -> void:
 	var new_number = len(startingWords);
@@ -28,14 +29,17 @@ func number_update() -> void:
 		$Sprite2D.self_modulate = Color(1, 1, 1)
 		$Sprite2D.modulate = Color(1, 1, 1, 0.4)
 
+
 func selection_ok() -> void:
 	selected = true
 	$Sprite2D.self_modulate = Color(1, 1, 0.6)
+
 
 func remove_selection() -> void:
 	selected = false
 	look_forward = Vector2(0, 0)
 	$Sprite2D.self_modulate = Color(1, 1, 1)
+
 
 func _on_grid_attempt_result(attempt_result: int, word: String, color: Color) -> void:
 	if selected:
@@ -46,9 +50,11 @@ func _on_grid_attempt_result(attempt_result: int, word: String, color: Color) ->
 		if startingWords.has(word):
 			startingWords.erase(word)
 
+
 func _on_grid_clear_grid() -> void:
 	remove_selection()
 	number_update()
+
 
 func _on_grid_show_number(to_show: bool) -> void:
 	if to_show and len(startingWords) != 0:
@@ -56,14 +62,13 @@ func _on_grid_show_number(to_show: bool) -> void:
 	else:
 		$Sprite2D/Numero.hide()
 
-func _input(event):
-	if event.is_action_pressed("click") and grid.ready_for_attempt:
-		var sprite_size = $Sprite2D.get_rect()
-		sprite_size *= Transform2D(0, $Sprite2D.scale, 0, Vector2())
-		if sprite_size.has_point(to_local(event.position)):
-			selection_attempt.emit(Vector2(grid_x, grid_y), selected, $Sprite2D/Lettera.text)
 
 func _on_area_2d_mouse_entered() -> void:
 	if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT) and grid.valid_attempt:
 		print("passed on {", grid_x, ", ", grid_y, "}")
+		selection_attempt.emit(Vector2(grid_x, grid_y), selected, $Sprite2D/Lettera.text)
+
+
+func _on_button_button_down() -> void:
+	if grid.ready_for_attempt:
 		selection_attempt.emit(Vector2(grid_x, grid_y), selected, $Sprite2D/Lettera.text)

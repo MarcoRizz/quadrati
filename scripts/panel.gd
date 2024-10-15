@@ -33,6 +33,9 @@ var dash_string = "-"
 var w_dash_label
 
 func _ready() -> void:
+	
+	mouse_filter = Control.MOUSE_FILTER_STOP
+	$Button.mouse_filter = Control.MOUSE_FILTER_STOP
 	#imposto le variabili statiche
 	# Ottieni il font del Label (assicurati che sia definito un font, altrimenti usa il font di default)
 	font = Label.new().get_theme_font("font")  # Recupera il font dal tema

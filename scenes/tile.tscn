@@ -51,4 +51,17 @@ scale = Vector2(2.77778, 2.77778)
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Sprite2D/Area2D"]
 polygon = PackedVector2Array(-30, -30, -30, 30, 30, 30, 30, -30)
 
+[node name="Button" type="Button" parent="Sprite2D"]
+self_modulate = Color(1, 1, 1, 0)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -125.0
+offset_top = -125.0
+offset_right = -125.0
+offset_bottom = -125.0
+grow_horizontal = 2
+grow_vertical = 2
+
 [connection signal="mouse_entered" from="Sprite2D/Area2D" to="." method="_on_area_2d_mouse_entered"]
+[connection signal="button_down" from="Sprite2D/Button" to="." method="_on_button_button_down"]
