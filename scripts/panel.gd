@@ -32,10 +32,9 @@ var w_container
 var dash_string = "-"
 var w_dash_label
 
+var clicked_label
+
 func _ready() -> void:
-	
-	mouse_filter = Control.MOUSE_FILTER_STOP
-	$Button.mouse_filter = Control.MOUSE_FILTER_STOP
 	#imposto le variabili statiche
 	# Ottieni il font del Label (assicurati che sia definito un font, altrimenti usa il font di default)
 	font = Label.new().get_theme_font("font")  # Recupera il font dal tema
@@ -44,6 +43,9 @@ func _ready() -> void:
 	h_label = font.get_string_size(dash_string).y
 	w_container = scroll_container.size.x
 	w_dash_label = font.get_string_size(dash_string).x
+	
+	#impedisco il click delle lettere se Panel è esteso
+	mouse_filter = Control.MOUSE_FILTER_STOP
 	
 	# Impostazioni dei Nodi di lunghezza_parole
 	for size_n in lunghezza_parole.keys():
@@ -54,6 +56,7 @@ func _ready() -> void:
 		hbox.custom_minimum_size.y = h_label
 		lunghezza_parole[size_n]["containers"].append(hbox)
 
+
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	# Aggiorna size.y e clamp
@@ -61,7 +64,8 @@ func _process(delta: float) -> void:
 	
 	# Aggiorna la posizione solo se size.y cambia
 	position.y = delta_y_base - size.y
-	
+
+
 func _on_main_attempt_result(word_finded: int, word: String) -> void:
 	var lunghezza = word.length()
 	
@@ -73,10 +77,11 @@ func _on_main_attempt_result(word_finded: int, word: String) -> void:
 				var n_max = lunghezza_parole[size_n]["n_max"]
 				var current_containers = lunghezza_parole[size_n]["containers"]
 				var last_container = current_containers[-1]  # Ottieni l'ultimo HBoxContainer
-
+				
 				# Crea un nuovo Label per la parola
-				var word_label = Label.new()
-				word_label.text = word
+				#var word_label = Label.new()
+				#word_label.text = word
+				var word_label = creat_clickable_label(word)
 				
 				if n > 0:
 					# Se la nuova parola non ci sta nell'ultimo container, crea un nuovo HBoxContainer (vai a capo)
@@ -100,13 +105,34 @@ func _on_main_attempt_result(word_finded: int, word: String) -> void:
 				
 				# Aggiungi la parola all'ultimo HBoxContainer
 				last_container.add_child(word_label)
-
+				
 				# Aggiorna il conteggio delle parole trovate
 				n +=1
 				lunghezza_parole[size_n]["n"] = n
 				lunghezza_parole[size_n]["title"].text = size_n + ": " + str(n) + "/" + str(n_max)
 				if n >= n_max:
 					lunghezza_parole[size_n]["title"].set("theme_override_colors/font_color", Color.AQUAMARINE)
+
+
+func creat_clickable_label(word: String) -> Label:
+	# Crea un nuovo Label per la parola
+	var word_label = Label.new()
+	word_label.text = word
+	word_label.mouse_filter = Control.MOUSE_FILTER_PASS
+	
+	# Connetti l'evento di input alla label
+	#word_label.connect("gui_input", Callable(self, "_on_label_clicked"))
+	word_label.connect("gui_input", _on_label_clicked.bind(word_label))
+	word_label.connect("mouse_exited", _on_label_exited.bind(word_label))
+	#word_label.connect("gui_input", Callable(self, "_on_label_clicked"), [word_label])
+	
+	# Crea un callable personalizzato che include la label
+	#var callable_with_label = Callable.new(self, funcref(self, "_on_label_clicked").bind(word_label))
+	# Connetti il segnale 'gui_input' usando callable
+	#word_label.connect("gui_input", callable_with_label)
+	
+	return word_label
+
 
 func instantiate(json_data) -> void:
 	for i_parola in json_data.words:
@@ -128,7 +154,7 @@ func instantiate(json_data) -> void:
 func _on_button_pressed() -> void:
 	$Button.rotation = (0.0 if moving_up else PI)
 	moving_up = not moving_up
-	
+
 
 	# Gestisci i clic fuori dal Panel
 func _input(event):
@@ -139,7 +165,24 @@ func _input(event):
 			# Usa la trasformazione globale per verificare la posizione del mouse rispetto al Button
 			var button_global_position = $Button.get_global_position()
 			var button_rect = Rect2(button_global_position - (Vector2() if $Button.rotation == 0 else $Button.size), $Button.size)
-
+			
 			if not panel_rect.has_point(mouse_pos) and not button_rect.has_point(mouse_pos):
 				$Button.rotation = 0
 				moving_up = false
+
+
+# Funzione che si attiva al clic della label
+func _on_label_clicked(event: InputEvent, label: Label) -> void:
+	if event is InputEventMouseButton and event.is_pressed():
+		clicked_label = label
+	
+	if event is InputEventMouseButton and event.is_released() and label == clicked_label:
+		clicked_label = null
+		# Recupera il testo della label per comporre l'URL
+		var url = "https://www.google.com/search?q=" + label.text
+		# Apre l'URL nel browser
+		OS.shell_open(url)
+
+
+func _on_label_exited(label: Label) -> void:
+	clicked_label = null
