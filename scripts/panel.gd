@@ -79,13 +79,10 @@ func _on_main_attempt_result(word_finded: int, word: String) -> void:
 				var last_container = current_containers[-1]  # Ottieni l'ultimo HBoxContainer
 				
 				# Crea un nuovo Label per la parola
-				#var word_label = Label.new()
-				#word_label.text = word
 				var word_label = creat_clickable_label(word)
 				
 				if n > 0:
 					# Se la nuova parola non ci sta nell'ultimo container, crea un nuovo HBoxContainer (vai a capo)
-					#var last_label = last_container.get_child(-1)
 					var x_pos = 0
 					for each_label in last_container.get_children():
 						x_pos += font.get_string_size(each_label.text).x + 4
@@ -121,15 +118,8 @@ func creat_clickable_label(word: String) -> Label:
 	word_label.mouse_filter = Control.MOUSE_FILTER_PASS
 	
 	# Connetti l'evento di input alla label
-	#word_label.connect("gui_input", Callable(self, "_on_label_clicked"))
 	word_label.connect("gui_input", _on_label_clicked.bind(word_label))
-	word_label.connect("mouse_exited", _on_label_exited.bind(word_label))
-	#word_label.connect("gui_input", Callable(self, "_on_label_clicked"), [word_label])
-	
-	# Crea un callable personalizzato che include la label
-	#var callable_with_label = Callable.new(self, funcref(self, "_on_label_clicked").bind(word_label))
-	# Connetti il segnale 'gui_input' usando callable
-	#word_label.connect("gui_input", callable_with_label)
+	word_label.connect("mouse_exited", _on_label_exited)
 	
 	return word_label
 
@@ -173,16 +163,17 @@ func _input(event):
 
 # Funzione che si attiva al clic della label
 func _on_label_clicked(event: InputEvent, label: Label) -> void:
-	if event is InputEventMouseButton and event.is_pressed():
-		clicked_label = label
-	
-	if event is InputEventMouseButton and event.is_released() and label == clicked_label:
-		clicked_label = null
-		# Recupera il testo della label per comporre l'URL
-		var url = "https://www.google.com/search?q=" + label.text
-		# Apre l'URL nel browser
-		OS.shell_open(url)
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
+		if event.is_pressed():
+			clicked_label = label
+		
+		elif event.is_released() and label == clicked_label:
+			clicked_label = null
+			# Recupera il testo della label per comporre l'URL
+			var url = "https://www.google.com/search?q=" + label.text + "+vocabolario"
+			# Apre l'URL nel browser
+			OS.shell_open(url)
 
 
-func _on_label_exited(label: Label) -> void:
+func _on_label_exited() -> void:
 	clicked_label = null
