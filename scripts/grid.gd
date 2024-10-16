@@ -7,8 +7,8 @@ signal attempt_changed(word: String)
 signal clear_grid
 signal show_number(show: bool)
 
-@export var tile_size := 90.0 #deprecated
-@export var tile_spacing := 10.0 #deprecated
+@export var tile_size := 90.0 #todo: prenderle dalla GUI
+@export var tile_spacing := 10.0 #todo: prenderle dalla GUI
 
 @onready var path: Line2D = $Path
 

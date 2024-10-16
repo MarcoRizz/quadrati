@@ -22,7 +22,7 @@ var lunghezza_parole = {
 # Variabili per l'espansione animata
 var original_size_y = size.y
 var extended_size_y = 350
-var delta_y_base = 490 + original_size_y
+var panel_y_bottom #la assegno in _ready()
 var moving_vel = 500.0
 var moving_up = false
 
@@ -46,6 +46,8 @@ func _ready() -> void:
 	
 	#impedisco il click delle lettere se Panel è esteso
 	mouse_filter = Control.MOUSE_FILTER_STOP
+	#rilevo la posizione globale
+	panel_y_bottom = get_global_position().y + original_size_y
 	
 	# Impostazioni dei Nodi di lunghezza_parole
 	for size_n in lunghezza_parole.keys():
@@ -63,7 +65,7 @@ func _process(delta: float) -> void:
 	size.y = clamp(size.y + moving_vel * delta * (1 if moving_up else -1), original_size_y, extended_size_y)
 	
 	# Aggiorna la posizione solo se size.y cambia
-	position.y = delta_y_base - size.y
+	position.y = panel_y_bottom - size.y
 
 
 func _on_main_attempt_result(word_finded: int, word: String) -> void:

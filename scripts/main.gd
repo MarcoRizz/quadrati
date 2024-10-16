@@ -4,7 +4,7 @@ const http_json_source = "https://script.google.com/macros/s/AKfycby6N9vEbuGpOp5
 
 signal attempt_result(word_finded: int, word: String)
 
-var todaysNum  #todo: qui salvo il numero di file JSON caricato
+var todaysNum  #qui salvo il numero di file JSON caricato
 var words = [] #colleziono tutte le parole
 var words_finded = [] #colleziono le parole trovate
 
@@ -79,6 +79,7 @@ func load_data(json_as_dict, willSave):
 			save_file.store_line(JSON.stringify(json_as_dict))
 		
 		todaysNum = json_as_dict.todaysNum
+		$Title.text += "#" + str(todaysNum)
 		for i_parola in json_as_dict.words:
 			words.append(i_parola)
 			$ProgressBar.max_value += len(i_parola)
