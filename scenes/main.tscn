@@ -84,11 +84,13 @@ color = Color(0.808998, 0.808998, 0.808998, 1)
 polygon = PackedVector2Array(0, 0, 400, 0, 400, 50, 0, 50)
 
 [connection signal="attempt_result" from="." to="Grid" method="_on_main_attempt_result"]
-[connection signal="attempt_result" from="." to="ProgressBar" method="_on_main_attempt_result"]
 [connection signal="attempt_result" from="." to="WordPanel" method="_on_main_attempt_result"]
+[connection signal="attempt_result" from="." to="ProgressBar" method="_on_main_attempt_result"]
+[connection signal="show_path" from="." to="Grid" method="_on_main_show_path"]
 [connection signal="attempt_changed" from="Grid" to="Parola" method="_on_grid_attempt_changed"]
 [connection signal="clear_grid" from="Grid" to="." method="_on_grid_clear_grid"]
 [connection signal="clear_grid" from="Grid" to="Parola" method="_on_grid_clear_grid"]
 [connection signal="pressed" from="RotateClockwise" to="Grid" method="_on_rotate_clockwise_pressed"]
 [connection signal="pressed" from="RotateCounterClockwise" to="Grid" method="_on_rotate_counter_clockwise_pressed"]
+[connection signal="show_path" from="WordPanel" to="." method="_on_wordpanel_show_path"]
 [connection signal="initials_threshold_signal" from="ProgressBar" to="." method="_on_progress_bar_initials_threshold_signal"]

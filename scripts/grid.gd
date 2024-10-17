@@ -67,19 +67,28 @@ func _process(delta: float) -> void:
 					tiles[x][y].position = tiles[x][y].position.rotated(delta * rot_speed * rot_on)
 
 
-func assegna_lettere(json_data) -> void:
+func instantiate(json_data) -> void:
 	var index = 0
+	# Per ogni startingLinks assegno a tile.startingWords la parola
 	for i_tile in json_data.startingLinks:
 		tiles[i_tile[0]][i_tile[1]].startingWords.append(json_data.words[index])
 		index += 1
+	
 	for y in range(grid_size):
 		for x in range(grid_size):
 			#assegno le lettere
 			tiles[x][y].get_node("Sprite2D").get_node("Lettera").text = json_data.grid[x][y]
+			# Per ogni passingLinks assegno a tile.passingWords la parola
 			for i_parola in json_data.passingLinks[x][y]:
 				tiles[x][y].passingWords.append(json_data.words[i_parola])
+			
 			tiles[x][y].number_update()
 
+
+func _input(event):
+	if event is InputEventMouseButton and event.pressed:
+		path.mod_clear_points()
+		$Path.default_color = Color(1, 1, 0)
 
 func elaborate_tile_coordinate(grid_vector: Vector2) -> Vector2:
 	return Vector2(
@@ -161,3 +170,9 @@ func _on_rotate_clockwise_pressed() -> void:
 func _on_rotate_counter_clockwise_pressed() -> void:
 	rot_on = -1 if rot_on == 0 else rot_on;
 	ready_for_attempt = false;
+
+
+func _on_main_show_path(path_tiles: Array) -> void:
+	$Path.default_color = Color(0.3, 0.5, 1)
+	for i_tile in path_tiles:
+		path.mod_add_point(elaborate_tile_coordinate(i_tile))
