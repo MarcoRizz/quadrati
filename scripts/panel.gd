@@ -1,5 +1,7 @@
 extends Panel
 
+signal show_path(word: String)
+
 @onready var vbox = $ScrollContainer/VBoxContainer
 @onready var scroll_container = $ScrollContainer
 
@@ -21,18 +23,22 @@ var lunghezza_parole = {
 
 # Variabili per l'espansione animata
 var original_size_y = size.y
-var extended_size_y = 350
+const extended_size_y = 350
+const moving_vel = 500.0
 var panel_y_bottom #la assegno in _ready()
-var moving_vel = 500.0
 var moving_up = false
 
+# Variabili per la costruzione delle Label
 var font #salvo il font per calcolare le lunghezze delle stringhe
 var h_label
 var w_container
-var dash_string = "-"
+const dash_string = "-"
 var w_dash_label
 
+# Variabili per il click delle parole
+const max_holding_time = 1.0 #secondi
 var clicked_label
+var holding_click_delta_time
 
 func _ready() -> void:
 	#imposto le variabili statiche
@@ -61,11 +67,26 @@ func _ready() -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	# Aggiorna size.y e clamp
-	size.y = clamp(size.y + moving_vel * delta * (1 if moving_up else -1), original_size_y, extended_size_y)
-	
-	# Aggiorna la posizione solo se size.y cambia
-	position.y = panel_y_bottom - size.y
+	# Esegui il calcolo solo se è necessario espandere o ridurre il pannello
+	if (moving_up and size.y < extended_size_y) or (not moving_up and size.y > original_size_y):
+		# Aggiorna size.y e applica il clamp per mantenerlo nei limiti
+		size.y = clamp(size.y + moving_vel * delta * (1 if moving_up else -1), original_size_y, extended_size_y)
+		
+		# Aggiorna la posizione solo se size.y cambia
+		position.y = panel_y_bottom - size.y
+
+	# Controlla se è stato cliccato un label
+	if not clicked_label == null:
+		holding_click_delta_time += delta
+		
+		# Se il tempo di hold è stato superato, esegui un'azione
+		if holding_click_delta_time > max_holding_time:
+			# Recupera il testo della label per comporre l'URL
+			var url = "https://www.google.com/search?q=" + clicked_label.text + "+vocabolario"
+			clicked_label = null
+			
+			# Apre l'URL nel browser
+			OS.shell_open(url)
 
 
 func _on_main_attempt_result(word_finded: int, word: String) -> void:
@@ -168,13 +189,11 @@ func _on_label_clicked(event: InputEvent, label: Label) -> void:
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
 		if event.is_pressed():
 			clicked_label = label
+			holding_click_delta_time = 0
 		
 		elif event.is_released() and label == clicked_label:
+			show_path.emit(clicked_label.text)
 			clicked_label = null
-			# Recupera il testo della label per comporre l'URL
-			var url = "https://www.google.com/search?q=" + label.text + "+vocabolario"
-			# Apre l'URL nel browser
-			OS.shell_open(url)
 
 
 func _on_label_exited() -> void:
