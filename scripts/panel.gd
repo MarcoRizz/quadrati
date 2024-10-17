@@ -38,6 +38,8 @@ var w_dash_label
 # Variabili per il click delle parole
 const max_holding_time = 1.0 #secondi
 var clicked_label
+var click_global_position
+var max_mouse_move = 10.0 #se sto trascinando il Panel evito che continui a cliccare la parola
 var holding_click_delta_time
 
 func _ready() -> void:
@@ -76,17 +78,24 @@ func _process(delta: float) -> void:
 		position.y = panel_y_bottom - size.y
 
 	# Controlla se è stato cliccato un label
-	if not clicked_label == null:
+	if clicked_label == null:
+		return
+	else:
 		holding_click_delta_time += delta
 		
-		# Se il tempo di hold è stato superato, esegui un'azione
-		if holding_click_delta_time > max_holding_time:
-			# Recupera il testo della label per comporre l'URL
-			var url = "https://www.google.com/search?q=" + clicked_label.text + "+vocabolario"
+		if click_global_position.distance_to(get_global_mouse_position()) > max_mouse_move:
 			clicked_label = null
-			
-			# Apre l'URL nel browser
-			OS.shell_open(url)
+			return
+		else:
+		
+			# Se il tempo di hold è stato superato, esegui un'azione
+			if holding_click_delta_time > max_holding_time:
+				# Recupera il testo della label per comporre l'URL
+				var url = "https://www.google.com/search?q=" + clicked_label.text + "+vocabolario"
+				clicked_label = null
+				
+				# Apre l'URL nel browser
+				OS.shell_open(url)
 
 
 func _on_main_attempt_result(word_finded: int, word: String) -> void:
@@ -189,6 +198,7 @@ func _on_label_clicked(event: InputEvent, label: Label) -> void:
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
 		if event.is_pressed():
 			clicked_label = label
+			click_global_position = get_global_mouse_position()
 			holding_click_delta_time = 0
 		
 		elif event.is_released() and label == clicked_label:
