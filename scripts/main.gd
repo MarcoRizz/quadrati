@@ -261,5 +261,6 @@ func find_path_recursive_step(starting_tile: Variant, step: int, word: String, d
 				var path = find_path_recursive_step(starting_tile, step + 1, word, dim_x, dim_y)
 				if len(path) == len(word):
 					return path
+				starting_tile.resize(starting_tile.size() - 1)
 			
 	return []
