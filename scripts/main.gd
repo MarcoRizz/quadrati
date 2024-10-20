@@ -340,12 +340,12 @@ func _on_yesterday_button_pressed() -> void:
 		for parola in yesterdaysSave:
 			attempt_result.emit(1, parola)
 		
-		var words = yesterdaysJson["words"]
+		var words_to_reveal = yesterdaysJson["words"]
 		
-		words = words.filter(func(word):
+		words_to_reveal = words_to_reveal.filter(func(word):
 			return not yesterdaysSave.has(word))
 		
-		for parola in words:
+		for parola in words_to_reveal:
 			reveal_word.emit(parola)
 
 		$YesterdayButton.rotation = PI
