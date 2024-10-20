@@ -18,7 +18,7 @@ func _ready() -> void:
 	add_child(http_request)
 	http_request.request_completed.connect(self._http_request_completed)
 	$Grid.hide()
-	$Parola.hide()
+	$Display.hide()
 	$ProgressBar.hide()
 	$WordPanel.hide()
 	$RotateClockwise.hide()
@@ -145,7 +145,7 @@ func load_data(json_to_load, load_word_finded: bool = true):
 			attempt_result.emit(1, i_parola)
 	
 	$Grid.show()
-	$Parola.show()
+	$Display.show()
 	$ProgressBar.show()
 	$WordPanel.show()
 	$RotateClockwise.show()
@@ -157,7 +157,7 @@ func load_data(json_to_load, load_word_finded: bool = true):
 func _input(event: InputEvent) -> void:
 	if event.is_action_released("click") and $Grid.is_visible_in_tree():
 		if $Grid.valid_attempt:
-			var word_guessed = $Parola.text
+			var word_guessed = $Display.text
 			var result
 			if words_finded.has(word_guessed):
 				result = 2  #parola già trovata
@@ -171,7 +171,7 @@ func _input(event: InputEvent) -> void:
 				result = 0  #parola non troata
 				#todo: messaggio paroal non trovata
 			
-			attempt_result.emit(result, $Parola.text)
+			attempt_result.emit(result, $Display.text)
 		else:
 			$Grid._on_timer_timeout()  #se non era un tentativo valido anticipo il reset della griglia
 
