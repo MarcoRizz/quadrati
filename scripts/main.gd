@@ -23,6 +23,7 @@ func _ready() -> void:
 	$WordPanel.hide()
 	$RotateClockwise.hide()
 	$RotateCounterClockwise.hide()
+	$YesterdayButton.hide()
 	$MidText.show()
 	
 	# Ottieni informazioni del client
@@ -149,6 +150,7 @@ func load_data(json_to_load, load_word_finded: bool = true):
 	$WordPanel.show()
 	$RotateClockwise.show()
 	$RotateCounterClockwise.show()
+	$YesterdayButton.show()
 	$MidText.hide()
 
 
