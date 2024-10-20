@@ -4,7 +4,7 @@
 [ext_resource type="Script" path="res://scripts/main.gd" id="1_woek1"]
 [ext_resource type="Script" path="res://scripts/parola.gd" id="3_2dkqv"]
 [ext_resource type="Script" path="res://scripts/progress_bar.gd" id="4_gwx55"]
-[ext_resource type="PackedScene" uid="uid://cbbhu4y4ff6ye" path="res://scenes/panel.tscn" id="5_o0gvf"]
+[ext_resource type="PackedScene" uid="uid://cbbhu4y4ff6ye" path="res://scenes/worldpanel.tscn" id="5_o0gvf"]
 [ext_resource type="Texture2D" uid="uid://cohsvggssqult" path="res://assets/rotate.png" id="6_va4aj"]
 [ext_resource type="Texture2D" uid="uid://bsau5q5jk82dt" path="res://assets/derotate.png" id="7_j0vcn"]
 

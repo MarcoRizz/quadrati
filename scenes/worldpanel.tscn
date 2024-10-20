@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://cbbhu4y4ff6ye"]
 
-[ext_resource type="Script" path="res://scripts/panel.gd" id="1_trugh"]
+[ext_resource type="Script" path="res://scripts/worldpanel.gd" id="1_trugh"]
 
 [node name="WordPanel" type="Panel"]
 z_index = 1
