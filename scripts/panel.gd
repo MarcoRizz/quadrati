@@ -6,12 +6,12 @@ signal show_path(word: String)
 @onready var scroll_container = $ScrollContainer
 
 var lunghezza_parole = {
-	"4-lettere": {"n": 0, "n_max": 0, "title": Label.new(), "containers": []},
-	"5-lettere": {"n": 0, "n_max": 0, "title": Label.new(), "containers": []},
-	"6-lettere": {"n": 0, "n_max": 0, "title": Label.new(), "containers": []},
-	"7-lettere": {"n": 0, "n_max": 0, "title": Label.new(), "containers": []},
-	"8-lettere": {"n": 0, "n_max": 0, "title": Label.new(), "containers": []},
-	"9-lettere": {"n": 0, "n_max": 0, "title": Label.new(), "containers": []},
+	 "4-lettere": {"n": 0, "n_max": 0, "title": Label.new(), "containers": []},
+	 "5-lettere": {"n": 0, "n_max": 0, "title": Label.new(), "containers": []},
+	 "6-lettere": {"n": 0, "n_max": 0, "title": Label.new(), "containers": []},
+	 "7-lettere": {"n": 0, "n_max": 0, "title": Label.new(), "containers": []},
+	 "8-lettere": {"n": 0, "n_max": 0, "title": Label.new(), "containers": []},
+	 "9-lettere": {"n": 0, "n_max": 0, "title": Label.new(), "containers": []},
 	"10-lettere": {"n": 0, "n_max": 0, "title": Label.new(), "containers": []},
 	"11-lettere": {"n": 0, "n_max": 0, "title": Label.new(), "containers": []},
 	"12-lettere": {"n": 0, "n_max": 0, "title": Label.new(), "containers": []},
@@ -58,7 +58,7 @@ func _ready() -> void:
 	panel_y_bottom = get_global_position().y + original_size_y
 	
 	# Impostazioni dei Nodi di lunghezza_parole
-	for size_n in lunghezza_parole.keys():
+	for size_n in lunghezza_parole:
 		lunghezza_parole[size_n]["title"].set("theme_override_colors/font_color", Color.BLANCHED_ALMOND)
 		# Aggiungi il primo HBoxContainer vuoto
 		var hbox = HBoxContainer.new()
@@ -99,48 +99,53 @@ func _process(delta: float) -> void:
 
 
 func _on_main_attempt_result(word_finded: int, word: String) -> void:
-	var lunghezza = word.length()
-	
 	if word_finded == 1:
-		# Verifica la size_n corrispondente alla lunghezza della parola
-		for size_n in lunghezza_parole:
-			if str(lunghezza) + "-lettere" == size_n:
-				var n = lunghezza_parole[size_n]["n"]
-				var n_max = lunghezza_parole[size_n]["n_max"]
-				var current_containers = lunghezza_parole[size_n]["containers"]
-				var last_container = current_containers[-1]  # Ottieni l'ultimo HBoxContainer
-				
-				# Crea un nuovo Label per la parola
-				var word_label = creat_clickable_label(word)
-				
-				if n > 0:
-					# Se la nuova parola non ci sta nell'ultimo container, crea un nuovo HBoxContainer (vai a capo)
-					var x_pos = 0
-					for each_label in last_container.get_children():
-						x_pos += font.get_string_size(each_label.text).x + 4
-						
-					if x_pos + w_dash_label + font.get_string_size(word).x + 8 > last_container.get_combined_minimum_size().x: #last_label.position.x + last_label.size.x + w_dash_label + font.get_string_size(word).x + 8 > last_container.get_combined_minimum_size().x:
-						var new_container = HBoxContainer.new()
-						new_container.custom_minimum_size.x = w_container
-						new_container.custom_minimum_size.y = h_label
-						current_containers.append(new_container)
-						last_container.add_sibling(new_container)
-						last_container = new_container
-					else:
-						# Aggiungi il trattino "-" se non è la prima parola nel container
-						var dash_label = Label.new()
-						dash_label.text = dash_string
-						last_container.add_child(dash_label)
-				
-				# Aggiungi la parola all'ultimo HBoxContainer
-				last_container.add_child(word_label)
-				
+		add_word(word)
+
+func add_word(word: String, increase_count: bool = true):
+	var lunghezza = word.length()
+	# Verifica la size_n corrispondente alla lunghezza della parola
+	for size_n in lunghezza_parole:
+		if str(lunghezza) + "-lettere" == size_n:
+			var n = lunghezza_parole[size_n]["n"]
+			var n_max = lunghezza_parole[size_n]["n_max"]
+			var current_containers = lunghezza_parole[size_n]["containers"]
+			var last_container = current_containers[-1]  # Ottieni l'ultimo HBoxContainer
+			
+			# Crea un nuovo Label per la parola
+			var word_label = creat_clickable_label(word)
+			
+			if n > 0:
+				# Se la nuova parola non ci sta nell'ultimo container, crea un nuovo HBoxContainer (vai a capo)
+				var x_pos = 0
+				for each_label in last_container.get_children():
+					x_pos += font.get_string_size(each_label.text).x + 4
+					
+				if x_pos + w_dash_label + font.get_string_size(word).x + 8 > last_container.get_combined_minimum_size().x: #last_label.position.x + last_label.size.x + w_dash_label + font.get_string_size(word).x + 8 > last_container.get_combined_minimum_size().x:
+					var hbox = HBoxContainer.new()
+					hbox.custom_minimum_size.x = w_container
+					hbox.custom_minimum_size.y = h_label
+					current_containers.append(hbox)
+					last_container.add_sibling(hbox)
+					last_container = hbox
+				else:
+					# Aggiungi il trattino "-" se non è la prima parola nel container
+					var dash_label = Label.new()
+					dash_label.text = dash_string
+					last_container.add_child(dash_label)
+			
+			# Aggiungi la parola all'ultimo HBoxContainer
+			last_container.add_child(word_label)
+			
+			if increase_count:
 				# Aggiorna il conteggio delle parole trovate
 				n +=1
 				lunghezza_parole[size_n]["n"] = n
 				lunghezza_parole[size_n]["title"].text = size_n + ": " + str(n) + "/" + str(n_max)
 				if n >= n_max:
 					lunghezza_parole[size_n]["title"].set("theme_override_colors/font_color", Color.AQUAMARINE)
+			else:
+				word_label.self_modulate = Color(1, 0.3, 0.3)
 
 
 func creat_clickable_label(word: String) -> Label:
@@ -156,14 +161,15 @@ func creat_clickable_label(word: String) -> Label:
 	return word_label
 
 
-func instantiate(json_data) -> void:
-	for i_parola in json_data.words:
+func instantiate(json: Dictionary) -> void:
+	for i_parola in json.words:
 		var lunghezza = i_parola.length()
 		lunghezza_parole[str(lunghezza) + "-lettere"].n_max += 1
 	
-	for size_n in lunghezza_parole.keys():
+	for size_n in lunghezza_parole:
 		if lunghezza_parole[size_n]["n_max"] == 0:
-			lunghezza_parole.erase(size_n)
+			#lunghezza_parole.erase(size_n)
+			pass
 		else:
 			lunghezza_parole[size_n]["title"].text = size_n + ": 0/" + str(lunghezza_parole[size_n]["n_max"])
 			vbox.add_child(lunghezza_parole[size_n]["title"])
@@ -171,6 +177,43 @@ func instantiate(json_data) -> void:
 			# Aggiungi tutti gli HBoxContainer per la specifica lunghezza di parole
 			for container in lunghezza_parole[size_n]["containers"]:
 				vbox.add_child(container)
+
+
+func deinstantiate() -> void:
+	#creo un "buffer" di nodi da eliminare (per evitare che nei get_children successivi vengano rilevati oggetti in coda di eiminazione)
+	#var delete_buffer = Node2D.new()
+	#add_child(delete_buffer)
+	
+	# Scollego e resetto tutte le righe in WordPanel
+	for child in vbox.get_children():
+		vbox.remove_child(child)
+		if child.is_class("HBoxContainer"):
+			child.queue_free()
+	for size_n in lunghezza_parole:
+		lunghezza_parole[size_n]["n_max"] = 0
+		lunghezza_parole[size_n]["n"] = 0
+		lunghezza_parole[size_n]["title"].set("theme_override_colors/font_color", Color.BLANCHED_ALMOND)
+		# non riassegno i titoli tanto reinizializzo subito
+		
+		# Elimino tutte le righe contenenti parole (hbox) eccetto la prima
+		#for i_hbox in range(1, len(lunghezza_parole[size_n]["containers"])):
+		#	var child = lunghezza_parole[size_n]["containers"][i_hbox]
+		#	child.reparent(delete_buffer)
+			#child.queue_free()
+		
+		lunghezza_parole[size_n]["containers"].clear()
+		
+		# Aggiungi il primo HBoxContainer vuoto
+		var hbox = HBoxContainer.new()
+		hbox.custom_minimum_size.x = w_container
+		hbox.custom_minimum_size.y = h_label
+		lunghezza_parole[size_n]["containers"].append(hbox)
+		# La prima e unica riga la svuoto
+		for i_label in lunghezza_parole[size_n]["containers"][0].get_children():
+			#i_label.reparent(delete_buffer)
+			lunghezza_parole[size_n]["containers"][0].remove_child(i_label)
+			i_label.queue_free()
+	#delete_buffer.queue_free()
 
 
 func _on_button_pressed() -> void:
@@ -208,3 +251,7 @@ func _on_label_clicked(event: InputEvent, label: Label) -> void:
 
 func _on_label_exited() -> void:
 	clicked_label = null
+
+
+func _on_main_reveal_word(word: String) -> void:
+	add_word(word, false)

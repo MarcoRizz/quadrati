@@ -23,11 +23,17 @@ func _ready() -> void:
 func number_update() -> void:
 	var new_number = len(startingWords);
 	$Sprite2D/Numero.text = str(new_number)
+	if grid.history_mode:
+		$Sprite2D/Numero.hide()
+		$Sprite2D.modulate = Color.LIGHT_SLATE_GRAY
+		return
 	if not new_number:
 		$Sprite2D/Numero.hide()
 	if not len(passingWords):
 		$Sprite2D.self_modulate = Color(1, 1, 1)
 		$Sprite2D.modulate = Color(1, 1, 1, 0.4)
+	else:
+		$Sprite2D.modulate = Color(1, 1, 1, 1)
 
 
 func selection_ok() -> void:

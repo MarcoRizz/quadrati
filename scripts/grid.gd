@@ -27,6 +27,7 @@ var rot_pos = 0 #ultimo angolo statico [0, 270]
 var rot_speed = 2.0
 var rot_angle = 0.0
 
+var history_mode = false
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -83,6 +84,14 @@ func instantiate(json_data) -> void:
 				tiles[x][y].passingWords.append(json_data.words[i_parola])
 			
 			tiles[x][y].number_update()
+
+
+func deinstantiate() -> void:
+	for y in range(grid_size):
+		for x in range(grid_size):
+			tiles[x][y].passingWords.clear()
+			tiles[x][y].startingWords.clear()
+			# tiles[x][y].number_update()  #per ora non serve
 
 
 func _input(event):
@@ -157,9 +166,9 @@ func _on_timer_timeout() -> void:
 	attempt.xy.clear()
 	$Path.default_color = Color(1, 1, 0)
 	clear_grid.emit()
-	show_number.emit(number_shown)
+	show_number.emit(number_shown and not history_mode)
 		
-	ready_for_attempt = true
+	ready_for_attempt = not history_mode
 
 
 func _on_rotate_clockwise_pressed() -> void:

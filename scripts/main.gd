@@ -3,7 +3,8 @@ extends Node2D
 const http_json_source = "https://script.google.com/macros/s/AKfycby6N9vEbuGpOp5Xn03sroodyP4UGcMLt2qHz2rnV-6AtMLJDodd3TvTnt_gZvTRpic/exec"
 
 signal attempt_result(word_finded: int, word: String)
-signal show_path(tiles: Array)
+signal reveal_word(word: String)
+signal show_path(tiles: Array[Vector2])
 
 var todaysJson #qui salvo il JSON caricato
 var words = [] #colleziono tutte le parole
@@ -124,7 +125,7 @@ func save_json(json_to_save):
 	save_file.close()
 
 
-func load_data(json_to_load):
+func load_data(json_to_load, load_word_finded: bool = true):
 	$Title.text += "#" + str(json_to_load.todaysNum)
 	
 	# Aggiungi le parole
@@ -137,9 +138,10 @@ func load_data(json_to_load):
 	$WordPanel.instantiate(json_to_load)
 	
 	#se trovo un file salvato odierno, carico le parole già trovate
-	words_finded = load_results()
-	for i_parola in words_finded:
-		attempt_result.emit(1, i_parola)
+	if load_word_finded:
+		words_finded = load_results()
+		for i_parola in words_finded:
+			attempt_result.emit(1, i_parola)
 	
 	$Grid.show()
 	$Parola.show()
@@ -173,7 +175,7 @@ func _input(event: InputEvent) -> void:
 
 
 func _on_grid_clear_grid() -> void:
-	if $ProgressBar.value >= $ProgressBar.max_value:
+	if $ProgressBar.value >= $ProgressBar.max_value and not $Grid.history_mode:
 		FINE()
 
 
@@ -194,7 +196,7 @@ func save_results():
 	save_file.store_line(json_string)
 
 
-func load_results() -> Array:
+func load_results() -> Array[String]:
 	if not FileAccess.file_exists("user://savegame.save"):
 		return []  # Non esiste un file di salvataggio, ritorna un array vuoto.
 
@@ -216,8 +218,10 @@ func load_results() -> Array:
 		
 		return []  # Ritorna un array vuoto poiché il numero non corrisponde
 	
+	var array_strings: Array[String]
+	array_strings.assign(parse_result.wordsFinded)
 	# Se tutto è ok, ritorna le parole trovate
-	return parse_result.wordsFinded
+	return array_strings
 
 
 func _on_wordpanel_show_path(word: String) -> void:
@@ -231,24 +235,36 @@ func _on_wordpanel_show_path(word: String) -> void:
 	print("segnale di path emesso, path: ", path)
 
 
-func find_path_from_json(word: String) -> Array:
+func find_path_from_json(word: String) -> Array[Vector2]:
+	
+	var json_to_check
+	if $Grid.history_mode:
+		if not FileAccess.file_exists("user://lastsavedjson.save"):
+			print("No saved JSON")
+			return []
+		
+		var old_json_as_text = FileAccess.get_file_as_string("user://lastsavedjson.save")
+		json_to_check = JSON.parse_string(old_json_as_text)
+	else:
+		json_to_check = todaysJson
+		
 	#cerco l'indice della parola nel json
-	var index = todaysJson.words.find(word)
+	var index = json_to_check.words.find(word)
 	# Verifica se l'elemento è stato trovato
 	if index == -1:
 		print("Errore: parola ", word, " non trovata nel JSON")
 		return []
 	
-	var starting_tile = todaysJson.startingLinks[index]
+	var starting_tile = json_to_check.startingLinks[index]
 	starting_tile = Vector2(starting_tile[0], starting_tile[1]) #converto in Vector2
-	var dim_x = todaysJson.grid.size()
-	var dim_y = todaysJson.grid[0].size()
-	var path = find_path_recursive_step([starting_tile], 0, word, dim_x, dim_y)
+	var dim_x = json_to_check.grid.size()
+	var dim_y = json_to_check.grid[0].size()
+	var path = find_path_recursive_step([starting_tile], 0, word, dim_x, dim_y, json_to_check)
 	
 	return path
 
 
-func find_path_recursive_step(starting_tile: Variant, step: int, word: String, dim_x: int, dim_y: int) -> Array:
+func find_path_recursive_step(starting_tile: Array[Vector2], step: int, word: String, dim_x: int, dim_y: int, json_to_check: Dictionary) -> Array[Vector2]:
 	# Controllo se abbiamo raggiunto il numero di passi massimo
 	if step + 1 == len(word):
 		return starting_tile
@@ -256,11 +272,84 @@ func find_path_recursive_step(starting_tile: Variant, step: int, word: String, d
 	else:
 		for dir in [Vector2(0, -1), Vector2(1, -1), Vector2(1, 0), Vector2(1, 1), Vector2(0, 1), Vector2(-1, 1), Vector2(-1, 0), Vector2(-1, -1)]:
 			var new_tile = starting_tile[-1] + dir
-			if new_tile.x >= 0 and new_tile.x < dim_x and new_tile.y >= 0 and new_tile.y < dim_y and starting_tile.find(new_tile) == -1 and todaysJson.grid[new_tile.x][new_tile.y] == word[step + 1]:
+			if new_tile.x >= 0 and new_tile.x < dim_x and new_tile.y >= 0 and new_tile.y < dim_y and starting_tile.find(new_tile) == -1 and json_to_check.grid[new_tile.x][new_tile.y] == word[step + 1]:
 				starting_tile.append(new_tile)
-				var path = find_path_recursive_step(starting_tile, step + 1, word, dim_x, dim_y)
+				var path = find_path_recursive_step(starting_tile, step + 1, word, dim_x, dim_y, json_to_check)
 				if len(path) == len(word):
 					return path
 				starting_tile.resize(starting_tile.size() - 1)
 			
 	return []
+
+
+func _on_yesterday_button_pressed() -> void:
+	$Grid.history_mode = not $Grid.history_mode
+	var json_directory: String
+	var save_directory: String
+	
+	if $Grid.history_mode:
+		json_directory = "user://lastsavedjson.save"
+		save_directory = "user://lastsavedgame.save"
+	else:
+		json_directory = "user://savejson.save"
+		save_directory = "user://savegame.save"
+
+	## CARICO LA GRIGLIA DELLA VOLTA SCORSA ##
+	if not FileAccess.file_exists(json_directory):
+		print("No saved JSON")
+		return
+	
+	var old_json_as_text = FileAccess.get_file_as_string(json_directory)
+	var yesterdaysJson = JSON.parse_string(old_json_as_text)
+	if not valid_json(yesterdaysJson):
+		print("Old saved JSON is corrupted")
+		return
+		
+	## CARICO I RISULATI DELLA VOLTA SCORSA ##
+	var yesterdaysSave
+	if not FileAccess.file_exists(save_directory):
+		yesterdaysSave = []  # Non esiste un file di salvataggio
+
+	# Carica il file di salvataggio come stringa
+	var old_save_as_text = FileAccess.get_file_as_string(save_directory)
+	var parse_old_result = JSON.parse_string(old_save_as_text)
+	
+	# Controlla se il parsing ha avuto successo
+	if not parse_old_result.has("wordsFinded"):
+		print("Errore nel parsing del file old_save: ", parse_old_result.error_string)
+		yesterdaysSave = []
+	
+	# Se il numero di "today's number" non corrisponde, rinomina il file
+	if parse_old_result.todaysNum != yesterdaysJson.todaysNum:
+		print("Il file old_save non corrisponde con old_JSON")
+		yesterdaysSave = []
+	
+	# Se tutto è ok, ritorna le parole trovate
+	yesterdaysSave = parse_old_result.wordsFinded
+	
+	## SISTEMO LA GRIGLIA ##
+	$Title.text = "QUADRATI"
+	$ProgressBar.max_value = 0
+	$ProgressBar.value = 0
+	$Grid.deinstantiate()
+	$WordPanel.deinstantiate()
+	#$WordPanel.instantiate(yesterdaysJson)
+	if $Grid.history_mode:
+		load_data(yesterdaysJson, false)
+		
+		for parola in yesterdaysSave:
+			attempt_result.emit(1, parola)
+		
+		var words = yesterdaysJson["words"]
+		
+		words = words.filter(func(word):
+			return not yesterdaysSave.has(word))
+		
+		for parola in words:
+			reveal_word.emit(parola)
+
+		$YesterdayButton.rotation = PI
+	else:
+		load_data(yesterdaysJson)
+
+		$YesterdayButton.rotation = 0
