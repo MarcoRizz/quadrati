@@ -167,10 +167,7 @@ func instantiate(json: Dictionary) -> void:
 		lunghezza_parole[str(lunghezza) + "-lettere"].n_max += 1
 	
 	for size_n in lunghezza_parole:
-		if lunghezza_parole[size_n]["n_max"] == 0:
-			#lunghezza_parole.erase(size_n)
-			pass
-		else:
+		if lunghezza_parole[size_n]["n_max"] != 0:
 			lunghezza_parole[size_n]["title"].text = size_n + ": 0/" + str(lunghezza_parole[size_n]["n_max"])
 			vbox.add_child(lunghezza_parole[size_n]["title"])
 			
@@ -180,10 +177,6 @@ func instantiate(json: Dictionary) -> void:
 
 
 func deinstantiate() -> void:
-	#creo un "buffer" di nodi da eliminare (per evitare che nei get_children successivi vengano rilevati oggetti in coda di eiminazione)
-	#var delete_buffer = Node2D.new()
-	#add_child(delete_buffer)
-	
 	# Scollego e resetto tutte le righe in WordPanel
 	for child in vbox.get_children():
 		vbox.remove_child(child)
@@ -195,12 +188,6 @@ func deinstantiate() -> void:
 		lunghezza_parole[size_n]["title"].set("theme_override_colors/font_color", Color.BLANCHED_ALMOND)
 		# non riassegno i titoli tanto reinizializzo subito
 		
-		# Elimino tutte le righe contenenti parole (hbox) eccetto la prima
-		#for i_hbox in range(1, len(lunghezza_parole[size_n]["containers"])):
-		#	var child = lunghezza_parole[size_n]["containers"][i_hbox]
-		#	child.reparent(delete_buffer)
-			#child.queue_free()
-		
 		lunghezza_parole[size_n]["containers"].clear()
 		
 		# Aggiungi il primo HBoxContainer vuoto
@@ -210,10 +197,8 @@ func deinstantiate() -> void:
 		lunghezza_parole[size_n]["containers"].append(hbox)
 		# La prima e unica riga la svuoto
 		for i_label in lunghezza_parole[size_n]["containers"][0].get_children():
-			#i_label.reparent(delete_buffer)
 			lunghezza_parole[size_n]["containers"][0].remove_child(i_label)
 			i_label.queue_free()
-	#delete_buffer.queue_free()
 
 
 func _on_button_pressed() -> void:
