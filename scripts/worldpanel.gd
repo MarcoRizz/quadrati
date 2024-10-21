@@ -61,10 +61,7 @@ func _ready() -> void:
 	for size_n in lunghezza_parole:
 		lunghezza_parole[size_n]["title"].set("theme_override_colors/font_color", Color.BLANCHED_ALMOND)
 		# Aggiungi il primo HBoxContainer vuoto
-		var hbox = HBoxContainer.new()
-		hbox.custom_minimum_size.x = w_container
-		hbox.custom_minimum_size.y = h_label
-		lunghezza_parole[size_n]["containers"].append(hbox)
+		create_hbox(lunghezza_parole[size_n]["containers"])
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -109,8 +106,8 @@ func add_word(word: String, increase_count: bool = true):
 		if str(lunghezza) + "-lettere" == size_n:
 			var n = lunghezza_parole[size_n]["n"]
 			var n_max = lunghezza_parole[size_n]["n_max"]
-			var current_containers = lunghezza_parole[size_n]["containers"]
-			var last_container = current_containers[-1]  # Ottieni l'ultimo HBoxContainer
+			var container_array = lunghezza_parole[size_n]["containers"]
+			var last_container = container_array[-1]  # Ottieni l'ultimo HBoxContainer
 			
 			# Crea un nuovo Label per la parola
 			var word_label = creat_clickable_label(word)
@@ -122,10 +119,7 @@ func add_word(word: String, increase_count: bool = true):
 					x_pos += font.get_string_size(each_label.text).x + 4
 					
 				if x_pos + w_dash_label + font.get_string_size(word).x + 8 > last_container.get_combined_minimum_size().x: #last_label.position.x + last_label.size.x + w_dash_label + font.get_string_size(word).x + 8 > last_container.get_combined_minimum_size().x:
-					var hbox = HBoxContainer.new()
-					hbox.custom_minimum_size.x = w_container
-					hbox.custom_minimum_size.y = h_label
-					current_containers.append(hbox)
+					var hbox = create_hbox(container_array)
 					last_container.add_sibling(hbox)
 					last_container = hbox
 				else:
@@ -161,6 +155,15 @@ func creat_clickable_label(word: String) -> Label:
 	return word_label
 
 
+func create_hbox(container_array: Array) -> HBoxContainer:
+	var hbox = HBoxContainer.new()
+	hbox.custom_minimum_size.x = w_container
+	hbox.custom_minimum_size.y = h_label
+	if not container_array == null:
+		container_array.append(hbox)
+	return hbox
+
+
 func instantiate(json: Dictionary) -> void:
 	for i_parola in json.words:
 		var lunghezza = i_parola.length()
@@ -191,10 +194,7 @@ func deinstantiate() -> void:
 		lunghezza_parole[size_n]["containers"].clear()
 		
 		# Aggiungi il primo HBoxContainer vuoto
-		var hbox = HBoxContainer.new()
-		hbox.custom_minimum_size.x = w_container
-		hbox.custom_minimum_size.y = h_label
-		lunghezza_parole[size_n]["containers"].append(hbox)
+		create_hbox(lunghezza_parole[size_n]["containers"])
 		# La prima e unica riga la svuoto
 		for i_label in lunghezza_parole[size_n]["containers"][0].get_children():
 			lunghezza_parole[size_n]["containers"][0].remove_child(i_label)
