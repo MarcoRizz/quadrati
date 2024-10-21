@@ -100,5 +100,5 @@ text = "<"
 [connection signal="pressed" from="RotateClockwise" to="Grid" method="_on_rotate_clockwise_pressed"]
 [connection signal="pressed" from="RotateCounterClockwise" to="Grid" method="_on_rotate_counter_clockwise_pressed"]
 [connection signal="show_path" from="WordPanel" to="." method="_on_wordpanel_show_path"]
-[connection signal="initials_threshold_signal" from="ProgressBar" to="." method="_on_progress_bar_initials_threshold_signal"]
+[connection signal="initials_threshold_signal" from="ProgressBar" to="Grid" method="_on_progress_bar_initials_threshold_signal"]
 [connection signal="pressed" from="YesterdayButton" to="." method="_on_yesterday_button_pressed"]

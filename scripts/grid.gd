@@ -87,6 +87,7 @@ func instantiate(json_data) -> void:
 
 
 func deinstantiate() -> void:
+	number_shown = false
 	for y in range(grid_size):
 		for x in range(grid_size):
 			tiles[x][y].passingWords.clear()
@@ -114,7 +115,7 @@ func _on_tile_selection_attempt(recived_vector, selected, letter):
 	print("selection " + letter)
 	print("position: " + str(recived_vector.x) + ", " + str(recived_vector.y))
 	
-	valid_attempt= true
+	valid_attempt = true
 	
 	var attempt_len = len(attempt.xy)
 	#capisco se sto tornando indietro o progredendo
@@ -185,3 +186,7 @@ func _on_main_show_path(path_tiles: Array) -> void:
 	$Path.default_color = Color(0.3, 0.5, 1)
 	for i_tile in path_tiles:
 		path.mod_add_point(elaborate_tile_coordinate(i_tile))
+
+
+func _on_progress_bar_initials_threshold_signal() -> void:
+	number_shown = true

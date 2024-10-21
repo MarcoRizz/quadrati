@@ -15,3 +15,8 @@ func _on_main_attempt_result(result: int, word: String) -> void:
 	if not initials_threshold and value * 3.0 > max_value * 1.0:
 		initials_threshold = true
 		initials_threshold_signal.emit()
+
+func reset():
+	max_value = 0
+	value = 0
+	initials_threshold = false

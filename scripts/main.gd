@@ -187,10 +187,6 @@ func FINE() -> void:
 	$MidText.show()
 
 
-func _on_progress_bar_initials_threshold_signal() -> void:
-	$Grid.number_shown = true
-
-
 func save_results():
 	var save_file = FileAccess.open("user://savegame.save", FileAccess.WRITE)
 	var save_dict = {"todaysNum" = todaysJson.todaysNum, "wordsFinded" = words_finded}
@@ -331,8 +327,7 @@ func _on_yesterday_button_pressed() -> void:
 	
 	## SISTEMO LA GRIGLIA ##
 	$Title.text = "QUADRATI"
-	$ProgressBar.max_value = 0
-	$ProgressBar.value = 0
+	$ProgressBar.reset()
 	$Grid.deinstantiate()
 	$WordPanel.deinstantiate()
 	#$WordPanel.instantiate(yesterdaysJson)
