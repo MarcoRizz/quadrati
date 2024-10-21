@@ -85,8 +85,4 @@ position = Vector2(150, 150)
 grid_x = 3
 grid_y = 3
 
-[node name="Timer" type="Timer" parent="."]
-wait_time = 0.5
-one_shot = true
-
-[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
+[connection signal="clear_grid" from="." to="Path" method="_on_grid_clear_grid"]

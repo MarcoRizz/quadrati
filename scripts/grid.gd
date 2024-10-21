@@ -9,6 +9,7 @@ signal show_number(show: bool)
 
 @export var tile_size := 90.0 #todo: prenderle dalla GUI
 @export var tile_spacing := 10.0 #todo: prenderle dalla GUI
+@export var result_view_time = 0.5
 
 @onready var path: Line2D = $Path
 
@@ -96,9 +97,10 @@ func deinstantiate() -> void:
 
 
 func _input(event):
+	#potrei avere un path plottato
 	if event is InputEventMouseButton and event.pressed:
 		path.mod_clear_points()
-		$Path.default_color = Color(1, 1, 0)
+		$Path.default_color = Color.YELLOW
 
 func elaborate_tile_coordinate(grid_vector: Vector2) -> Vector2:
 	return Vector2(
@@ -158,14 +160,15 @@ func _on_main_attempt_result(result: int, word: String) -> void:
 	print(attempt)
 	ready_for_attempt = false
 	valid_attempt = false
-	$Timer.start()
+	
+	# aspetto il tempo di mostrare il risultato
+	await get_tree().create_timer(result_view_time).timeout
+	clear_grid_fun()
 
 
-func _on_timer_timeout() -> void:
-	path.mod_clear_points()
+func clear_grid_fun():
 	attempt.letter.clear()
 	attempt.xy.clear()
-	$Path.default_color = Color(1, 1, 0)
 	clear_grid.emit()
 	show_number.emit(number_shown and not history_mode)
 		

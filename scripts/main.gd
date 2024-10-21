@@ -173,7 +173,7 @@ func _input(event: InputEvent) -> void:
 			
 			attempt_result.emit(result, $Display.text)
 		else:
-			$Grid._on_timer_timeout()  #se non era un tentativo valido anticipo il reset della griglia
+			$Grid.clear_grid_fun()  #se non era un tentativo valido anticipo il reset della griglia
 
 
 func _on_grid_clear_grid() -> void:
