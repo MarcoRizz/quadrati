@@ -10,6 +10,11 @@ var todaysJson #qui salvo il JSON caricato
 var words = [] #colleziono tutte le parole
 var words_finded = [] #colleziono le parole trovate
 
+var fileName_actual_grid := "user://savejson.save"
+var fileName_actual_results := "user://savegame.save"
+var fileName_old_grid := "user://lastsavedjson.save"
+var fileName_old_results := "user://lastsavedgame.save"
+
 
 func _ready() -> void:
 	#leggo il file json di oggi
@@ -54,11 +59,11 @@ func _ready() -> void:
 	var error = http_request.request(http_json_source + params)
 	if error != OK:
 		print("An error occurred in the HTTP request.")
-		if not FileAccess.file_exists("user://savejson.save"):
+		if not FileAccess.file_exists(fileName_actual_grid):
 			print("No saved JSON, exiting")
 			get_tree().quit()
 			return
-		var json_as_text = FileAccess.get_file_as_string("user://savejson.save")
+		var json_as_text = FileAccess.get_file_as_string(fileName_actual_grid)
 		todaysJson = JSON.parse_string(json_as_text)
 		load_data(todaysJson)
 
@@ -67,8 +72,8 @@ func _ready() -> void:
 func _http_request_completed(result, response_code, headers, body):
 	if not result == 0:
 		print("An error occurred in the HTTP request, error " + str(result))
-		if FileAccess.file_exists("user://savejson.save"):
-			var json_as_text = FileAccess.get_file_as_string("user://savejson.save")
+		if FileAccess.file_exists(fileName_actual_grid):
+			var json_as_text = FileAccess.get_file_as_string(fileName_actual_grid)
 			todaysJson = JSON.parse_string(json_as_text)
 			if not valid_json(todaysJson):
 				print("Saved JSON is corrupted, exiting")
@@ -83,11 +88,11 @@ func _http_request_completed(result, response_code, headers, body):
 	
 	if not valid_json(todaysJson):
 		print("JSON not corresponding, load saved JSON")
-		if not FileAccess.file_exists("user://savejson.save"):
+		if not FileAccess.file_exists(fileName_actual_grid):
 			print("No saved JSON, exiting")
 			get_tree().quit()
 			return
-		var json_as_text = FileAccess.get_file_as_string("user://savejson.save")
+		var json_as_text = FileAccess.get_file_as_string(fileName_actual_grid)
 		todaysJson = JSON.parse_string(json_as_text)
 		if not valid_json(todaysJson):
 			print("Saved JSON is corrupted, exiting")
@@ -106,9 +111,9 @@ func valid_json(json_to_validate) -> bool:
 
 func save_json(json_to_save):
 	# Controlla se il file 'savejson.save' esiste
-	if FileAccess.file_exists("user://savejson.save"):
+	if FileAccess.file_exists(fileName_actual_grid):
 		# Leggi il file esistente
-		var saved_json_as_text = FileAccess.get_file_as_string("user://savejson.save")
+		var saved_json_as_text = FileAccess.get_file_as_string(fileName_actual_grid)
 		var parse_result = JSON.parse_string(saved_json_as_text)
 		
 		# Controlla se il parsing ha avuto successo
@@ -116,12 +121,12 @@ func save_json(json_to_save):
 			# Controlla se il 'todaysNum' del file salvato è diverso
 			if parse_result.has("todaysNum") and parse_result.todaysNum != json_to_save.todaysNum:
 				# Salva una copia del file esistente con il nuovo nome 'lastsavedjson.save'
-				var previous_file = FileAccess.open("user://lastsavedjson.save", FileAccess.WRITE)
+				var previous_file = FileAccess.open(fileName_old_grid, FileAccess.WRITE)
 				previous_file.store_string(saved_json_as_text)
 				previous_file.close()
 	
 	# Salva il nuovo file json
-	var save_file = FileAccess.open("user://savejson.save", FileAccess.WRITE)
+	var save_file = FileAccess.open(fileName_actual_grid, FileAccess.WRITE)
 	save_file.store_line(JSON.stringify(json_to_save))
 	save_file.close()
 
@@ -188,18 +193,18 @@ func FINE() -> void:
 
 
 func save_results():
-	var save_file = FileAccess.open("user://savegame.save", FileAccess.WRITE)
+	var save_file = FileAccess.open(fileName_actual_results, FileAccess.WRITE)
 	var save_dict = {"todaysNum" = todaysJson.todaysNum, "wordsFinded" = words_finded}
 	var json_string = JSON.stringify(save_dict)
 	save_file.store_line(json_string)
 
 
 func load_results() -> Array[String]:
-	if not FileAccess.file_exists("user://savegame.save"):
+	if not FileAccess.file_exists(fileName_actual_results):
 		return []  # Non esiste un file di salvataggio, ritorna un array vuoto.
 
 	# Carica il file di salvataggio come stringa
-	var json_as_text = FileAccess.get_file_as_string("user://savegame.save")
+	var json_as_text = FileAccess.get_file_as_string(fileName_actual_results)
 	var parse_result = JSON.parse_string(json_as_text)
 	
 	# Controlla se il parsing ha avuto successo
@@ -210,7 +215,7 @@ func load_results() -> Array[String]:
 	# Se il numero di "today's number" non corrisponde, rinomina il file
 	if parse_result.todaysNum != todaysJson.todaysNum:
 		# Copia il contenuto del file in un nuovo file "lastsavedgame.save"
-		var save_file = FileAccess.open("user://lastsavedgame.save", FileAccess.WRITE)
+		var save_file = FileAccess.open(fileName_old_results, FileAccess.WRITE)
 		save_file.store_string(json_as_text)
 		save_file.close()
 		
@@ -237,11 +242,11 @@ func find_path_from_json(word: String) -> Array[Vector2]:
 	
 	var json_to_check
 	if $Grid.history_mode:
-		if not FileAccess.file_exists("user://lastsavedjson.save"):
+		if not FileAccess.file_exists(fileName_old_grid):
 			print("No saved JSON")
 			return []
 		
-		var old_json_as_text = FileAccess.get_file_as_string("user://lastsavedjson.save")
+		var old_json_as_text = FileAccess.get_file_as_string(fileName_old_grid)
 		json_to_check = JSON.parse_string(old_json_as_text)
 	else:
 		json_to_check = todaysJson
@@ -286,11 +291,11 @@ func _on_yesterday_button_pressed() -> void:
 	var save_directory: String
 	
 	if $Grid.history_mode:
-		json_directory = "user://lastsavedjson.save"
-		save_directory = "user://lastsavedgame.save"
+		json_directory = fileName_old_grid
+		save_directory = fileName_old_results
 	else:
-		json_directory = "user://savejson.save"
-		save_directory = "user://savegame.save"
+		json_directory = fileName_actual_grid
+		save_directory = fileName_actual_results
 
 	## CARICO LA GRIGLIA DELLA VOLTA SCORSA ##
 	if not FileAccess.file_exists(json_directory):
