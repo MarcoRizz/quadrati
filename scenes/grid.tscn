@@ -13,76 +13,81 @@ width = 30.0
 default_color = Color(1, 1, 0, 1)
 script = ExtResource("2_03yts")
 
-[node name="tile00" parent="." instance=ExtResource("2_ayh7i")]
+[node name="tile00" parent="." groups=["tiles_group"] instance=ExtResource("2_ayh7i")]
 position = Vector2(-150, -150)
 
-[node name="tile10" parent="." instance=ExtResource("2_ayh7i")]
+[node name="tile10" parent="." groups=["tiles_group"] instance=ExtResource("2_ayh7i")]
 position = Vector2(-50, -150)
 grid_x = 1
 
-[node name="tile20" parent="." instance=ExtResource("2_ayh7i")]
+[node name="tile20" parent="." groups=["tiles_group"] instance=ExtResource("2_ayh7i")]
 position = Vector2(50, -150)
 grid_x = 2
 
-[node name="tile30" parent="." instance=ExtResource("2_ayh7i")]
+[node name="tile30" parent="." groups=["tiles_group"] instance=ExtResource("2_ayh7i")]
 position = Vector2(150, -150)
 grid_x = 3
 
-[node name="tile01" parent="." instance=ExtResource("2_ayh7i")]
+[node name="tile01" parent="." groups=["tiles_group"] instance=ExtResource("2_ayh7i")]
 position = Vector2(-150, -50)
 grid_y = 1
 
-[node name="tile11" parent="." instance=ExtResource("2_ayh7i")]
+[node name="tile11" parent="." groups=["tiles_group"] instance=ExtResource("2_ayh7i")]
 position = Vector2(-50, -50)
 grid_x = 1
 grid_y = 1
 
-[node name="tile21" parent="." instance=ExtResource("2_ayh7i")]
+[node name="tile21" parent="." groups=["tiles_group"] instance=ExtResource("2_ayh7i")]
 position = Vector2(50, -50)
 grid_x = 2
 grid_y = 1
 
-[node name="tile31" parent="." instance=ExtResource("2_ayh7i")]
+[node name="tile31" parent="." groups=["tiles_group"] instance=ExtResource("2_ayh7i")]
 position = Vector2(150, -50)
 grid_x = 3
 grid_y = 1
 
-[node name="tile02" parent="." instance=ExtResource("2_ayh7i")]
+[node name="tile02" parent="." groups=["tiles_group"] instance=ExtResource("2_ayh7i")]
 position = Vector2(-150, 50)
 grid_y = 2
 
-[node name="tile12" parent="." instance=ExtResource("2_ayh7i")]
+[node name="tile12" parent="." groups=["tiles_group"] instance=ExtResource("2_ayh7i")]
 position = Vector2(-50, 50)
 grid_x = 1
 grid_y = 2
 
-[node name="tile22" parent="." instance=ExtResource("2_ayh7i")]
+[node name="tile22" parent="." groups=["tiles_group"] instance=ExtResource("2_ayh7i")]
 position = Vector2(50, 50)
 grid_x = 2
 grid_y = 2
 
-[node name="tile32" parent="." instance=ExtResource("2_ayh7i")]
+[node name="tile32" parent="." groups=["tiles_group"] instance=ExtResource("2_ayh7i")]
 position = Vector2(150, 50)
 grid_x = 3
 grid_y = 2
 
-[node name="tile03" parent="." instance=ExtResource("2_ayh7i")]
+[node name="tile03" parent="." groups=["tiles_group"] instance=ExtResource("2_ayh7i")]
 position = Vector2(-150, 150)
 grid_y = 3
 
-[node name="tile13" parent="." instance=ExtResource("2_ayh7i")]
+[node name="tile13" parent="." groups=["tiles_group"] instance=ExtResource("2_ayh7i")]
 position = Vector2(-50, 150)
 grid_x = 1
 grid_y = 3
 
-[node name="tile23" parent="." instance=ExtResource("2_ayh7i")]
+[node name="tile23" parent="." groups=["tiles_group"] instance=ExtResource("2_ayh7i")]
 position = Vector2(50, 150)
 grid_x = 2
 grid_y = 3
 
-[node name="tile33" parent="." instance=ExtResource("2_ayh7i")]
+[node name="tile33" parent="." groups=["tiles_group"] instance=ExtResource("2_ayh7i")]
 position = Vector2(150, 150)
 grid_x = 3
 grid_y = 3
 
+[node name="Timer" type="Timer" parent="."]
+wait_time = 0.5
+one_shot = true
+
 [connection signal="clear_grid" from="." to="Path" method="_on_grid_clear_grid"]
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]

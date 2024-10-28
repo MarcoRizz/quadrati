@@ -15,7 +15,6 @@ signal show_number(show: bool)
 
 @export var tile_size := 90.0 #todo: prenderle dalla GUI
 @export var tile_spacing := 10.0 #todo: prenderle dalla GUI
-@export var result_view_time = 0.5
 
 @onready var path: Line2D = $Path
 
@@ -66,34 +65,34 @@ func _process(delta: float) -> void:
 			# Applica la rotazione corretta ai tile usando il valore ridotto di rotazione
 			for y in range(grid_size):
 				for x in range(grid_size):
-					tiles[x][y].position = elaborate_tile_coordinate(Vector2(x, y))  #corregge gli errori causati dalla chiamata di position.rotated
+					tiles[x][y].position = elaborate_tile_coordinate(Vector2(x, y))  #corregge gli errori causati dalla chiamata di position.rotated  #TODO: spostare a chiata di group??
 
 		else:
 			# Aggiorna la posizione delle tile ruotandole normalmente
 			for y in range(grid_size):
 				for x in range(grid_size):
-					tiles[x][y].position = tiles[x][y].position.rotated(delta * rot_speed * rot_on)
+					tiles[x][y].position = tiles[x][y].position.rotated(delta * rot_speed * rot_on) #TODO: spostare a chiata di group??
 
 
 func instantiate(data: Dictionary) -> void:
+	# Assegno le lettere
+	get_tree().call_group("tiles_group", "set_letter", data.grid)
+	
+	# Assegno le tessere iniziali
 	var index = 0
-	# Per ogni startingLinks assegno a tile.startingWords la parola
-	for i_tile in data.startingLinks:
-		tiles[i_tile[0]][i_tile[1]].startingWords.append(data.words[index])
+	for tile in data.startingLinks:
+		tiles[tile[0]][tile[1]].startingWords.append(data.words[index])
 		index += 1
 	
-	for y in range(grid_size):
-		for x in range(grid_size):
-			#assegno le lettere
-			tiles[x][y].get_node("Sprite2D").get_node("Lettera").text = data.grid[x][y]
-			# Per ogni passingLinks assegno a tile.passingWords la parola
-			for i_parola in data.passingLinks[x][y]:
-				tiles[x][y].passingWords.append(data.words[i_parola])
-			
-			tiles[x][y].number_update()
+	# Assegno le parole di passaggio
+	get_tree().call_group("tiles_group", "set_passingWords", data.passingLinks, data.words)
+	
+	# Aggiorno la griglia
+	get_tree().call_group("tiles_group", "number_update")
+	$Timer.start()
 
 
-func deinstantiate() -> void:
+func deinstantiate() -> void: #TODO: da riconsiderare dopo riabilitazione pulsante yesterday
 	number_shown = false
 	for y in range(grid_size):
 		for x in range(grid_size):
@@ -168,8 +167,7 @@ func set_answer(result: AttemptResult, word: String) -> void:
 	valid_attempt = false
 	
 	# aspetto il tempo di mostrare il risultato
-	await get_tree().create_timer(result_view_time).timeout
-	clear_grid_fun()
+	$Timer.start()
 
 
 func clear_grid_fun():
@@ -199,3 +197,7 @@ func show_path(path_tiles: Array) -> void:
 
 func _on_progress_bar_initials_threshold_signal() -> void:
 	number_shown = true
+
+
+func _on_timer_timeout() -> void:
+	clear_grid_fun()

@@ -39,7 +39,7 @@ func _input(event: InputEvent) -> void:
 				$ProgressBar.increase(word)
 			attempt_result.emit(result, word)
 		else:
-			$Grid.clear_grid_fun()  #se non era un tentativo valido anticipo il reset della griglia
+			$Grid/Timer.start()  #se non era un tentativo valido anticipo il reset della griglia
 
 
 func load_game(data: Dictionary):
@@ -62,9 +62,7 @@ func load_results(save: Dictionary):
 		words_finded.append(i_parola)
 		$WordPanel.add_word(i_parola)
 		$ProgressBar.increase(i_parola)
-	
-	await get_tree().create_timer($Grid.result_view_time).timeout
-	$Grid.clear_grid_fun()
+		#$Grid.set_answer(AttemptResult.NEW_FIND, i_parola, true)  <-- trovare altro modo!
 
 func _on_grid_clear_grid() -> void:
 	if $ProgressBar.value >= $ProgressBar.max_value and not $Grid.history_mode:

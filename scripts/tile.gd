@@ -20,6 +20,15 @@ func _ready() -> void:
 	$Sprite2D/Button.mouse_filter = Control.MOUSE_FILTER_PASS
 
 
+func set_letter(letters: Array) -> void:
+	$Sprite2D/Lettera.text = letters[grid_x][grid_y]
+
+
+func set_passingWords(indexes: Array, words: Array) -> void:
+	for i in indexes[grid_x][grid_y]:
+		passingWords.append(words[i])
+
+
 func number_update() -> void:
 	var new_number = len(startingWords);
 	$Sprite2D/Numero.text = str(new_number)
