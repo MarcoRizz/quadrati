@@ -9,9 +9,7 @@ enum AttemptResult {
 const grid_size := 4
 
 signal attempt_changed(word: String)
-signal attempt_result(word_finded: int, word: String, color: Color)
-signal clear_grid
-signal show_number(show: bool)
+signal clear()
 
 @export var tile_size := 90.0 #todo: prenderle dalla GUI
 @export var tile_spacing := 10.0 #todo: prenderle dalla GUI
@@ -37,14 +35,7 @@ var history_mode = false
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	for y in range(grid_size):
-		for x in range(grid_size):
-			#automatizzo i collegamenti
-			connect("attempt_result", tiles[x][y]._on_grid_attempt_result)
-			connect("clear_grid", tiles[x][y]._on_grid_clear_grid)
-			connect("show_number", tiles[x][y]._on_grid_show_number)
-			tiles[x][y].connect("selection_attempt", _on_tile_selection_attempt)
-	show_number.emit(number_shown)
+	get_tree().call_group("tiles_group", "show_number", number_shown)
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -74,6 +65,13 @@ func _process(delta: float) -> void:
 					tiles[x][y].position = tiles[x][y].position.rotated(delta * rot_speed * rot_on) #TODO: spostare a chiata di group??
 
 
+func _input(event):
+	#potrei avere un path plottato
+	if event is InputEventMouseButton and event.pressed:
+		path.mod_clear_points()
+		$Path.default_color = Color.YELLOW
+
+
 func instantiate(data: Dictionary) -> void:
 	# Assegno le lettere
 	get_tree().call_group("tiles_group", "set_letter", data.grid)
@@ -100,12 +98,6 @@ func deinstantiate() -> void: #TODO: da riconsiderare dopo riabilitazione pulsan
 			tiles[x][y].startingWords.clear()
 			# tiles[x][y].number_update()  #per ora non serve
 
-
-func _input(event):
-	#potrei avere un path plottato
-	if event is InputEventMouseButton and event.pressed:
-		path.mod_clear_points()
-		$Path.default_color = Color.YELLOW
 
 func elaborate_tile_coordinate(grid_vector: Vector2) -> Vector2:
 	return Vector2(
@@ -161,22 +153,12 @@ func set_answer(result: AttemptResult, word: String) -> void:
 			color = Color(0.6, 0.6, 0.6)
 	
 	$Path.default_color = color
-	attempt_result.emit(result, word, color)
 	print(attempt)
 	ready_for_attempt = false
 	valid_attempt = false
-	
+	get_tree().call_group("tiles_group", "set_result", result, word, color)
 	# aspetto il tempo di mostrare il risultato
 	$Timer.start()
-
-
-func clear_grid_fun():
-	attempt.letter.clear()
-	attempt.xy.clear()
-	clear_grid.emit()
-	show_number.emit(number_shown and not history_mode)
-		
-	ready_for_attempt = not history_mode
 
 
 func _on_rotate_clockwise_pressed() -> void:
@@ -200,4 +182,11 @@ func _on_progress_bar_initials_threshold_signal() -> void:
 
 
 func _on_timer_timeout() -> void:
-	clear_grid_fun()
+	attempt.letter.clear()
+	attempt.xy.clear()
+	$Path.mod_clear_points()
+	get_tree().call_group("tiles_group", "clear")
+	get_tree().call_group("tiles_group", "show_number", number_shown and not history_mode)
+	clear.emit()
+		
+	ready_for_attempt = not history_mode

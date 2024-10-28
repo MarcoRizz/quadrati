@@ -1,6 +1,11 @@
 extends Node2D
 
 #const myenums = preload("res://scripts/enum.gd")
+enum AttemptResult {
+	NEW_FIND, #nuova parola trovata
+	WRONG, #parola sbagliata
+	REPEATED #parola già trovata in precedenza
+}
 
 signal selection_attempt(grid_vector, selected, letter)
 
@@ -56,23 +61,23 @@ func remove_selection() -> void:
 	$Sprite2D.self_modulate = Color(1, 1, 1)
 
 
-func _on_grid_attempt_result(attempt_result: int, word: String, color: Color) -> void:
+func set_result(attempt_result: AttemptResult, word: String, color: Color) -> void:
 	if selected:
 		$Sprite2D.self_modulate = color
-	if attempt_result == 1:
+	if attempt_result == AttemptResult.NEW_FIND:
 		if passingWords.has(word):
 			passingWords.erase(word)
 		if startingWords.has(word):
 			startingWords.erase(word)
 
 
-func _on_grid_clear_grid() -> void:
+func clear() -> void:
 	remove_selection()
 	number_update()
 
 
-func _on_grid_show_number(to_show: bool) -> void:
-	if to_show and len(startingWords) != 0:
+func show_number(show_it: bool) -> void:
+	if show_it and len(startingWords) != 0:
 		$Sprite2D/Numero.show()
 	else:
 		$Sprite2D/Numero.hide()

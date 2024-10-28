@@ -89,5 +89,20 @@ grid_y = 3
 wait_time = 0.5
 one_shot = true
 
-[connection signal="clear_grid" from="." to="Path" method="_on_grid_clear_grid"]
+[connection signal="selection_attempt" from="tile00" to="." method="_on_tile_selection_attempt"]
+[connection signal="selection_attempt" from="tile10" to="." method="_on_tile_selection_attempt"]
+[connection signal="selection_attempt" from="tile20" to="." method="_on_tile_selection_attempt"]
+[connection signal="selection_attempt" from="tile30" to="." method="_on_tile_selection_attempt"]
+[connection signal="selection_attempt" from="tile01" to="." method="_on_tile_selection_attempt"]
+[connection signal="selection_attempt" from="tile11" to="." method="_on_tile_selection_attempt"]
+[connection signal="selection_attempt" from="tile21" to="." method="_on_tile_selection_attempt"]
+[connection signal="selection_attempt" from="tile31" to="." method="_on_tile_selection_attempt"]
+[connection signal="selection_attempt" from="tile02" to="." method="_on_tile_selection_attempt"]
+[connection signal="selection_attempt" from="tile12" to="." method="_on_tile_selection_attempt"]
+[connection signal="selection_attempt" from="tile22" to="." method="_on_tile_selection_attempt"]
+[connection signal="selection_attempt" from="tile32" to="." method="_on_tile_selection_attempt"]
+[connection signal="selection_attempt" from="tile03" to="." method="_on_tile_selection_attempt"]
+[connection signal="selection_attempt" from="tile13" to="." method="_on_tile_selection_attempt"]
+[connection signal="selection_attempt" from="tile23" to="." method="_on_tile_selection_attempt"]
+[connection signal="selection_attempt" from="tile33" to="." method="_on_tile_selection_attempt"]
 [connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]

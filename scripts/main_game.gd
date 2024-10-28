@@ -38,8 +38,8 @@ func _input(event: InputEvent) -> void:
 				$WordPanel.add_word(word)
 				$ProgressBar.increase(word)
 			attempt_result.emit(result, word)
-		else:
-			$Grid/Timer.start()  #se non era un tentativo valido anticipo il reset della griglia
+		#else:
+			#$Grid/Timer.start()  #se non era un tentativo valido anticipo il reset della griglia  #TODO to check, perché serviva?
 
 
 func load_game(data: Dictionary):
@@ -62,7 +62,7 @@ func load_results(save: Dictionary):
 		words_finded.append(i_parola)
 		$WordPanel.add_word(i_parola)
 		$ProgressBar.increase(i_parola)
-		#$Grid.set_answer(AttemptResult.NEW_FIND, i_parola, true)  <-- trovare altro modo!
+		$Grid.set_answer(AttemptResult.NEW_FIND, i_parola)
 
 func _on_grid_clear_grid() -> void:
 	if $ProgressBar.value >= $ProgressBar.max_value and not $Grid.history_mode:

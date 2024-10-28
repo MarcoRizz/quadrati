@@ -56,9 +56,7 @@ show_percentage = false
 script = ExtResource("4_gwx55")
 
 [connection signal="attempt_changed" from="Grid" to="Display" method="_on_grid_attempt_changed"]
-[connection signal="attempt_result" from="Grid" to="WordPanel" method="_on_grid_attempt_result"]
-[connection signal="clear_grid" from="Grid" to="." method="_on_grid_clear_grid"]
-[connection signal="clear_grid" from="Grid" to="Display" method="_on_grid_clear_grid"]
+[connection signal="clear" from="Grid" to="Display" method="_on_grid_clear"]
 [connection signal="pressed" from="RotateClockwise" to="Grid" method="_on_rotate_clockwise_pressed"]
 [connection signal="pressed" from="RotateCounterClockwise" to="Grid" method="_on_rotate_counter_clockwise_pressed"]
 [connection signal="show_path" from="WordPanel" to="." method="_on_wordpanel_show_path"]
