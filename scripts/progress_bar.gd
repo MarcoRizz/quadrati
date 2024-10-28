@@ -8,9 +8,8 @@ var initials_threshold = false
 func _ready() -> void:
 	pass # Replace with function body.
 
-func _on_main_attempt_result(result: int, word: String) -> void:
-	if result == 1:
-		value += len(word)
+func increase(word: String) -> void:
+	value += len(word)
 	
 	if not initials_threshold and value * 3.0 > max_value * 1.0:
 		initials_threshold = true

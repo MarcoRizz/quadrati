@@ -1,5 +1,11 @@
 extends Panel
 
+enum AttemptResult {
+	NEW_FIND, #nuova parola trovata
+	WRONG, #parola sbagliata
+	REPEATED #parola già trovata in precedenza
+}
+
 signal show_path(word: String)
 
 @onready var vbox = $ScrollContainer/VBoxContainer
@@ -55,7 +61,7 @@ func _ready() -> void:
 	#impedisco il click delle lettere se Panel è esteso
 	mouse_filter = Control.MOUSE_FILTER_STOP
 	#rilevo la posizione globale
-	panel_y_bottom = get_global_position().y + original_size_y
+	panel_y_bottom = position.y + original_size_y
 	
 	# Impostazioni dei Nodi di lunghezza_parole
 	for size_n in lunghezza_parole:
@@ -94,10 +100,6 @@ func _process(delta: float) -> void:
 				# Apre l'URL nel browser
 				OS.shell_open(url)
 
-
-func _on_main_attempt_result(word_finded: int, word: String) -> void:
-	if word_finded == 1:
-		add_word(word)
 
 func add_word(word: String, increase_count: bool = true):
 	var lunghezza = word.length()

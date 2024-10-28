@@ -1,0 +1,23 @@
+{
+  "todaysNum": 26,
+  "wordsFinded": [
+	"DITA",
+	"DISTA",
+	"NATI",
+	"DIVO",
+	"ELFO",
+	"ALEF",
+	"CEFFO",
+	"CELATI",
+	"CELA",
+	"CANTI",
+	"VISTA",
+	"VITA",
+	"CITA",
+	"TALE",
+	"TACE",
+	"DITALE",
+	"UNTA",
+	"UNTI"
+  ]
+}

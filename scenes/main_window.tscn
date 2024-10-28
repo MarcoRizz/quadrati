@@ -1,0 +1,47 @@
+[gd_scene load_steps=4 format=3 uid="uid://ctsuofbrx0vtb"]
+
+[ext_resource type="Script" path="res://scripts/main_window.gd" id="1_nxi1l"]
+[ext_resource type="Script" path="res://scripts/display.gd" id="2_eg268"]
+[ext_resource type="PackedScene" uid="uid://dtciitusji7kn" path="res://scenes/main_game.tscn" id="3_kli33"]
+
+[node name="MainWindow" type="Node2D"]
+script = ExtResource("1_nxi1l")
+
+[node name="Title" type="Label" parent="."]
+offset_right = 400.0
+offset_bottom = 50.0
+theme_override_font_sizes/font_size = 35
+text = "QUADRATI"
+horizontal_alignment = 1
+vertical_alignment = 1
+script = ExtResource("2_eg268")
+
+[node name="YesterdayButton" type="Button" parent="."]
+offset_right = 45.0
+offset_bottom = 45.0
+pivot_offset = Vector2(22.5, 22.5)
+focus_mode = 0
+text = "<"
+
+[node name="Game" parent="." instance=ExtResource("3_kli33")]
+position = Vector2(0, 50)
+
+[node name="MidText" type="Label" parent="."]
+visible = false
+self_modulate = Color(0, 0, 0, 1)
+z_index = 3
+offset_top = 230.0
+offset_right = 400.0
+offset_bottom = 280.0
+theme_override_font_sizes/font_size = 35
+text = "Caricamento..."
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Background" type="Polygon2D" parent="MidText"]
+z_index = -1
+color = Color(0.808998, 0.808998, 0.808998, 1)
+polygon = PackedVector2Array(0, 0, 400, 0, 400, 50, 0, 50)
+
+[connection signal="attempt_result" from="Game" to="." method="_on_game_attempt_result"]
+[connection signal="game_complete" from="Game" to="." method="_on_game_game_complete"]

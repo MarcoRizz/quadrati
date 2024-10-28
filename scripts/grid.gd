@@ -1,9 +1,15 @@
 extends Node2D
 
+enum AttemptResult {
+	NEW_FIND, #nuova parola trovata
+	WRONG, #parola sbagliata
+	REPEATED #parola già trovata in precedenza
+}
+
 const grid_size := 4
 
-signal attempt_result(word_finded: int, word: String, color: Color)
 signal attempt_changed(word: String)
+signal attempt_result(word_finded: int, word: String, color: Color)
 signal clear_grid
 signal show_number(show: bool)
 
@@ -69,20 +75,20 @@ func _process(delta: float) -> void:
 					tiles[x][y].position = tiles[x][y].position.rotated(delta * rot_speed * rot_on)
 
 
-func instantiate(json_data) -> void:
+func instantiate(data: Dictionary) -> void:
 	var index = 0
 	# Per ogni startingLinks assegno a tile.startingWords la parola
-	for i_tile in json_data.startingLinks:
-		tiles[i_tile[0]][i_tile[1]].startingWords.append(json_data.words[index])
+	for i_tile in data.startingLinks:
+		tiles[i_tile[0]][i_tile[1]].startingWords.append(data.words[index])
 		index += 1
 	
 	for y in range(grid_size):
 		for x in range(grid_size):
 			#assegno le lettere
-			tiles[x][y].get_node("Sprite2D").get_node("Lettera").text = json_data.grid[x][y]
+			tiles[x][y].get_node("Sprite2D").get_node("Lettera").text = data.grid[x][y]
 			# Per ogni passingLinks assegno a tile.passingWords la parola
-			for i_parola in json_data.passingLinks[x][y]:
-				tiles[x][y].passingWords.append(json_data.words[i_parola])
+			for i_parola in data.passingLinks[x][y]:
+				tiles[x][y].passingWords.append(data.words[i_parola])
 			
 			tiles[x][y].number_update()
 
@@ -145,14 +151,14 @@ func _on_tile_selection_attempt(recived_vector, selected, letter):
 	attempt_changed.emit(nuova_parola)
 
 
-func _on_main_attempt_result(result: int, word: String) -> void:
+func set_answer(result: AttemptResult, word: String) -> void:
 	var color
 	match result:
-		0:
+		AttemptResult.WRONG:
 			color = Color(1, 0.6, 0.6)
-		1:
+		AttemptResult.NEW_FIND:
 			color = Color(0.6, 1, 0.6)
-		2:
+		AttemptResult.REPEATED:
 			color = Color(0.6, 0.6, 0.6)
 	
 	$Path.default_color = color
@@ -185,7 +191,7 @@ func _on_rotate_counter_clockwise_pressed() -> void:
 	ready_for_attempt = false;
 
 
-func _on_main_show_path(path_tiles: Array) -> void:
+func show_path(path_tiles: Array) -> void:
 	$Path.default_color = Color(0.3, 0.5, 1)
 	for i_tile in path_tiles:
 		path.mod_add_point(elaborate_tile_coordinate(i_tile))
