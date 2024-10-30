@@ -18,72 +18,63 @@ position = Vector2(-150, -150)
 
 [node name="tile10" parent="." groups=["tiles_group"] instance=ExtResource("2_ayh7i")]
 position = Vector2(-50, -150)
-grid_x = 1
+grid_vect = Vector2(1, 0)
 
 [node name="tile20" parent="." groups=["tiles_group"] instance=ExtResource("2_ayh7i")]
 position = Vector2(50, -150)
-grid_x = 2
+grid_vect = Vector2(2, 0)
 
 [node name="tile30" parent="." groups=["tiles_group"] instance=ExtResource("2_ayh7i")]
 position = Vector2(150, -150)
-grid_x = 3
+grid_vect = Vector2(3, 0)
 
 [node name="tile01" parent="." groups=["tiles_group"] instance=ExtResource("2_ayh7i")]
 position = Vector2(-150, -50)
-grid_y = 1
+grid_vect = Vector2(0, 1)
 
 [node name="tile11" parent="." groups=["tiles_group"] instance=ExtResource("2_ayh7i")]
 position = Vector2(-50, -50)
-grid_x = 1
-grid_y = 1
+grid_vect = Vector2(1, 1)
 
 [node name="tile21" parent="." groups=["tiles_group"] instance=ExtResource("2_ayh7i")]
 position = Vector2(50, -50)
-grid_x = 2
-grid_y = 1
+grid_vect = Vector2(2, 1)
 
 [node name="tile31" parent="." groups=["tiles_group"] instance=ExtResource("2_ayh7i")]
 position = Vector2(150, -50)
-grid_x = 3
-grid_y = 1
+grid_vect = Vector2(3, 1)
 
 [node name="tile02" parent="." groups=["tiles_group"] instance=ExtResource("2_ayh7i")]
 position = Vector2(-150, 50)
-grid_y = 2
+grid_vect = Vector2(0, 2)
 
 [node name="tile12" parent="." groups=["tiles_group"] instance=ExtResource("2_ayh7i")]
 position = Vector2(-50, 50)
-grid_x = 1
-grid_y = 2
+grid_vect = Vector2(1, 2)
 
 [node name="tile22" parent="." groups=["tiles_group"] instance=ExtResource("2_ayh7i")]
 position = Vector2(50, 50)
-grid_x = 2
-grid_y = 2
+grid_vect = Vector2(2, 2)
 
 [node name="tile32" parent="." groups=["tiles_group"] instance=ExtResource("2_ayh7i")]
 position = Vector2(150, 50)
-grid_x = 3
-grid_y = 2
+grid_vect = Vector2(3, 2)
 
 [node name="tile03" parent="." groups=["tiles_group"] instance=ExtResource("2_ayh7i")]
 position = Vector2(-150, 150)
-grid_y = 3
+grid_vect = Vector2(0, 3)
 
 [node name="tile13" parent="." groups=["tiles_group"] instance=ExtResource("2_ayh7i")]
 position = Vector2(-50, 150)
-grid_x = 1
-grid_y = 3
+grid_vect = Vector2(1, 3)
 
 [node name="tile23" parent="." groups=["tiles_group"] instance=ExtResource("2_ayh7i")]
 position = Vector2(50, 150)
-grid_x = 2
-grid_y = 3
+grid_vect = Vector2(2, 3)
 
 [node name="tile33" parent="." groups=["tiles_group"] instance=ExtResource("2_ayh7i")]
 position = Vector2(150, 150)
-grid_x = 3
-grid_y = 3
+grid_vect = Vector2(3, 3)
 
 [node name="Timer" type="Timer" parent="."]
 wait_time = 0.5

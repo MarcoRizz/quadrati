@@ -21,7 +21,7 @@ signal clear()
 					  [$tile20, $tile21, $tile22, $tile23],
 					  [$tile30, $tile31, $tile32, $tile33]]
 
-var attempt = {"letter": [], "xy": []}
+var attempt = {"letters": [], "tiles": []}
 var ready_for_attempt = false
 var valid_attempt = false
 var number_shown = false
@@ -107,55 +107,50 @@ func elaborate_tile_coordinate(grid_vector: Vector2) -> Vector2:
 	).rotated(rot_pos)
 
 
-func i_tile_from_attempt(i: int) -> Node2D:
-	return tiles[attempt.xy[i].x][attempt.xy[i].y]
+#func i_tile_from_attempt(i: int) -> Node2D:
+	#return tiles[attempt.xy[i].x][attempt.xy[i].y]
 
 
-func _on_tile_attempt_start(recived_vector: Vector2, letter: String) -> void:
+func _on_tile_attempt_start(recived_tile: Node2D, letter: String) -> void:
 	if ready_for_attempt:
 		path.mod_clear_points()
 		$Path.default_color = Color.YELLOW
 		valid_attempt = true
-		print("position: " + str(recived_vector.x) + ", " + str(recived_vector.y))
 		
-		print("selection " + letter)
 		#aggiungo selezione
-		path.mod_add_point(elaborate_tile_coordinate(recived_vector))
-		attempt.letter.append(letter)
-		attempt.xy.append(recived_vector)
-		i_tile_from_attempt(-1).selection_ok()
+		path.mod_add_point(recived_tile.position)
+		attempt.letters.append(letter)
+		attempt.tiles.append(recived_tile)
+		recived_tile.selection_ok()
 		
 		#attivo il segnale attempt_changed
 		attempt_changed.emit(letter)
 
-func _on_tile_selection_attempt(recived_vector: Vector2, selected: bool, letter: String):
+func _on_tile_selection_attempt(recived_tile: Node2D, selected: bool, letter: String):
 	if valid_attempt:
-		print("passed on ", recived_vector)
-		print("selection " + letter)
-		
-		var attempt_len = len(attempt.xy)
+		var attempt_len = len(attempt.letters)
 		#capisco se sto tornando indietro o progredendo
 		if selected:
-			if attempt_len > 1 and recived_vector + i_tile_from_attempt(-2).look_forward == attempt.xy[-1]:
+			if attempt_len > 1 and recived_tile.grid_vect + attempt.tiles[-2].look_forward == attempt.tiles[-1].grid_vect:
 				# Se la tile selezionata sta guardando in direzione dell'ultima tile in attempt significa che sto tornando indietro --> undo ultima selezione
 				path.mod_remove_point(path.get_point_count() - 1)
-				i_tile_from_attempt(-1).remove_selection()
-				attempt.letter.resize(attempt_len - 1)
-				attempt.xy.resize(attempt_len - 1)
+				attempt.tiles[-1].remove_selection()
+				attempt.letters.resize(attempt_len - 1)
+				attempt.tiles.resize(attempt_len - 1)
 		else:
-			if recived_vector.distance_to(attempt.xy[-1]) < 1.5:
+			if recived_tile.grid_vect.distance_to(attempt.tiles[-1].grid_vect) < 1.5:
 				#aggiungo selezione
-				path.mod_add_point(elaborate_tile_coordinate(recived_vector))
-				attempt.letter.append(letter)
-				attempt.xy.append(recived_vector)
-				i_tile_from_attempt(-1).selection_ok()
+				path.mod_add_point(elaborate_tile_coordinate(recived_tile.grid_vect))
+				attempt.letters.append(letter)
+				attempt.tiles.append(recived_tile)
+				recived_tile.selection_ok()
 				if attempt_len > 0:
 					#assegno look_forward per avere memoria di dove prosegue il path
-					i_tile_from_attempt(-2).look_forward = attempt.xy[-1] - attempt.xy[-2]
+					attempt.tiles[-2].look_forward = attempt.tiles[-1].grid_vect - attempt.tiles[-2].grid_vect
 		
 		#attivo il segnale attempt_changed
 		var nuova_parola: String = ""
-		for each_letter in attempt.letter:
+		for each_letter in attempt.letters:
 			nuova_parola += each_letter
 		attempt_changed.emit(nuova_parola)
 
@@ -171,7 +166,7 @@ func set_answer(result: AttemptResult, word: String) -> void:
 			color = Color(0.6, 0.6, 0.6)
 	
 	$Path.default_color = color
-	print(attempt)
+	print(attempt.letters)
 	ready_for_attempt = false
 	valid_attempt = false
 	get_tree().call_group("tiles_group", "set_result", result, word, color)
@@ -201,8 +196,8 @@ func _on_progress_bar_initials_threshold_signal() -> void:
 
 
 func _on_timer_timeout() -> void:
-	attempt.letter.clear()
-	attempt.xy.clear()
+	attempt.letters.clear()
+	attempt.tiles.clear()
 	$Path.mod_clear_points()
 	get_tree().call_group("tiles_group", "clear")
 	get_tree().call_group("tiles_group", "show_number", number_shown and not history_mode)

@@ -7,11 +7,10 @@ enum AttemptResult {
 	REPEATED #parola già trovata in precedenza
 }
 
-signal attempt_start(grid_vector: Vector2, letter: String)
-signal selection_attempt(grid_vector: Vector2, selected: bool, letter: String)
+signal attempt_start(tile: Node2D, letter: String)
+signal selection_attempt(tile: Node2D, selected: bool, letter: String)
 
-@export var grid_x: int = 0
-@export var grid_y: int = 0
+@export var grid_vect = Vector2()
 
 var selected: bool = false
 var look_forward = Vector2() #durante un attempt attivo, indica la tile successiva
@@ -27,11 +26,11 @@ func _ready() -> void:
 
 
 func set_letter(letters: Array) -> void:
-	$Sprite2D/Lettera.text = letters[grid_x][grid_y]
+	$Sprite2D/Lettera.text = letters[grid_vect.x][grid_vect.y]
 
 
 func set_passingWords(indexes: Array, words: Array) -> void:
-	for i in indexes[grid_x][grid_y]:
+	for i in indexes[grid_vect.x][grid_vect.y]:
 		passingWords.append(words[i])
 
 
@@ -86,8 +85,8 @@ func show_number(show_it: bool) -> void:
 
 func _on_area_2d_mouse_entered() -> void:
 	if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
-		selection_attempt.emit(Vector2(grid_x, grid_y), selected, $Sprite2D/Lettera.text)
+		selection_attempt.emit(self, selected, $Sprite2D/Lettera.text)
 
 
 func _on_button_button_down() -> void:
-	attempt_start.emit(Vector2(grid_x, grid_y), $Sprite2D/Lettera.text)
+	attempt_start.emit(self, $Sprite2D/Lettera.text)
