@@ -16,21 +16,19 @@ var words_finded = [] #colleziono le parole trovate
 
 
 func _input(event: InputEvent) -> void:
-	if event.is_action_released("click") and $Grid.is_visible_in_tree():
+	if event.is_action_released("click") and $Grid.is_visible_in_tree(): #TODO: assegnare a Grid?
 		if $Grid.valid_attempt:
 			var word_guessed = $Display.text
 			var result : AttemptResult
 			if words_finded.has(word_guessed):
 				result = AttemptResult.REPEATED
-				#todo: messaggio parola ripetuta
+				#TODO: messaggio parola ripetuta
 			elif words.has(word_guessed):
 				result = AttemptResult.NEW_FIND
 				words_finded.append(word_guessed)
-				
-				#save_results()  #TODO: da assegnare a main_wondow
 			else:
 				result = AttemptResult.WRONG
-				#todo: messaggio paroal non trovata
+				#TODO: messaggio paroal non trovata
 			
 			var word = $Display.text
 			$Grid.set_answer(result, word)
@@ -38,8 +36,6 @@ func _input(event: InputEvent) -> void:
 				$WordPanel.add_word(word)
 				$ProgressBar.increase(word)
 			attempt_result.emit(result, word)
-		#else:
-			#$Grid/Timer.start()  #se non era un tentativo valido anticipo il reset della griglia  #TODO to check, perché serviva?
 
 
 func load_game(data: Dictionary):

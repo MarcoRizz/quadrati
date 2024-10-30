@@ -7,18 +7,19 @@ enum AttemptResult {
 	REPEATED #parola già trovata in precedenza
 }
 
-signal selection_attempt(grid_vector, selected, letter)
+signal attempt_start(grid_vector: Vector2, letter: String)
+signal selection_attempt(grid_vector: Vector2, selected: bool, letter: String)
 
 @export var grid_x: int = 0
 @export var grid_y: int = 0
 
 var selected: bool = false
-var look_forward = Vector2(0, 0) #durante un tentativo indica la tile successiva
+var look_forward = Vector2() #durante un attempt attivo, indica la tile successiva
 
 var passingWords = [] #archivio le parole che possono passare per la tile
 var startingWords = [] #archivio le parole che possono iniziare dalla tile
 
-@onready var grid = $".."
+@onready var grid = $".."   #TODO: <-- da timuovere rif a grid
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -37,7 +38,7 @@ func set_passingWords(indexes: Array, words: Array) -> void:
 func number_update() -> void:
 	var new_number = len(startingWords);
 	$Sprite2D/Numero.text = str(new_number)
-	if grid.history_mode:
+	if grid.history_mode:    #TODO: <-- da timuovere rif a grid
 		$Sprite2D/Numero.hide()
 		$Sprite2D.modulate = Color.LIGHT_SLATE_GRAY
 		return
@@ -57,7 +58,7 @@ func selection_ok() -> void:
 
 func remove_selection() -> void:
 	selected = false
-	look_forward = Vector2(0, 0)
+	look_forward = Vector2()
 	$Sprite2D.self_modulate = Color(1, 1, 1)
 
 
@@ -84,11 +85,9 @@ func show_number(show_it: bool) -> void:
 
 
 func _on_area_2d_mouse_entered() -> void:
-	if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT) and grid.valid_attempt:
-		print("passed on {", grid_x, ", ", grid_y, "}")
+	if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
 		selection_attempt.emit(Vector2(grid_x, grid_y), selected, $Sprite2D/Lettera.text)
 
 
 func _on_button_button_down() -> void:
-	if grid.ready_for_attempt:
-		selection_attempt.emit(Vector2(grid_x, grid_y), selected, $Sprite2D/Lettera.text)
+	attempt_start.emit(Vector2(grid_x, grid_y), $Sprite2D/Lettera.text)

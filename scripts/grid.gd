@@ -22,7 +22,7 @@ signal clear()
 					  [$tile30, $tile31, $tile32, $tile33]]
 
 var attempt = {"letter": [], "xy": []}
-var ready_for_attempt = true
+var ready_for_attempt = false
 var valid_attempt = false
 var number_shown = false
 
@@ -66,10 +66,11 @@ func _process(delta: float) -> void:
 
 
 func _input(event):
-	#potrei avere un path plottato
-	if event is InputEventMouseButton and event.pressed:
-		path.mod_clear_points()
-		$Path.default_color = Color.YELLOW
+	if event.is_action_released("click"):
+		if not valid_attempt and $Timer.is_stopped():
+			#potrei avere un path plottato
+			path.mod_clear_points()
+			$Path.default_color = Color.YELLOW
 
 
 func instantiate(data: Dictionary) -> void:
@@ -110,36 +111,53 @@ func i_tile_from_attempt(i: int) -> Node2D:
 	return tiles[attempt.xy[i].x][attempt.xy[i].y]
 
 
-func _on_tile_selection_attempt(recived_vector, selected, letter):
-	print("selection " + letter)
-	print("position: " + str(recived_vector.x) + ", " + str(recived_vector.y))
-	
-	valid_attempt = true
-	
-	var attempt_len = len(attempt.xy)
-	#capisco se sto tornando indietro o progredendo
-	if not selected and (len(attempt.xy) == 0 or recived_vector.distance_to(attempt.xy[-1]) < 1.5):
+func _on_tile_attempt_start(recived_vector: Vector2, letter: String) -> void:
+	if ready_for_attempt:
+		path.mod_clear_points()
+		$Path.default_color = Color.YELLOW
+		valid_attempt = true
+		print("position: " + str(recived_vector.x) + ", " + str(recived_vector.y))
+		
+		print("selection " + letter)
 		#aggiungo selezione
 		path.mod_add_point(elaborate_tile_coordinate(recived_vector))
 		attempt.letter.append(letter)
 		attempt.xy.append(recived_vector)
 		i_tile_from_attempt(-1).selection_ok()
-		if attempt_len > 0:
-			i_tile_from_attempt(-2).look_forward = attempt.xy[-1] - attempt.xy[-2]
+		
+		#attivo il segnale attempt_changed
+		attempt_changed.emit(letter)
 
-	if selected and attempt_len > 1:
-		if recived_vector - attempt.xy[-1] == - i_tile_from_attempt(-2).look_forward:
-			#undo ultima selezione
-			path.mod_remove_point(path.get_point_count() - 1)
-			i_tile_from_attempt(-1).remove_selection()
-			attempt.letter.resize(attempt_len - 1)
-			attempt.xy.resize(attempt_len - 1)
-	
-	#attivo il segnale attempt_changed
-	var nuova_parola: String = ""
-	for each_letter in attempt.letter:
-		nuova_parola += each_letter
-	attempt_changed.emit(nuova_parola)
+func _on_tile_selection_attempt(recived_vector: Vector2, selected: bool, letter: String):
+	if valid_attempt:
+		print("passed on ", recived_vector)
+		print("selection " + letter)
+		
+		var attempt_len = len(attempt.xy)
+		#capisco se sto tornando indietro o progredendo
+		if selected:
+			if attempt_len > 1 and recived_vector + i_tile_from_attempt(-2).look_forward == attempt.xy[-1]:
+				# Se la tile selezionata sta guardando in direzione dell'ultima tile in attempt significa che sto tornando indietro --> undo ultima selezione
+				path.mod_remove_point(path.get_point_count() - 1)
+				i_tile_from_attempt(-1).remove_selection()
+				attempt.letter.resize(attempt_len - 1)
+				attempt.xy.resize(attempt_len - 1)
+		else:
+			if recived_vector.distance_to(attempt.xy[-1]) < 1.5:
+				#aggiungo selezione
+				path.mod_add_point(elaborate_tile_coordinate(recived_vector))
+				attempt.letter.append(letter)
+				attempt.xy.append(recived_vector)
+				i_tile_from_attempt(-1).selection_ok()
+				if attempt_len > 0:
+					#assegno look_forward per avere memoria di dove prosegue il path
+					i_tile_from_attempt(-2).look_forward = attempt.xy[-1] - attempt.xy[-2]
+		
+		#attivo il segnale attempt_changed
+		var nuova_parola: String = ""
+		for each_letter in attempt.letter:
+			nuova_parola += each_letter
+		attempt_changed.emit(nuova_parola)
 
 
 func set_answer(result: AttemptResult, word: String) -> void:
@@ -172,9 +190,10 @@ func _on_rotate_counter_clockwise_pressed() -> void:
 
 
 func show_path(path_tiles: Array) -> void:
-	$Path.default_color = Color(0.3, 0.5, 1)
-	for i_tile in path_tiles:
-		path.mod_add_point(elaborate_tile_coordinate(i_tile))
+	if ready_for_attempt:
+		$Path.default_color = Color(0.3, 0.5, 1)
+		for i_tile in path_tiles:
+			path.mod_add_point(elaborate_tile_coordinate(i_tile))
 
 
 func _on_progress_bar_initials_threshold_signal() -> void:
