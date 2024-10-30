@@ -21,6 +21,7 @@ offset_right = 45.0
 offset_bottom = 45.0
 pivot_offset = Vector2(22.5, 22.5)
 focus_mode = 0
+toggle_mode = true
 text = "<"
 
 [node name="Game" parent="." instance=ExtResource("3_kli33")]
@@ -43,5 +44,6 @@ z_index = -1
 color = Color(0.808998, 0.808998, 0.808998, 1)
 polygon = PackedVector2Array(0, 0, 400, 0, 400, 50, 0, 50)
 
+[connection signal="toggled" from="YesterdayButton" to="." method="_on_yesterday_button_toggled"]
 [connection signal="attempt_result" from="Game" to="." method="_on_game_attempt_result"]
 [connection signal="game_complete" from="Game" to="." method="_on_game_game_complete"]

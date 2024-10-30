@@ -11,7 +11,7 @@ signal show_path(word: String)
 @onready var vbox = $ScrollContainer/VBoxContainer
 @onready var scroll_container = $ScrollContainer
 
-var lunghezza_parole = {
+var box_parole = {
 	 "4-lettere": {"n": 0, "n_max": 0, "title": Label.new(), "containers": []},
 	 "5-lettere": {"n": 0, "n_max": 0, "title": Label.new(), "containers": []},
 	 "6-lettere": {"n": 0, "n_max": 0, "title": Label.new(), "containers": []},
@@ -63,11 +63,11 @@ func _ready() -> void:
 	#rilevo la posizione globale
 	panel_y_bottom = position.y + original_size_y
 	
-	# Impostazioni dei Nodi di lunghezza_parole
-	for size_n in lunghezza_parole:
-		lunghezza_parole[size_n]["title"].set("theme_override_colors/font_color", Color.BLANCHED_ALMOND)
+	# Impostazioni dei Nodi di box_parole
+	for size_n in box_parole:
+		box_parole[size_n]["title"].set("theme_override_colors/font_color", Color.BLANCHED_ALMOND)
 		# Aggiungi il primo HBoxContainer vuoto
-		create_hbox(lunghezza_parole[size_n]["containers"])
+		create_hbox(box_parole[size_n]["containers"])
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -104,11 +104,11 @@ func _process(delta: float) -> void:
 func add_word(word: String, increase_count: bool = true):
 	var lunghezza = word.length()
 	# Verifica la size_n corrispondente alla lunghezza della parola
-	for size_n in lunghezza_parole:
+	for size_n in box_parole:
 		if str(lunghezza) + "-lettere" == size_n:
-			var n = lunghezza_parole[size_n]["n"]
-			var n_max = lunghezza_parole[size_n]["n_max"]
-			var container_array = lunghezza_parole[size_n]["containers"]
+			var n = box_parole[size_n]["n"]
+			var n_max = box_parole[size_n]["n_max"]
+			var container_array = box_parole[size_n]["containers"]
 			var last_container = container_array[-1]  # Ottieni l'ultimo HBoxContainer
 			
 			# Crea un nuovo Label per la parola
@@ -136,10 +136,10 @@ func add_word(word: String, increase_count: bool = true):
 			if increase_count:
 				# Aggiorna il conteggio delle parole trovate
 				n +=1
-				lunghezza_parole[size_n]["n"] = n
-				lunghezza_parole[size_n]["title"].text = size_n + ": " + str(n) + "/" + str(n_max)
+				box_parole[size_n]["n"] = n
+				box_parole[size_n]["title"].text = size_n + ": " + str(n) + "/" + str(n_max)
 				if n >= n_max:
-					lunghezza_parole[size_n]["title"].set("theme_override_colors/font_color", Color.AQUAMARINE)
+					box_parole[size_n]["title"].set("theme_override_colors/font_color", Color.AQUAMARINE)
 			else:
 				word_label.self_modulate = Color(1, 0.3, 0.3)
 
@@ -169,38 +169,16 @@ func create_hbox(container_array: Array) -> HBoxContainer:
 func instantiate(json: Dictionary) -> void:
 	for i_parola in json.words:
 		var lunghezza = i_parola.length()
-		lunghezza_parole[str(lunghezza) + "-lettere"].n_max += 1
+		box_parole[str(lunghezza) + "-lettere"].n_max += 1
 	
-	for size_n in lunghezza_parole:
-		if lunghezza_parole[size_n]["n_max"] != 0:
-			lunghezza_parole[size_n]["title"].text = size_n + ": 0/" + str(lunghezza_parole[size_n]["n_max"])
-			vbox.add_child(lunghezza_parole[size_n]["title"])
+	for size_n in box_parole:
+		if box_parole[size_n]["n_max"] != 0:
+			box_parole[size_n]["title"].text = size_n + ": 0/" + str(box_parole[size_n]["n_max"])
+			vbox.add_child(box_parole[size_n]["title"])
 			
 			# Aggiungi tutti gli HBoxContainer per la specifica lunghezza di parole
-			for container in lunghezza_parole[size_n]["containers"]:
+			for container in box_parole[size_n]["containers"]:
 				vbox.add_child(container)
-
-
-func deinstantiate() -> void:
-	# Scollego e resetto tutte le righe in WordPanel
-	for child in vbox.get_children():
-		vbox.remove_child(child)
-		if child.is_class("HBoxContainer"):
-			child.queue_free()
-	for size_n in lunghezza_parole:
-		lunghezza_parole[size_n]["n_max"] = 0
-		lunghezza_parole[size_n]["n"] = 0
-		lunghezza_parole[size_n]["title"].set("theme_override_colors/font_color", Color.BLANCHED_ALMOND)
-		# non riassegno i titoli tanto reinizializzo subito
-		
-		lunghezza_parole[size_n]["containers"].clear()
-		
-		# Aggiungi il primo HBoxContainer vuoto
-		create_hbox(lunghezza_parole[size_n]["containers"])
-		# La prima e unica riga la svuoto
-		for i_label in lunghezza_parole[size_n]["containers"][0].get_children():
-			lunghezza_parole[size_n]["containers"][0].remove_child(i_label)
-			i_label.queue_free()
 
 
 func _on_button_pressed() -> void:

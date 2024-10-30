@@ -95,15 +95,6 @@ func instantiate(data: Dictionary) -> void:
 	$Timer.start()
 
 
-func deinstantiate() -> void: #TODO: da riconsiderare dopo riabilitazione pulsante yesterday
-	number_shown = false
-	for y in range(grid_size):
-		for x in range(grid_size):
-			tiles[x][y].passingWords.clear()
-			tiles[x][y].startingWords.clear()
-			# tiles[x][y].number_update()  #per ora non serve
-
-
 func elaborate_tile_coordinate(grid_vector: Vector2) -> Vector2:
 	return Vector2(
 		(tile_size + tile_spacing) * (grid_vector.x - 1.5),
@@ -131,7 +122,7 @@ func _on_tile_attempt_start(recived_tile: Node2D, letter: String) -> void:
 
 func _on_tile_selection_attempt(recived_tile: Node2D, selected: bool, letter: String):
 	if valid_attempt:
-		var attempt_len = len(attempt_tiles)
+		var attempt_len = attempt_tiles.size()
 		#capisco se sto tornando indietro o progredendo
 		if selected:
 			if attempt_len > 1 and recived_tile.grid_vect + attempt_tiles[-2].look_forward == attempt_tiles[-1].grid_vect:

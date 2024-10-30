@@ -29,13 +29,17 @@ func set_letter(letters: Array) -> void:
 	$Sprite2D/Lettera.text = letters[grid_vect.x][grid_vect.y]
 
 
+func get_letter() -> String:
+	return $Sprite2D/Lettera.text
+
+
 func set_passingWords(indexes: Array, words: Array) -> void:
 	for i in indexes[grid_vect.x][grid_vect.y]:
 		passingWords.append(words[i])
 
 
 func number_update() -> void:
-	var new_number = len(startingWords);
+	var new_number = startingWords.size();
 	$Sprite2D/Numero.text = str(new_number)
 	if grid.history_mode:    #TODO: <-- da timuovere rif a grid
 		$Sprite2D/Numero.hide()
@@ -43,7 +47,7 @@ func number_update() -> void:
 		return
 	if not new_number:
 		$Sprite2D/Numero.hide()
-	if not len(passingWords):
+	if not passingWords.size():
 		$Sprite2D.self_modulate = Color(1, 1, 1)
 		$Sprite2D.modulate = Color(1, 1, 1, 0.4)
 	else:
@@ -77,7 +81,7 @@ func clear() -> void:
 
 
 func show_number(show_it: bool) -> void:
-	if show_it and len(startingWords) != 0:
+	if show_it and not startingWords.is_empty():
 		$Sprite2D/Numero.show()
 	else:
 		$Sprite2D/Numero.hide()

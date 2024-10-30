@@ -9,7 +9,7 @@ func _ready() -> void:
 	pass # Replace with function body.
 
 func increase(word: String) -> void:
-	value += len(word)
+	value += word.length()
 	
 	if not initials_threshold and value * 3.0 > max_value * 1.0:
 		initials_threshold = true

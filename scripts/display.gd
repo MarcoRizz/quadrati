@@ -6,9 +6,9 @@ func _ready() -> void:
 	pass # Replace with function body.
 
 
-func _on_grid_attempt_changed(add_char: bool, char: String) -> void:
+func _on_grid_attempt_changed(add_char: bool, letter: String) -> void:
 	if add_char:
-		text += char
+		text += letter
 	else:
 		text = text.erase(text.length() - 1, 1)
 

@@ -13,17 +13,23 @@ const fileName_actual_results := "user://savegame.save"
 const fileName_old_grid := "user://lastsavedjson.save"
 const fileName_old_results := "user://lastsavedgame.save"
 
+const NodeGrid = preload("res://scenes/main_game.tscn")
+
 var todaysJson : Dictionary
 var todaysSave : Dictionary
 
+@onready var game_obj = $Game
+var game_obj_position # Lo assegno in _ready
+
 
 func _ready() -> void:
+	game_obj_position = game_obj.position
 	#leggo il file json di oggi
 	# Create an HTTP request node and connect its completion signal.
 	var http_request = HTTPRequest.new()
 	add_child(http_request)
 	http_request.request_completed.connect(self._http_request_completed)
-	$Game.hide()
+	game_obj.hide()
 	$MidText.show()
 	
 	# Ottieni informazioni del client
@@ -60,7 +66,7 @@ func _ready() -> void:
 			return
 		var json_as_text = FileAccess.get_file_as_string(fileName_actual_grid)
 		todaysJson = JSON.parse_string(json_as_text)
-		load_data_to_game(todaysJson)
+		load_todays_data_to_game()
 
 
 # Called when the HTTP request is completed.
@@ -74,9 +80,10 @@ func _http_request_completed(result, response_code, headers, body):
 				print("Saved JSON is corrupted, exiting")
 				get_tree().quit()
 				return
-			load_data_to_game(todaysJson)
+			load_todays_data_to_game()
 			return
 	
+	# Ricevo il grid odierno
 	var json = JSON.new()
 	json.parse(body.get_string_from_utf8())
 	todaysJson = json.get_data()
@@ -93,13 +100,11 @@ func _http_request_completed(result, response_code, headers, body):
 			print("Saved JSON is corrupted, exiting")
 			get_tree().quit()
 			return
-		load_data_to_game(todaysJson)
+		load_todays_data_to_game()
 		return
 	
 	# Controlla se esiste già un file fileName_actual_grid
-	var local_saved_game = load_json_file(fileName_actual_grid, false)
-	
-	
+	var local_saved_game = load_json_file(fileName_actual_grid)
 	if not valid_game_file(local_saved_game) or not local_saved_game.todaysNum == todaysJson.todaysNum:
 		if not valid_game_file(local_saved_game):
 			if not local_saved_game == {}:
@@ -110,17 +115,38 @@ func _http_request_completed(result, response_code, headers, body):
 		# Salva il nuovo file json in fileName_actual_grid
 		save_dictionary_file(todaysJson, fileName_actual_grid)
 	
-	##in rifacimento
-	# Controlla se il 'todaysNum' del file salvato è diverso
+	# Controlla se il 'todaysNum' del file salvato è diverso (è cambiato giorno)
 	if valid_game_file(local_saved_game) and local_saved_game.todaysNum != todaysJson.todaysNum:
 		# Salva una copia del file esistente con il nuovo nome fileName_old_grid
 		save_dictionary_file(local_saved_game, fileName_old_grid)
 		
 		# Salva il nuovo file json in fileName_actual_grid
 		save_dictionary_file(todaysJson, fileName_actual_grid)
-	##in rifacimento
 	
-	load_data_to_game(todaysJson)
+	load_todays_data_to_game()
+
+
+func load_todays_data_to_game():
+	# Carico il salvataggio precedente
+	todaysSave = load_json_file(fileName_actual_results)
+	if not valid_save_file(todaysSave) or not todaysSave.todaysNum == todaysJson.todaysNum:
+		if not valid_save_file(todaysSave):
+			if not todaysSave == {}:
+				print("corrupted save file, ignoring it...")
+		else:
+			# Copia il contenuto del file in un nuovo file fileName_old_results
+			save_dictionary_file(todaysSave, fileName_old_results)
+		#creo un nuovo Dizionario vuoto col numero odierno
+		todaysSave.clear()
+		todaysSave.todaysNum = todaysJson.todaysNum
+		todaysSave.wordsFinded = []
+	
+	# Carico la schermata
+	$Title.text += "#" + str(todaysJson.todaysNum)
+	game_obj.load_game(todaysJson)
+	game_obj.load_results(todaysSave)
+	game_obj.show()
+	$MidText.hide()
 
 
 func valid_game_file(file: Dictionary) -> bool:
@@ -129,33 +155,6 @@ func valid_game_file(file: Dictionary) -> bool:
 
 func valid_save_file(file: Dictionary) -> bool:
 	return file.has("todaysNum") and file.has("wordsFinded")
-
-func load_data_to_game(json_to_load, also_load_results: bool = true):
-	$Title.text += "#" + str(json_to_load.todaysNum)
-	
-	#trasmetto le informazioni ricevute al Game
-	$Game.load_game(json_to_load)
-	
-	#se trovo un file salvato odierno, carico le parole già trovate
-	if also_load_results:
-		todaysSave = load_json_file(fileName_actual_results)
-		
-		if not valid_save_file(todaysSave) or not todaysSave.todaysNum == todaysJson.todaysNum:
-			if not valid_save_file(todaysSave):
-				if not todaysSave == {}:
-					print("corrupted save file, ignoring it...")
-			else:
-				# Copia il contenuto del file in un nuovo file fileName_old_results
-				save_dictionary_file(todaysSave, fileName_old_results)
-			#creo un nuovo Dizionario vuoto col numero odierno
-			todaysSave.clear()
-			todaysSave.todaysNum = todaysJson.todaysNum
-			todaysSave.wordsFinded = []
-		else:
-			$Game.load_results(todaysSave)
-	
-	$Game.show()
-	$MidText.hide()
 
 
 #func _on_yesterday_button_pressed() -> void:
@@ -228,13 +227,42 @@ func load_data_to_game(json_to_load, also_load_results: bool = true):
 		#load_data(yesterdaysJson)
 #
 		#$YesterdayButton.rotation = 0
+func _on_yesterday_button_toggled(toggled_on: bool) -> void:
+	var game_to_load: Dictionary
+	var save_to_load: Dictionary
+	if toggled_on:
+		# Carico i dati vecchi
+		game_to_load = load_json_file(fileName_old_grid)
+		if not valid_game_file(game_to_load) and not game_to_load == {}:
+			#TODO: messaggio a schermo
+			print("corrupted old json file, old results view canceled")
+			return
+		save_to_load = load_json_file(fileName_old_results)
+		if not valid_save_file(save_to_load) or not save_to_load.todaysNum == game_to_load.todaysNum:
+			if not valid_save_file(save_to_load) and not save_to_load == {}:
+				print("corrupted old save file, ignoring it...")
+			save_to_load.clear()
+	else:
+		game_to_load = todaysJson
+		save_to_load = todaysSave
+	
+	# Cancello Game vecchio e ne istanzio uno nuovo
+	#game_obj.queue_free()
+	game_obj.free()
+	var new_grid = NodeGrid.instantiate()
+	add_child(new_grid)
+	game_obj = new_grid
+	game_obj.position = game_obj_position
+	
+	$Title.text = "QUADRATI#" + str(game_to_load.todaysNum)
+	game_obj.history_mode = toggled_on
+	game_obj.load_game(game_to_load)
+	game_obj.load_results(save_to_load)
+	game_obj.history_mode = toggled_on
 
 
-func load_json_file(fileName: String, expect_existing_file: bool = true) -> Dictionary:
+func load_json_file(fileName: String) -> Dictionary:
 	if not FileAccess.file_exists(fileName):
-		if expect_existing_file:
-			print("load_json_file -> file non trovato: ", fileName)
-			return {}
 		return {}
 	
 	# Carica il file di salvataggio

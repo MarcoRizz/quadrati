@@ -10,6 +10,8 @@ signal attempt_result(word_finded: AttemptResult, word: String)
 signal reveal_word(word: String)
 signal game_complete()
 
+var history_mode = false
+
 var words = [] #colleziono tutte le parole
 var startingWords = [] #colleziono tutti gli inizi delle parole
 var words_finded = [] #colleziono le parole trovate
@@ -39,10 +41,11 @@ func _input(event: InputEvent) -> void:
 
 
 func load_game(data: Dictionary):
+	$Grid.history_mode = history_mode
 	# Aggiungi le parole
 	for i_parola in data.words:
 		words.append(i_parola)
-		$ProgressBar.max_value += len(i_parola)
+		$ProgressBar.max_value += i_parola.length()
 	
 	# Salvo le posizioni iniziali
 	for i_start in data.startingLinks:
@@ -93,16 +96,16 @@ func find_path_from_json(word: String) -> Array[Vector2]:
 
 func find_path_recursive_step(starting_tile: Array[Vector2], step: int, word: String) -> Array[Vector2]:
 	# Controllo se abbiamo raggiunto il numero di passi massimo
-	if step + 1 == len(word):
+	if step + 1 == word.length():
 		return starting_tile
 	
 	else:
 		for dir in [Vector2(0, -1), Vector2(1, -1), Vector2(1, 0), Vector2(1, 1), Vector2(0, 1), Vector2(-1, 1), Vector2(-1, 0), Vector2(-1, -1)]:
 			var new_tile = starting_tile[-1] + dir
-			if new_tile.x >= 0 and new_tile.x < 4 and new_tile.y >= 0 and new_tile.y < 4 and starting_tile.find(new_tile) == -1 and $Grid.tiles[new_tile.x][new_tile.y].get_node("Sprite2D").get_node("Lettera").text == word[step + 1]:
+			if new_tile.x >= 0 and new_tile.x < 4 and new_tile.y >= 0 and new_tile.y < 4 and starting_tile.find(new_tile) == -1 and $Grid.tiles[new_tile.x][new_tile.y].get_letter() == word[step + 1]:
 				starting_tile.append(new_tile)
 				var path = find_path_recursive_step(starting_tile, step + 1, word)
-				if len(path) == len(word):
+				if path.size() == word.length():
 					return path
 				starting_tile.resize(starting_tile.size() - 1)
 			
