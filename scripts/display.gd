@@ -6,9 +6,12 @@ func _ready() -> void:
 	pass # Replace with function body.
 
 
-func _on_grid_attempt_changed(word: String) -> void:
-	self.text = word
+func _on_grid_attempt_changed(add_char: bool, char: String) -> void:
+	if add_char:
+		text += char
+	else:
+		text = text.erase(text.length() - 1, 1)
 
 
 func _on_grid_clear() -> void:
-	self.text = ""
+	text = ""

@@ -8,7 +8,8 @@ enum AttemptResult {
 
 const grid_size := 4
 
-signal attempt_changed(word: String)
+signal attempt_changed(add_char: bool, char: String)
+signal attempt_emitted(word: String)
 signal clear()
 
 @export var tile_size := 90.0 #todo: prenderle dalla GUI
@@ -21,7 +22,7 @@ signal clear()
 					  [$tile20, $tile21, $tile22, $tile23],
 					  [$tile30, $tile31, $tile32, $tile33]]
 
-var attempt = {"letters": [], "tiles": []}
+var attempt_tiles: Array[Node2D]
 var ready_for_attempt = false
 var valid_attempt = false
 var number_shown = false
@@ -71,6 +72,9 @@ func _input(event):
 			#potrei avere un path plottato
 			path.mod_clear_points()
 			$Path.default_color = Color.YELLOW
+		
+		elif valid_attempt:
+			attempt_emitted.emit()
 
 
 func instantiate(data: Dictionary) -> void:
@@ -119,40 +123,35 @@ func _on_tile_attempt_start(recived_tile: Node2D, letter: String) -> void:
 		
 		#aggiungo selezione
 		path.mod_add_point(recived_tile.position)
-		attempt.letters.append(letter)
-		attempt.tiles.append(recived_tile)
+		attempt_tiles.append(recived_tile)
 		recived_tile.selection_ok()
 		
 		#attivo il segnale attempt_changed
-		attempt_changed.emit(letter)
+		attempt_changed.emit(true, letter)
 
 func _on_tile_selection_attempt(recived_tile: Node2D, selected: bool, letter: String):
 	if valid_attempt:
-		var attempt_len = len(attempt.letters)
+		var attempt_len = len(attempt_tiles)
 		#capisco se sto tornando indietro o progredendo
 		if selected:
-			if attempt_len > 1 and recived_tile.grid_vect + attempt.tiles[-2].look_forward == attempt.tiles[-1].grid_vect:
+			if attempt_len > 1 and recived_tile.grid_vect + attempt_tiles[-2].look_forward == attempt_tiles[-1].grid_vect:
 				# Se la tile selezionata sta guardando in direzione dell'ultima tile in attempt significa che sto tornando indietro --> undo ultima selezione
 				path.mod_remove_point(path.get_point_count() - 1)
-				attempt.tiles[-1].remove_selection()
-				attempt.letters.resize(attempt_len - 1)
-				attempt.tiles.resize(attempt_len - 1)
+				attempt_tiles[-1].remove_selection()
+				attempt_tiles.resize(attempt_len - 1)
+				
+				attempt_changed.emit(not selected, letter)
 		else:
-			if recived_tile.grid_vect.distance_to(attempt.tiles[-1].grid_vect) < 1.5:
+			if recived_tile.grid_vect.distance_to(attempt_tiles[-1].grid_vect) < 1.5:
 				#aggiungo selezione
 				path.mod_add_point(elaborate_tile_coordinate(recived_tile.grid_vect))
-				attempt.letters.append(letter)
-				attempt.tiles.append(recived_tile)
+				attempt_tiles.append(recived_tile)
 				recived_tile.selection_ok()
 				if attempt_len > 0:
 					#assegno look_forward per avere memoria di dove prosegue il path
-					attempt.tiles[-2].look_forward = attempt.tiles[-1].grid_vect - attempt.tiles[-2].grid_vect
-		
-		#attivo il segnale attempt_changed
-		var nuova_parola: String = ""
-		for each_letter in attempt.letters:
-			nuova_parola += each_letter
-		attempt_changed.emit(nuova_parola)
+					attempt_tiles[-2].look_forward = attempt_tiles[-1].grid_vect - attempt_tiles[-2].grid_vect
+				
+				attempt_changed.emit(not selected, letter)
 
 
 func set_answer(result: AttemptResult, word: String) -> void:
@@ -166,7 +165,6 @@ func set_answer(result: AttemptResult, word: String) -> void:
 			color = Color(0.6, 0.6, 0.6)
 	
 	$Path.default_color = color
-	print(attempt.letters)
 	ready_for_attempt = false
 	valid_attempt = false
 	get_tree().call_group("tiles_group", "set_result", result, word, color)
@@ -196,8 +194,7 @@ func _on_progress_bar_initials_threshold_signal() -> void:
 
 
 func _on_timer_timeout() -> void:
-	attempt.letters.clear()
-	attempt.tiles.clear()
+	attempt_tiles.clear()
 	$Path.mod_clear_points()
 	get_tree().call_group("tiles_group", "clear")
 	get_tree().call_group("tiles_group", "show_number", number_shown and not history_mode)
