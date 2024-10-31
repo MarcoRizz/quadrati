@@ -6,26 +6,29 @@ enum AttemptResult {
 	REPEATED #parola già trovata in precedenza
 }
 
+const parola_obj = preload("res://scenes/worldpanel_parola.tscn")
+
 signal show_path(word: String)
 
 @onready var vbox = $ScrollContainer/VBoxContainer
 @onready var scroll_container = $ScrollContainer
 
 var box_parole = {
-	 "4-lettere": {"n": 0, "n_max": 0, "title": Label.new(), "containers": []},
-	 "5-lettere": {"n": 0, "n_max": 0, "title": Label.new(), "containers": []},
-	 "6-lettere": {"n": 0, "n_max": 0, "title": Label.new(), "containers": []},
-	 "7-lettere": {"n": 0, "n_max": 0, "title": Label.new(), "containers": []},
-	 "8-lettere": {"n": 0, "n_max": 0, "title": Label.new(), "containers": []},
-	 "9-lettere": {"n": 0, "n_max": 0, "title": Label.new(), "containers": []},
-	"10-lettere": {"n": 0, "n_max": 0, "title": Label.new(), "containers": []},
-	"11-lettere": {"n": 0, "n_max": 0, "title": Label.new(), "containers": []},
-	"12-lettere": {"n": 0, "n_max": 0, "title": Label.new(), "containers": []},
-	"13-lettere": {"n": 0, "n_max": 0, "title": Label.new(), "containers": []},
-	"14-lettere": {"n": 0, "n_max": 0, "title": Label.new(), "containers": []},
-	"15-lettere": {"n": 0, "n_max": 0, "title": Label.new(), "containers": []},
-	"16-lettere": {"n": 0, "n_max": 0, "title": Label.new(), "containers": []}
+	 "4": {"n": 0, "n_max": 0, "title": Label.new(), "containers": []},
+	 "5": {"n": 0, "n_max": 0, "title": Label.new(), "containers": []},
+	 "6": {"n": 0, "n_max": 0, "title": Label.new(), "containers": []},
+	 "7": {"n": 0, "n_max": 0, "title": Label.new(), "containers": []},
+	 "8": {"n": 0, "n_max": 0, "title": Label.new(), "containers": []},
+	 "9": {"n": 0, "n_max": 0, "title": Label.new(), "containers": []},
+	"10": {"n": 0, "n_max": 0, "title": Label.new(), "containers": []},
+	"11": {"n": 0, "n_max": 0, "title": Label.new(), "containers": []},
+	"12": {"n": 0, "n_max": 0, "title": Label.new(), "containers": []},
+	"13": {"n": 0, "n_max": 0, "title": Label.new(), "containers": []},
+	"14": {"n": 0, "n_max": 0, "title": Label.new(), "containers": []},
+	"15": {"n": 0, "n_max": 0, "title": Label.new(), "containers": []},
+	"16": {"n": 0, "n_max": 0, "title": Label.new(), "containers": []}
 }
+var all_words = Node.new() #qui salvo tutte le parole
 
 # Variabili per l'espansione animata
 var original_size_y = size.y
@@ -34,40 +37,11 @@ const moving_vel = 500.0
 var panel_y_bottom #la assegno in _ready()
 var moving_up = false
 
-# Variabili per la costruzione delle Label
-var font #salvo il font per calcolare le lunghezze delle stringhe
-var h_label
-var w_container
-const dash_string = "-"
-var w_dash_label
-
-# Variabili per il click delle parole
-const max_holding_time = 1.0 #secondi
-var clicked_label
-var click_global_position
-var max_mouse_move = 10.0 #se sto trascinando il Panel evito che continui a cliccare la parola
-var holding_click_delta_time
-
 func _ready() -> void:
-	#imposto le variabili statiche
-	# Ottieni il font del Label (assicurati che sia definito un font, altrimenti usa il font di default)
-	font = Label.new().get_theme_font("font")  # Recupera il font dal tema
-	if font == null:
-		font = Label.new().get_font("CustomFont")  # Prova a ottenere il font personalizzato se esiste
-	h_label = font.get_string_size(dash_string).y
-	w_container = scroll_container.size.x
-	w_dash_label = font.get_string_size(dash_string).x
-	
 	#impedisco il click delle lettere se Panel è esteso
 	mouse_filter = Control.MOUSE_FILTER_STOP
 	#rilevo la posizione globale
 	panel_y_bottom = position.y + original_size_y
-	
-	# Impostazioni dei Nodi di box_parole
-	for size_n in box_parole:
-		box_parole[size_n]["title"].set("theme_override_colors/font_color", Color.BLANCHED_ALMOND)
-		# Aggiungi il primo HBoxContainer vuoto
-		create_hbox(box_parole[size_n]["containers"])
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -80,105 +54,75 @@ func _process(delta: float) -> void:
 		# Aggiorna la posizione solo se size.y cambia
 		position.y = panel_y_bottom - size.y
 
-	# Controlla se è stato cliccato un label
-	if clicked_label == null:
-		return
-	else:
-		holding_click_delta_time += delta
-		
-		if click_global_position.distance_to(get_global_mouse_position()) > max_mouse_move:
-			clicked_label = null
-			return
-		else:
-		
-			# Se il tempo di hold è stato superato, esegui un'azione
-			if holding_click_delta_time > max_holding_time:
-				# Recupera il testo della label per comporre l'URL
-				var url = "https://www.google.com/search?q=" + clicked_label.text + "+vocabolario"
-				clicked_label = null
-				
-				# Apre l'URL nel browser
-				OS.shell_open(url)
-
-
-func add_word(word: String, increase_count: bool = true):
-	var lunghezza = word.length()
-	# Verifica la size_n corrispondente alla lunghezza della parola
-	for size_n in box_parole:
-		if str(lunghezza) + "-lettere" == size_n:
-			var n = box_parole[size_n]["n"]
-			var n_max = box_parole[size_n]["n_max"]
-			var container_array = box_parole[size_n]["containers"]
-			var last_container = container_array[-1]  # Ottieni l'ultimo HBoxContainer
-			
-			# Crea un nuovo Label per la parola
-			var word_label = creat_clickable_label(word)
-			
-			if n > 0:
-				# Se la nuova parola non ci sta nell'ultimo container, crea un nuovo HBoxContainer (vai a capo)
-				var x_pos = 0
-				for each_label in last_container.get_children():
-					x_pos += font.get_string_size(each_label.text).x + 4
-					
-				if x_pos + w_dash_label + font.get_string_size(word).x + 8 > last_container.get_combined_minimum_size().x: #last_label.position.x + last_label.size.x + w_dash_label + font.get_string_size(word).x + 8 > last_container.get_combined_minimum_size().x:
-					var hbox = create_hbox(container_array)
-					last_container.add_sibling(hbox)
-					last_container = hbox
-				else:
-					# Aggiungi il trattino "-" se non è la prima parola nel container
-					var dash_label = Label.new()
-					dash_label.text = dash_string
-					last_container.add_child(dash_label)
-			
-			# Aggiungi la parola all'ultimo HBoxContainer
-			last_container.add_child(word_label)
-			
-			if increase_count:
-				# Aggiorna il conteggio delle parole trovate
-				n +=1
-				box_parole[size_n]["n"] = n
-				box_parole[size_n]["title"].text = size_n + ": " + str(n) + "/" + str(n_max)
-				if n >= n_max:
-					box_parole[size_n]["title"].set("theme_override_colors/font_color", Color.AQUAMARINE)
-			else:
-				word_label.self_modulate = Color(1, 0.3, 0.3)
-
-
-func creat_clickable_label(word: String) -> Label:
-	# Crea un nuovo Label per la parola
-	var word_label = Label.new()
-	word_label.text = word
-	word_label.mouse_filter = Control.MOUSE_FILTER_PASS
-	
-	# Connetti l'evento di input alla label
-	word_label.connect("gui_input", _on_label_clicked.bind(word_label))
-	word_label.connect("mouse_exited", _on_label_exited)
-	
-	return word_label
-
-
-func create_hbox(container_array: Array) -> HBoxContainer:
-	var hbox = HBoxContainer.new()
-	hbox.custom_minimum_size.x = w_container
-	hbox.custom_minimum_size.y = h_label
-	if not container_array == null:
-		container_array.append(hbox)
-	return hbox
+	# Controlla se è stato cliccato un label TODO da implementare in worldpanel_parola
+	#if clicked_label == null:
+		#return
+	#else:
+		#holding_click_delta_time += delta
+		#
+		#if click_global_position.distance_to(get_global_mouse_position()) > max_mouse_move:
+			#clicked_label = null
+			#return
+		#else:
+		#
+			## Se il tempo di hold è stato superato, esegui un'azione
+			#if holding_click_delta_time > max_holding_time:
+				## Recupera il testo della label per comporre l'URL
+				#var url = "https://www.google.com/search?q=" + clicked_label.text + "+vocabolario"
+				#clicked_label = null
+				#
+				## Apre l'URL nel browser
+				#OS.shell_open(url)
 
 
 func instantiate(json: Dictionary) -> void:
 	for i_parola in json.words:
 		var lunghezza = i_parola.length()
-		box_parole[str(lunghezza) + "-lettere"].n_max += 1
+		box_parole[str(lunghezza)].n_max += 1
+		var new_parola = parola_obj.instantiate()
+		new_parola.name = "_" + i_parola
+		new_parola.text = i_parola
+		all_words.add_child(new_parola)
 	
 	for size_n in box_parole:
-		if box_parole[size_n]["n_max"] != 0:
-			box_parole[size_n]["title"].text = size_n + ": 0/" + str(box_parole[size_n]["n_max"])
-			vbox.add_child(box_parole[size_n]["title"])
-			
-			# Aggiungi tutti gli HBoxContainer per la specifica lunghezza di parole
-			for container in box_parole[size_n]["containers"]:
-				vbox.add_child(container)
+		if box_parole[size_n]["n_max"] == 0:
+			vbox.remove_child(vbox.get_node(str(size_n) + "_titolo"))
+			vbox.remove_child(vbox.get_node(str(size_n) + "_box"))
+		else:
+			# Inizializzo il titolo
+			vbox.get_node(str(size_n) + "_titolo").text = size_n + "-lettere: 0/" + str(box_parole[size_n]["n_max"])
+
+
+func add_word(word: String, increase_count: bool = true):
+	var lunghezza_char = str(word.length())
+	
+	all_words.get_node("_" + word).reparent(vbox.get_node(lunghezza_char + "_box"))
+	
+	if increase_count:
+		# Aggiorna il conteggio delle parole trovate
+		var n = box_parole[lunghezza_char]["n"] + 1
+		var n_max = box_parole[lunghezza_char]["n_max"]
+		var title = vbox.get_node(str(lunghezza_char) + "_titolo")
+		box_parole[lunghezza_char]["n"] = n
+		title.text = lunghezza_char + "-lettere: " + str(n) + "/" + str(box_parole[lunghezza_char]["n_max"])
+		if n >= n_max:
+			title.set("theme_override_colors/font_color", Color.AQUAMARINE)
+	else:
+		pass
+		#word_label.self_modulate = Color(1, 0.3, 0.3)  #TODO per la visualizzazione delle parole in history_mode
+
+
+#func creat_clickable_label(word: String) -> Label:
+	## Crea un nuovo Label per la parola
+	#var word_label = Label.new()
+	#word_label.text = word
+	#word_label.mouse_filter = Control.MOUSE_FILTER_PASS
+	#
+	## Connetti l'evento di input alla label
+	#word_label.connect("gui_input", _on_label_clicked.bind(word_label))
+	#word_label.connect("mouse_exited", _on_label_exited)
+	#
+	#return word_label
 
 
 func _on_button_pressed() -> void:
@@ -201,22 +145,22 @@ func _input(event):
 				moving_up = false
 
 
-# Funzione che si attiva al clic della label
-func _on_label_clicked(event: InputEvent, label: Label) -> void:
-	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
-		if event.is_pressed():
-			clicked_label = label
-			click_global_position = get_global_mouse_position()
-			holding_click_delta_time = 0
-		
-		elif event.is_released() and label == clicked_label:
-			show_path.emit(clicked_label.text)
-			clicked_label = null
-
-
-func _on_label_exited() -> void:
-	clicked_label = null
-
-
-func _on_main_reveal_word(word: String) -> void:
-	add_word(word, false)
+## Funzione che si attiva al clic della label
+#func _on_label_clicked(event: InputEvent, label: Label) -> void:
+	#if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
+		#if event.is_pressed():
+			#clicked_label = label
+			#click_global_position = get_global_mouse_position()
+			#holding_click_delta_time = 0
+		#
+		#elif event.is_released() and label == clicked_label:
+			#show_path.emit(clicked_label.text)
+			#clicked_label = null
+#
+#
+#func _on_label_exited() -> void:
+	#clicked_label = null
+#
+#
+#func _on_main_reveal_word(word: String) -> void:
+	#add_word(word, false)
