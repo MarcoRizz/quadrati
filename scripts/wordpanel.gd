@@ -6,7 +6,7 @@ enum AttemptResult {
 	REPEATED #parola già trovata in precedenza
 }
 
-const parola_obj = preload("res://scenes/worldpanel_parola.tscn")
+const parola_obj = preload("res://scenes/wordpanel_parola.tscn")
 
 signal show_path(word: String)
 
@@ -54,7 +54,7 @@ func _process(delta: float) -> void:
 		# Aggiorna la posizione solo se size.y cambia
 		position.y = panel_y_bottom - size.y
 
-	# Controlla se è stato cliccato un label TODO da implementare in worldpanel_parola
+	# Controlla se è stato cliccato un label TODO da implementare in wordpanel_parola
 	#if clicked_label == null:
 		#return
 	#else:
