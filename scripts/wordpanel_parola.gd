@@ -36,9 +36,7 @@ func _on_button_down() -> void:
 
 
 func _on_button_up() -> void:
-	if valid_click:
-		show_path.emit(text)
-		valid_click = false
+	valid_click = false
 
 
 func set_revealed_word() -> void:
@@ -46,3 +44,9 @@ func set_revealed_word() -> void:
 	set("theme_override_colors/font_color", color)
 	set("theme_override_colors/font_pressed_color", color)
 	set("theme_override_colors/font_hover_color", color)
+
+
+func _on_pressed() -> void:
+	if valid_click:
+		show_path.emit(text)
+		valid_click = false
