@@ -11,5 +11,4 @@ text = "PAROLA"
 script = ExtResource("1_omrdl")
 
 [connection signal="button_down" from="." to="." method="_on_button_down"]
-[connection signal="button_up" from="." to="." method="_on_button_up"]
 [connection signal="pressed" from="." to="." method="_on_pressed"]
