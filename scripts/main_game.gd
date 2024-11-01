@@ -9,7 +9,7 @@ enum AttemptResult {
 signal attempt_result(word_finded: AttemptResult, word: String)
 signal game_complete()
 
-var history_mode = false
+var yesterday_mode = false
 
 var words = [] #colleziono tutte le parole
 var startingWords = [] #colleziono tutti gli inizi delle parole
@@ -40,7 +40,9 @@ func _input(event: InputEvent) -> void:
 
 
 func load_game(data: Dictionary):
-	$Grid.history_mode = history_mode
+	if yesterday_mode:
+		$Grid.set_yesterday_mode()
+		$WordPanel.set_yesterday_mode()
 	# Aggiungi le parole
 	for i_parola in data.words:
 		words.append(i_parola)
@@ -62,12 +64,12 @@ func load_results(save: Dictionary):
 		$ProgressBar.increase(i_parola)
 		$Grid.set_answer(AttemptResult.NEW_FIND, i_parola)
 	
-	# Se sono in history_mode rivelo le rimanenti
-	if history_mode:
+	# Se sono in yesterday_mode rivelo le rimanenti
+	if yesterday_mode:
 		$WordPanel.reveal_remaining_words()
 
 func _on_grid_clear_grid() -> void:
-	if $ProgressBar.value >= $ProgressBar.max_value and not $Grid.history_mode:
+	if $ProgressBar.value >= $ProgressBar.max_value and not $Grid.yesterday_mode:
 		game_complete.emit()
 
 

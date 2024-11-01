@@ -13,8 +13,6 @@ const fileName_actual_results := "user://savegame.save"
 const fileName_old_grid := "user://lastsavedjson.save"
 const fileName_old_results := "user://lastsavedgame.save"
 
-const NodeGrid = preload("res://scenes/main_game.tscn")
-
 var todaysJson : Dictionary
 var todaysSave : Dictionary
 
@@ -157,79 +155,10 @@ func valid_save_file(file: Dictionary) -> bool:
 	return file.has("todaysNum") and file.has("wordsFinded")
 
 
-#func _on_yesterday_button_pressed() -> void:
-	#$Grid.history_mode = not $Grid.history_mode
-	#var json_directory: String
-	#var save_directory: String
-	#
-	#if $Grid.history_mode:
-		#json_directory = fileName_old_grid
-		#save_directory = fileName_old_results
-	#else:
-		#json_directory = fileName_actual_grid
-		#save_directory = fileName_actual_results
-#
-	### CARICO LA GRIGLIA DELLA VOLTA SCORSA ##
-	#if not FileAccess.file_exists(json_directory):
-		#print("No saved JSON")
-		#return
-	#
-	#var old_json_as_text = FileAccess.get_file_as_string(json_directory)
-	#var yesterdaysJson = JSON.parse_string(old_json_as_text)
-	#if not valid_game_file(yesterdaysJson):
-		#print("Old saved JSON is corrupted")
-		#return
-		#
-	### CARICO I RISULATI DELLA VOLTA SCORSA ##
-	#var yesterdaysSave
-	#if not FileAccess.file_exists(save_directory):
-		#yesterdaysSave = []  # Non esiste un file di salvataggio
-#
-	## Carica il file di salvataggio come stringa
-	#var old_save_as_text = FileAccess.get_file_as_string(save_directory)
-	#var parse_old_result = JSON.parse_string(old_save_as_text)
-	#
-	## Controlla se il parsing ha avuto successo
-	#if not parse_old_result.has("wordsFinded"):
-		#print("Errore nel parsing del file old_save: ", parse_old_result.error_string)
-		#yesterdaysSave = []
-	#
-	## Se il numero di "today's number" non corrisponde, rinomina il file
-	#if parse_old_result.todaysNum != yesterdaysJson.todaysNum:
-		#print("Il file old_save non corrisponde con old_JSON")
-		#yesterdaysSave = []
-	#
-	## Se tutto è ok, ritorna le parole trovate
-	#yesterdaysSave = parse_old_result.wordsFinded
-	#
-	### SISTEMO LA GRIGLIA ##
-	#$Title.text = "QUADRATI"
-	#$ProgressBar.reset()
-	#$Grid.deinstantiate()
-	#$WordPanel.deinstantiate()
-	##$WordPanel.instantiate(yesterdaysJson)
-	#if $Grid.history_mode:
-		#load_data(yesterdaysJson, false)
-		#
-		#for parola in yesterdaysSave:
-			#attempt_result.emit(1, parola)
-		#
-		#var words_to_reveal = yesterdaysJson["words"]
-		#
-		#words_to_reveal = words_to_reveal.filter(func(word):
-			#return not yesterdaysSave.has(word))
-		#
-		#for parola in words_to_reveal:
-			#reveal_word.emit(parola)
-#
-		#$YesterdayButton.rotation = PI
-	#else:
-		#load_data(yesterdaysJson)
-#
-		#$YesterdayButton.rotation = 0
 func _on_yesterday_button_toggled(toggled_on: bool) -> void:
 	var game_to_load: Dictionary
 	var save_to_load: Dictionary
+	var NodeGrid: Resource
 	if toggled_on:
 		# Carico i dati vecchi
 		game_to_load = load_json_file(fileName_old_grid)
@@ -242,9 +171,12 @@ func _on_yesterday_button_toggled(toggled_on: bool) -> void:
 			if not valid_save_file(save_to_load) and not save_to_load == {}:
 				print("corrupted old save file, ignoring it...")
 			save_to_load.clear()
+		
+		NodeGrid = preload("res://scenes/yesterday_game.tscn")
 	else:
 		game_to_load = todaysJson
 		save_to_load = todaysSave
+		NodeGrid = preload("res://scenes/main_game.tscn")
 	
 	# Cancello Game vecchio e ne istanzio uno nuovo
 	#game_obj.queue_free()
@@ -255,10 +187,10 @@ func _on_yesterday_button_toggled(toggled_on: bool) -> void:
 	game_obj.position = game_obj_position
 	
 	$Title.text = "QUADRATI#" + str(game_to_load.todaysNum)
-	game_obj.history_mode = toggled_on
+	game_obj.yesterday_mode = toggled_on
 	game_obj.load_game(game_to_load)
 	game_obj.load_results(save_to_load)
-	game_obj.history_mode = toggled_on
+	game_obj.yesterday_mode = toggled_on
 
 
 func load_json_file(fileName: String) -> Dictionary:

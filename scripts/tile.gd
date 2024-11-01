@@ -41,7 +41,7 @@ func set_passingWords(indexes: Array, words: Array) -> void:
 func number_update() -> void:
 	var new_number = startingWords.size();
 	$Sprite2D/Numero.text = str(new_number)
-	if grid.history_mode:    #TODO: <-- da timuovere rif a grid
+	if grid.yesterday_mode:    #TODO: <-- da timuovere rif a grid
 		$Sprite2D/Numero.hide()
 		$Sprite2D.modulate = Color.LIGHT_SLATE_GRAY
 		return

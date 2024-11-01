@@ -13,6 +13,8 @@ signal show_path(word: String)
 @onready var vbox = $ScrollContainer/VBoxContainer
 @onready var scroll_container = $ScrollContainer
 
+var yesterday_mode = false
+
 var box_parole = {
 	 "4": {"n": 0, "n_max": 0, "title": Label.new(), "containers": []},
 	 "5": {"n": 0, "n_max": 0, "title": Label.new(), "containers": []},
@@ -47,7 +49,7 @@ func _ready() -> void:
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	# Esegui il calcolo solo se è necessario espandere o ridurre il pannello
-	if (moving_up and size.y < extended_size_y) or (not moving_up and size.y > original_size_y):
+	if not yesterday_mode and ((moving_up and size.y < extended_size_y) or (not moving_up and size.y > original_size_y)):
 		# Aggiorna size.y e applica il clamp per mantenerlo nei limiti
 		size.y = clamp(size.y + moving_vel * delta * (1 if moving_up else -1), original_size_y, extended_size_y)
 		
@@ -117,3 +119,8 @@ func _input(event):
 
 func _on_parola_show_path(word: String) -> void:
 	show_path.emit(word)
+
+
+func set_yesterday_mode() -> void:
+	yesterday_mode = true
+	$Button.hide()

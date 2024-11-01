@@ -32,7 +32,7 @@ var rot_pos = 0 #ultimo angolo statico [0, 270]
 var rot_speed = 2.0
 var rot_angle = 0.0
 
-var history_mode = false
+var yesterday_mode = false
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -100,10 +100,6 @@ func elaborate_tile_coordinate(grid_vector: Vector2) -> Vector2:
 		(tile_size + tile_spacing) * (grid_vector.x - 1.5),
 		(tile_size + tile_spacing) * (grid_vector.y - 1.5)
 	).rotated(rot_pos)
-
-
-#func i_tile_from_attempt(i: int) -> Node2D:
-	#return tiles[attempt.xy[i].x][attempt.xy[i].y]
 
 
 func _on_tile_attempt_start(recived_tile: Node2D, letter: String) -> void:
@@ -188,7 +184,10 @@ func _on_timer_timeout() -> void:
 	attempt_tiles.clear()
 	$Path.mod_clear_points()
 	get_tree().call_group("tiles_group", "clear")
-	get_tree().call_group("tiles_group", "show_number", number_shown and not history_mode)
+	get_tree().call_group("tiles_group", "show_number", number_shown and not yesterday_mode)
 	clear.emit()
 		
-	ready_for_attempt = not history_mode
+	ready_for_attempt = not yesterday_mode
+
+func set_yesterday_mode() -> void:
+	yesterday_mode = true
