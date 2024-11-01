@@ -174,7 +174,7 @@ func _on_rotate_counter_clockwise_pressed() -> void:
 
 
 func show_path(path_tiles: Array) -> void:
-	if ready_for_attempt:
+	if rot_on == 0:
 		$Path.default_color = Color(0.3, 0.5, 1)
 		for i_tile in path_tiles:
 			path.mod_add_point(elaborate_tile_coordinate(i_tile))

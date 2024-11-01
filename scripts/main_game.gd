@@ -7,7 +7,6 @@ enum AttemptResult {
 }
 
 signal attempt_result(word_finded: AttemptResult, word: String)
-signal reveal_word(word: String)
 signal game_complete()
 
 var history_mode = false
@@ -62,6 +61,10 @@ func load_results(save: Dictionary):
 		$WordPanel.add_word(i_parola)
 		$ProgressBar.increase(i_parola)
 		$Grid.set_answer(AttemptResult.NEW_FIND, i_parola)
+	
+	# Se sono in history_mode rivelo le rimanenti
+	if history_mode:
+		$WordPanel.reveal_remaining_words()
 
 func _on_grid_clear_grid() -> void:
 	if $ProgressBar.value >= $ProgressBar.max_value and not $Grid.history_mode:

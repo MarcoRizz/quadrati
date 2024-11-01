@@ -5,5 +5,9 @@
 [node name="Parola" type="Button"]
 offset_right = 8.0
 offset_bottom = 8.0
+focus_mode = 0
 text = "PAROLA"
 script = ExtResource("1_omrdl")
+
+[connection signal="button_down" from="." to="." method="_on_button_down"]
+[connection signal="button_up" from="." to="." method="_on_button_up"]
