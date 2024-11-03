@@ -26,7 +26,7 @@ func _ready() -> void:
 	# Create an HTTP request node and connect its completion signal.
 	var http_request = HTTPRequest.new()
 	add_child(http_request)
-	http_request.request_completed.connect(self._http_request_completed)
+	http_request.request_completed.connect(_http_request_completed)
 	game_obj.hide()
 	$MidText.show()
 	
@@ -160,6 +160,7 @@ func _on_yesterday_button_toggled(toggled_on: bool) -> void:
 	var save_to_load: Dictionary
 	var NodeGrid: Resource
 	if toggled_on:
+		$YesterdayButton.rotation = PI
 		# Carico i dati vecchi
 		game_to_load = load_json_file(fileName_old_grid)
 		if not valid_game_file(game_to_load) and not game_to_load == {}:
@@ -174,6 +175,7 @@ func _on_yesterday_button_toggled(toggled_on: bool) -> void:
 		
 		NodeGrid = preload("res://scenes/yesterday_game.tscn")
 	else:
+		$YesterdayButton.rotation = 0
 		game_to_load = todaysJson
 		save_to_load = todaysSave
 		NodeGrid = preload("res://scenes/main_game.tscn")
@@ -191,6 +193,9 @@ func _on_yesterday_button_toggled(toggled_on: bool) -> void:
 	game_obj.load_game(game_to_load)
 	game_obj.load_results(save_to_load)
 	game_obj.yesterday_mode = toggled_on
+	if not toggled_on:
+		game_obj.attempt_result.connect(_on_game_attempt_result)
+		game_obj.game_complete.connect(_on_game_game_complete)
 
 
 func load_json_file(fileName: String) -> Dictionary:
