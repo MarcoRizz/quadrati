@@ -58,19 +58,16 @@ func load_game(data: Dictionary):
 
 
 func load_results(save: Dictionary):
-	for i_parola in save.wordsFinded:
-		words_finded.append(i_parola)
-		$WordPanel.add_word(i_parola)
-		$ProgressBar.increase(i_parola)
-		$Grid.set_answer(AttemptResult.NEW_FIND, i_parola)
+	if save.has("wordsFinded"):
+		for i_parola in save.wordsFinded:
+			words_finded.append(i_parola)
+			$WordPanel.add_word(i_parola)
+			$ProgressBar.increase(i_parola)
+			$Grid.set_answer(AttemptResult.NEW_FIND, i_parola)
 	
 	# Se sono in yesterday_mode rivelo le rimanenti
 	if yesterday_mode:
 		$WordPanel.reveal_remaining_words()
-
-func _on_grid_clear_grid() -> void:
-	if $ProgressBar.value >= $ProgressBar.max_value and not $Grid.yesterday_mode:
-		game_complete.emit()
 
 
 func _on_wordpanel_show_path(word: String) -> void:
@@ -115,3 +112,8 @@ func find_path_recursive_step(starting_tile: Array[Vector2], step: int, word: St
 				starting_tile.resize(starting_tile.size() - 1)
 			
 	return []
+
+
+func _on_grid_clear() -> void:
+	if $ProgressBar.value >= $ProgressBar.max_value and not $Grid.yesterday_mode:
+		game_complete.emit()

@@ -156,6 +156,7 @@ func valid_save_file(file: Dictionary) -> bool:
 
 
 func _on_yesterday_button_toggled(toggled_on: bool) -> void:
+	$MidText.hide()
 	var game_to_load: Dictionary
 	var save_to_load: Dictionary
 	var NodeGrid: Resource
