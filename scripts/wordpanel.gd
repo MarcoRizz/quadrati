@@ -1,11 +1,5 @@
 extends Panel
 
-enum AttemptResult {
-	NEW_FIND, #nuova parola trovata
-	WRONG, #parola sbagliata
-	REPEATED #parola già trovata in precedenza
-}
-
 const parola_obj = preload("res://scenes/wordpanel_parola.tscn")
 
 signal show_path(word: String)
@@ -16,19 +10,20 @@ signal show_path(word: String)
 var yesterday_mode = false
 
 var box_parole = {
-	 "4": {"n": 0, "n_max": 0, "title": Label.new(), "containers": []},
-	 "5": {"n": 0, "n_max": 0, "title": Label.new(), "containers": []},
-	 "6": {"n": 0, "n_max": 0, "title": Label.new(), "containers": []},
-	 "7": {"n": 0, "n_max": 0, "title": Label.new(), "containers": []},
-	 "8": {"n": 0, "n_max": 0, "title": Label.new(), "containers": []},
-	 "9": {"n": 0, "n_max": 0, "title": Label.new(), "containers": []},
-	"10": {"n": 0, "n_max": 0, "title": Label.new(), "containers": []},
-	"11": {"n": 0, "n_max": 0, "title": Label.new(), "containers": []},
-	"12": {"n": 0, "n_max": 0, "title": Label.new(), "containers": []},
-	"13": {"n": 0, "n_max": 0, "title": Label.new(), "containers": []},
-	"14": {"n": 0, "n_max": 0, "title": Label.new(), "containers": []},
-	"15": {"n": 0, "n_max": 0, "title": Label.new(), "containers": []},
-	"16": {"n": 0, "n_max": 0, "title": Label.new(), "containers": []}
+	 "4":    {"n": 0, "n_max": 0, "title": Label.new(), "containers": []},
+	 "5":    {"n": 0, "n_max": 0, "title": Label.new(), "containers": []},
+	 "6":    {"n": 0, "n_max": 0, "title": Label.new(), "containers": []},
+	 "7":    {"n": 0, "n_max": 0, "title": Label.new(), "containers": []},
+	 "8":    {"n": 0, "n_max": 0, "title": Label.new(), "containers": []},
+	 "9":    {"n": 0, "n_max": 0, "title": Label.new(), "containers": []},
+	"10":    {"n": 0, "n_max": 0, "title": Label.new(), "containers": []},
+	"11":    {"n": 0, "n_max": 0, "title": Label.new(), "containers": []},
+	"12":    {"n": 0, "n_max": 0, "title": Label.new(), "containers": []},
+	"13":    {"n": 0, "n_max": 0, "title": Label.new(), "containers": []},
+	"14":    {"n": 0, "n_max": 0, "title": Label.new(), "containers": []},
+	"15":    {"n": 0, "n_max": 0, "title": Label.new(), "containers": []},
+	"16":    {"n": 0, "n_max": 0, "title": Label.new(), "containers": []},
+	"bonus": {"n": 0, "n_max": 0, "title": Label.new(), "containers": []}
 }
 var all_words = Node.new() #qui salvo tutte le parole
 
@@ -67,13 +62,25 @@ func instantiate(json: Dictionary) -> void:
 		new_parola.show_path.connect(_on_parola_show_path)
 		all_words.add_child(new_parola)
 	
+	if json.has("bonus"):
+		for i_parola in json.bonus:
+			box_parole["bonus"].n_max += 1
+			var new_parola = parola_obj.instantiate()
+			new_parola.name = "_" + i_parola
+			new_parola.text = i_parola
+			new_parola.show_path.connect(_on_parola_show_path)
+			all_words.add_child(new_parola)
+	
 	for size_n in box_parole:
 		if box_parole[size_n]["n_max"] == 0:
-			vbox.remove_child(vbox.get_node(str(size_n) + "_titolo"))
-			vbox.remove_child(vbox.get_node(str(size_n) + "_box"))
+			vbox.remove_child(vbox.get_node(size_n + "_titolo"))
+			vbox.remove_child(vbox.get_node(size_n + "_box"))
 		else:
 			# Inizializzo il titolo
-			vbox.get_node(str(size_n) + "_titolo").text = size_n + "-lettere: 0/" + str(box_parole[size_n]["n_max"])
+			if not size_n == "bonus":
+				vbox.get_node(size_n + "_titolo").text = size_n + "-lettere: 0/" + str(box_parole[size_n]["n_max"])
+			else:
+				vbox.get_node(size_n + "_titolo").text = "Bonus: 0/" + str(box_parole[size_n]["n_max"])
 
 
 func add_word(word: String):
@@ -87,6 +94,18 @@ func add_word(word: String):
 	var title = vbox.get_node(str(lunghezza_char) + "_titolo")
 	box_parole[lunghezza_char]["n"] = n
 	title.text = lunghezza_char + "-lettere: " + str(n) + "/" + str(box_parole[lunghezza_char]["n_max"])
+	if n >= n_max:
+		title.set("theme_override_colors/font_color", Color.AQUAMARINE)
+
+func add_bonus(word: String):	
+	all_words.get_node("_" + word).reparent(vbox.get_node("bonus_box"))
+	
+	# Aggiorna il conteggio delle parole trovate
+	var n = box_parole["bonus"]["n"] + 1
+	var n_max = box_parole["bonus"]["n_max"]
+	var title = vbox.get_node("bonus_titolo")
+	box_parole["bonus"]["n"] = n
+	title.text = "Bonus: " + str(n) + "/" + str(box_parole["bonus"]["n_max"])
 	if n >= n_max:
 		title.set("theme_override_colors/font_color", Color.AQUAMARINE)
 

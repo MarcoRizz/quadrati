@@ -2,8 +2,9 @@ extends Node2D
 
 enum AttemptResult {
 	NEW_FIND, #nuova parola trovata
-	WRONG, #parola sbagliata
-	REPEATED #parola già trovata in precedenza
+	WRONG,    #parola sbagliata
+	REPEATED, #parola già trovata in precedenza
+	BONUS     #parola bonus
 }
 
 const grid_size := 4
@@ -150,6 +151,8 @@ func set_answer(result: AttemptResult, word: String) -> void:
 			color = Color(0.6, 1, 0.6)
 		AttemptResult.REPEATED:
 			color = Color(0.6, 0.6, 0.6)
+		AttemptResult.BONUS:
+			color = Color.LIGHT_SEA_GREEN
 	
 	$Path.default_color = color
 	ready_for_attempt = false

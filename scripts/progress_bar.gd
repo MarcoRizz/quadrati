@@ -15,6 +15,10 @@ func increase(word: String) -> void:
 		initials_threshold = true
 		initials_threshold_signal.emit()
 
+func increase_bonus(word: String) -> void:
+	max_value += word.length()
+	increase(word)
+
 func reset():
 	max_value = 0
 	value = 0

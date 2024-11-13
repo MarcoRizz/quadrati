@@ -2,8 +2,9 @@ extends Node2D
 
 enum AttemptResult {
 	NEW_FIND, #nuova parola trovata
-	WRONG, #parola sbagliata
-	REPEATED #parola già trovata in precedenza
+	WRONG,    #parola sbagliata
+	REPEATED, #parola già trovata in precedenza
+	BONUS     #parola bonus
 }
 
 const http_json_source = "https://script.google.com/macros/s/AKfycby6N9vEbuGpOp5Xn03sroodyP4UGcMLt2qHz2rnV-6AtMLJDodd3TvTnt_gZvTRpic/exec"
@@ -14,7 +15,7 @@ const fileName_old_grid := "user://lastsavedjson.save"
 const fileName_old_results := "user://lastsavedgame.save"
 
 var todaysJson : Dictionary
-var todaysSave : Dictionary
+var todaysSave : Dictionary = {"wordsFinded" = [], "bonusFinded" = []}
 
 @onready var game_obj = $Game
 var game_obj_position # Lo assegno in _ready
@@ -138,6 +139,7 @@ func load_todays_data_to_game():
 		todaysSave.clear()
 		todaysSave.todaysNum = todaysJson.todaysNum
 		todaysSave.wordsFinded = []
+		todaysSave.bonusFinded = []
 	
 	# Carico la schermata
 	$Title.text += "#" + str(todaysJson.todaysNum)
@@ -240,4 +242,7 @@ func _on_game_game_complete() -> void:
 func _on_game_attempt_result(word_finded: AttemptResult, word: String) -> void:
 	if word_finded == AttemptResult.NEW_FIND:
 		todaysSave.wordsFinded.append(word)
+		save_dictionary_file(todaysSave, fileName_actual_results)
+	elif word_finded == AttemptResult.BONUS:
+		todaysSave.bonusFinded.append(word)
 		save_dictionary_file(todaysSave, fileName_actual_results)

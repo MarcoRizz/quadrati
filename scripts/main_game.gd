@@ -2,8 +2,9 @@ extends Node2D
 
 enum AttemptResult {
 	NEW_FIND, #nuova parola trovata
-	WRONG, #parola sbagliata
-	REPEATED #parola già trovata in precedenza
+	WRONG,    #parola sbagliata
+	REPEATED, #parola già trovata in precedenza
+	BONUS     #parola bonus
 }
 
 signal attempt_result(word_finded: AttemptResult, word: String)
@@ -13,7 +14,10 @@ var yesterday_mode = false
 
 var words = [] #colleziono tutte le parole
 var startingWords = [] #colleziono tutti gli inizi delle parole
+var bonus = [] #colleziono tutte le parole bonus
+
 var words_finded = [] #colleziono le parole trovate
+var bonus_finded = [] #colleziono le parole bonus trovate
 
 
 func _input(event: InputEvent) -> void:
@@ -21,12 +25,15 @@ func _input(event: InputEvent) -> void:
 		if $Grid.valid_attempt:
 			var word_guessed = $Display.text
 			var result : AttemptResult
-			if words_finded.has(word_guessed):
+			if words_finded.has(word_guessed) or bonus_finded.has(word_guessed):
 				result = AttemptResult.REPEATED
 				#TODO: messaggio parola ripetuta
 			elif words.has(word_guessed):
 				result = AttemptResult.NEW_FIND
 				words_finded.append(word_guessed)
+			elif bonus.has(word_guessed):
+				result = AttemptResult.BONUS
+				bonus_finded.append(word_guessed)
 			else:
 				result = AttemptResult.WRONG
 				#TODO: messaggio paroal non trovata
@@ -36,6 +43,9 @@ func _input(event: InputEvent) -> void:
 			if result == AttemptResult.NEW_FIND:
 				$WordPanel.add_word(word)
 				$ProgressBar.increase(word)
+			elif result == AttemptResult.BONUS:
+				$WordPanel.add_bonus(word)
+				$ProgressBar.increase_bonus(word)
 			attempt_result.emit(result, word)
 
 
@@ -52,6 +62,11 @@ func load_game(data: Dictionary):
 	for i_start in data.startingLinks:
 		startingWords.append(i_start)
 	
+	# salvo le parole bonus
+	if data.has("bonus"):
+		for i_parola in data.bonus:
+			bonus.append(i_parola)
+	
 	# Carica le parole odierne
 	$Grid.instantiate(data)
 	$WordPanel.instantiate(data)
@@ -64,6 +79,12 @@ func load_results(save: Dictionary):
 			$WordPanel.add_word(i_parola)
 			$ProgressBar.increase(i_parola)
 			$Grid.set_answer(AttemptResult.NEW_FIND, i_parola)
+	
+	if save.has("bonusFinded"):
+		for i_parola in save.bonusFinded:
+			bonus_finded.append(i_parola)
+			$WordPanel.add_bonus(i_parola)
+			$ProgressBar.increase_bonus(i_parola)
 	
 	# Se sono in yesterday_mode rivelo le rimanenti
 	if yesterday_mode:

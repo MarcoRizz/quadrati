@@ -1,10 +1,10 @@
 extends Node2D
 
-#const myenums = preload("res://scripts/enum.gd")
 enum AttemptResult {
 	NEW_FIND, #nuova parola trovata
-	WRONG, #parola sbagliata
-	REPEATED #parola già trovata in precedenza
+	WRONG,    #parola sbagliata
+	REPEATED, #parola già trovata in precedenza
+	BONUS     #parola bonus
 }
 
 signal attempt_start(tile: Node2D, letter: String)
