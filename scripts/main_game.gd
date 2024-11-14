@@ -103,18 +103,28 @@ func _on_wordpanel_show_path(word: String) -> void:
 
 
 func find_path_from_json(word: String) -> Array[Vector2]:
-	#cerco l'indice della parola nel json
+	# Cerco l'indice della parola nel json
 	var index = words.find(word)
 	# Verifica se l'elemento è stato trovato
-	if index == -1:
-		print("Errore: parola ", word, " non trovata nel JSON")
-		return []
+	if not index == -1:
+		var starting_tile = startingWords[index]
+		starting_tile = Vector2(starting_tile[0], starting_tile[1]) #converto in Vector2
+		var path = find_path_recursive_step([starting_tile], 0, word)
+		
+		return path
 	
-	var starting_tile = startingWords[index]
-	starting_tile = Vector2(starting_tile[0], starting_tile[1]) #converto in Vector2
-	var path = find_path_recursive_step([starting_tile], 0, word)
+	if bonus.has(word):
+		# Per le parole bonus non ho startingWords, devo trovarla manualmente
+		for x in range(0, 4):
+			for y in range(0, 4):
+				var path
+				if $Grid.tiles[x][y].get_letter() == word[0]:
+					path = find_path_recursive_step([Vector2(x, y)], 0, word)
+				if not path.is_empty():
+					return path
 	
-	return path
+	print("Errore: parola ", word, " non trovata nel JSON")
+	return []
 
 
 func find_path_recursive_step(starting_tile: Array[Vector2], step: int, word: String) -> Array[Vector2]:
