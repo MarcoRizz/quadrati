@@ -7,6 +7,11 @@ enum AttemptResult {
 	BONUS     #parola bonus
 }
 
+@onready var grid_obj = $VBox/Grid
+@onready var display_obj = $VBox/Display
+@onready var wordPanel_obj = $VBox/WordPanel
+@onready var progressBar_obj = $VBox/ProgressBar
+
 signal attempt_result(word_finded: AttemptResult, word: String)
 signal game_complete()
 
@@ -21,9 +26,9 @@ var bonus_finded = [] #colleziono le parole bonus trovate
 
 
 func _input(event: InputEvent) -> void:
-	if event.is_action_released("click") and $Grid.is_visible_in_tree(): #TODO: assegnare a Grid?
-		if $Grid.valid_attempt:
-			var word_guessed = $Display.text
+	if event.is_action_released("click") and grid_obj.is_visible_in_tree(): #TODO: assegnare a Grid?
+		if grid_obj.valid_attempt:
+			var word_guessed = display_obj.text
 			var result : AttemptResult
 			if words_finded.has(word_guessed) or bonus_finded.has(word_guessed):
 				result = AttemptResult.REPEATED
@@ -38,25 +43,25 @@ func _input(event: InputEvent) -> void:
 				result = AttemptResult.WRONG
 				#TODO: messaggio paroal non trovata
 			
-			var word = $Display.text
-			$Grid.set_answer(result, word)
+			var word = display_obj.text
+			grid_obj.set_answer(result, word)
 			if result == AttemptResult.NEW_FIND:
-				$WordPanel.add_word(word)
-				$ProgressBar.increase(word)
+				wordPanel_obj.add_word(word)
+				progressBar_obj.increase(word)
 			elif result == AttemptResult.BONUS:
-				$WordPanel.add_bonus(word)
-				$ProgressBar.increase_bonus(word)
+				wordPanel_obj.add_bonus(word)
+				progressBar_obj.increase_bonus(word)
 			attempt_result.emit(result, word)
 
 
 func load_game(data: Dictionary):
 	if yesterday_mode:
-		$Grid.set_yesterday_mode()
-		$WordPanel.set_yesterday_mode()
+		grid_obj.set_yesterday_mode()
+		wordPanel_obj.set_yesterday_mode()
 	# Aggiungi le parole
 	for i_parola in data.words:
 		words.append(i_parola)
-		$ProgressBar.max_value += i_parola.length()
+		progressBar_obj.max_value += i_parola.length()
 	
 	# Salvo le posizioni iniziali
 	for i_start in data.startingLinks:
@@ -68,27 +73,27 @@ func load_game(data: Dictionary):
 			bonus.append(i_parola)
 	
 	# Carica le parole odierne
-	$Grid.instantiate(data)
-	$WordPanel.instantiate(data)
+	grid_obj.instantiate(data)
+	wordPanel_obj.instantiate(data)
 
 
 func load_results(save: Dictionary):
 	if save.has("wordsFinded"):
 		for i_parola in save.wordsFinded:
 			words_finded.append(i_parola)
-			$WordPanel.add_word(i_parola)
-			$ProgressBar.increase(i_parola)
-			$Grid.set_answer(AttemptResult.NEW_FIND, i_parola)
+			wordPanel_obj.add_word(i_parola)
+			progressBar_obj.increase(i_parola)
+			grid_obj.set_answer(AttemptResult.NEW_FIND, i_parola)
 	
 	if save.has("bonusFinded"):
 		for i_parola in save.bonusFinded:
 			bonus_finded.append(i_parola)
-			$WordPanel.add_bonus(i_parola)
-			$ProgressBar.increase_bonus(i_parola)
+			wordPanel_obj.add_bonus(i_parola)
+			progressBar_obj.increase_bonus(i_parola)
 	
 	# Se sono in yesterday_mode rivelo le rimanenti
 	if yesterday_mode:
-		$WordPanel.reveal_remaining_words()
+		wordPanel_obj.reveal_remaining_words()
 
 
 func _on_wordpanel_show_path(word: String) -> void:
@@ -98,7 +103,7 @@ func _on_wordpanel_show_path(word: String) -> void:
 		print("Errore: path non trovato della parola ", word)
 		return
 	
-	$Grid.show_path(path)
+	grid_obj.show_path(path)
 	print("segnale di path emesso, path: ", path)
 
 
@@ -118,7 +123,7 @@ func find_path_from_json(word: String) -> Array[Vector2]:
 		for x in range(0, 4):
 			for y in range(0, 4):
 				var path
-				if $Grid.tiles[x][y].get_letter() == word[0]:
+				if grid_obj.tiles[x][y].get_letter() == word[0]:
 					path = find_path_recursive_step([Vector2(x, y)], 0, word)
 				if not path.is_empty():
 					return path
@@ -135,7 +140,7 @@ func find_path_recursive_step(starting_tile: Array[Vector2], step: int, word: St
 	else:
 		for dir in [Vector2(0, -1), Vector2(1, -1), Vector2(1, 0), Vector2(1, 1), Vector2(0, 1), Vector2(-1, 1), Vector2(-1, 0), Vector2(-1, -1)]:
 			var new_tile = starting_tile[-1] + dir
-			if new_tile.x >= 0 and new_tile.x < 4 and new_tile.y >= 0 and new_tile.y < 4 and starting_tile.find(new_tile) == -1 and $Grid.tiles[new_tile.x][new_tile.y].get_letter() == word[step + 1]:
+			if new_tile.x >= 0 and new_tile.x < 4 and new_tile.y >= 0 and new_tile.y < 4 and starting_tile.find(new_tile) == -1 and grid_obj.tiles[new_tile.x][new_tile.y].get_letter() == word[step + 1]:
 				starting_tile.append(new_tile)
 				var path = find_path_recursive_step(starting_tile, step + 1, word)
 				if path.size() == word.length():
@@ -146,5 +151,5 @@ func find_path_recursive_step(starting_tile: Array[Vector2], step: int, word: St
 
 
 func _on_grid_clear() -> void:
-	if $ProgressBar.value >= $ProgressBar.max_value and not $Grid.yesterday_mode:
+	if progressBar_obj.value >= progressBar_obj.max_value and not grid_obj.yesterday_mode:
 		game_complete.emit()

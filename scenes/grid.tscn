@@ -5,24 +5,23 @@
 [ext_resource type="PackedScene" uid="uid://c7ftdk55r810x" path="res://scenes/tile.tscn" id="2_ayh7i"]
 
 [node name="Grid" type="Control"]
+custom_minimum_size = Vector2(350, 350)
 layout_mode = 3
-anchors_preset = 0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 script = ExtResource("1_bmk3s")
 
 [node name="GridContainer" type="GridContainer" parent="."]
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -195.0
-offset_top = -195.0
-offset_right = 195.0
-offset_bottom = 195.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-pivot_offset = Vector2(195, 195)
+pivot_offset = Vector2(175, 175)
 theme_override_constants/h_separation = 10
 theme_override_constants/v_separation = 10
 columns = 4

@@ -14,10 +14,14 @@ const fileName_actual_results := "user://savegame.save"
 const fileName_old_grid := "user://lastsavedjson.save"
 const fileName_old_results := "user://lastsavedgame.save"
 
+@onready var game_obj = $VBox/Game
+@onready var midText_obj = $MidText
+@onready var title_obj = $VBox/Title
+@onready var yesterdayButton_obj = $VBox/Title/YesterdayButton
+
 var todaysJson : Dictionary
 var todaysSave : Dictionary = {"wordsFinded" = [], "bonusFinded" = []}
 
-@onready var game_obj = $Game
 var game_obj_position # Lo assegno in _ready
 
 
@@ -29,7 +33,7 @@ func _ready() -> void:
 	add_child(http_request)
 	http_request.request_completed.connect(_http_request_completed)
 	game_obj.hide()
-	$MidText.show()
+	midText_obj.show()
 	
 	# Ottieni informazioni del client
 	var ip_adress :String
@@ -142,11 +146,11 @@ func load_todays_data_to_game():
 		todaysSave.bonusFinded = []
 	
 	# Carico la schermata
-	$Title.text += "#" + str(todaysJson.todaysNum)
+	title_obj.text += "#" + str(todaysJson.todaysNum)
 	game_obj.load_game(todaysJson)
 	game_obj.load_results(todaysSave)
 	game_obj.show()
-	$MidText.hide()
+	midText_obj.hide()
 
 
 func valid_game_file(file: Dictionary) -> bool:
@@ -158,12 +162,12 @@ func valid_save_file(file: Dictionary) -> bool:
 
 
 func _on_yesterday_button_toggled(toggled_on: bool) -> void:
-	$MidText.hide()
+	midText_obj.hide()
 	var game_to_load: Dictionary
 	var save_to_load: Dictionary
 	var NodeGrid: Resource
 	if toggled_on:
-		$YesterdayButton.rotation = PI
+		yesterdayButton_obj.rotation = PI
 		# Carico i dati vecchi
 		game_to_load = load_json_file(fileName_old_grid)
 		if not valid_game_file(game_to_load) and not game_to_load == {}:
@@ -178,7 +182,7 @@ func _on_yesterday_button_toggled(toggled_on: bool) -> void:
 		
 		NodeGrid = preload("res://scenes/yesterday_game.tscn")
 	else:
-		$YesterdayButton.rotation = 0
+		yesterdayButton_obj.rotation = 0
 		game_to_load = todaysJson
 		save_to_load = todaysSave
 		NodeGrid = preload("res://scenes/main_game.tscn")
@@ -191,7 +195,7 @@ func _on_yesterday_button_toggled(toggled_on: bool) -> void:
 	game_obj = new_grid
 	game_obj.position = game_obj_position
 	
-	$Title.text = "QUADRATI#" + str(game_to_load.todaysNum)
+	title_obj.text = "QUADRATI#" + str(game_to_load.todaysNum)
 	game_obj.yesterday_mode = toggled_on
 	game_obj.load_game(game_to_load)
 	game_obj.load_results(save_to_load)
@@ -234,9 +238,9 @@ func save_dictionary_file(dizionario: Dictionary, file_path: String) -> bool:
 
 
 func _on_game_game_complete() -> void:
-	$MidText.text = "Complimenti, hai vinto!"
-	$MidText/Background.self_modulate = Color.SKY_BLUE
-	$MidText.show()
+	midText_obj.text = "Complimenti, hai vinto!"
+	midText_obj.get_node("Background").self_modulate = Color.SKY_BLUE
+	midText_obj.show()
 
 
 func _on_game_attempt_result(word_finded: AttemptResult, word: String) -> void:

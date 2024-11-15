@@ -4,19 +4,19 @@
 [ext_resource type="Script" path="res://scripts/tile.gd" id="2_kmar1"]
 
 [node name="tile" type="TextureRect"]
-custom_minimum_size = Vector2(90, 90)
+custom_minimum_size = Vector2(80, 80)
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -45.0
-offset_top = -45.0
-offset_right = 45.0
-offset_bottom = 45.0
+offset_left = -200.0
+offset_top = -335.0
+offset_right = -120.0
+offset_bottom = -255.0
 grow_horizontal = 2
 grow_vertical = 2
-pivot_offset = Vector2(45, 45)
+pivot_offset = Vector2(40, 40)
 texture = ExtResource("1_cngsq")
 expand_mode = 1
 script = ExtResource("2_kmar1")

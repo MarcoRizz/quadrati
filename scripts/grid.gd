@@ -9,19 +9,21 @@ enum AttemptResult {
 
 const grid_size := 4
 
-signal attempt_changed(add_char: bool, char: String)
-signal attempt_emitted(word: String)
-signal clear()
-
-@export var tile_size := 90.0 #todo: prenderle dalla GUI
-@export var tile_spacing := 10.0 #todo: prenderle dalla GUI
-
 @onready var path: Line2D = $GridContainer/Path
+@onready var grid_obj = $GridContainer
+@onready var timer_obj = $Timer
 
 @onready var tiles = [[$GridContainer/tile00, $GridContainer/tile01, $GridContainer/tile02, $GridContainer/tile03],
 					  [$GridContainer/tile10, $GridContainer/tile11, $GridContainer/tile12, $GridContainer/tile13],
 					  [$GridContainer/tile20, $GridContainer/tile21, $GridContainer/tile22, $GridContainer/tile23],
 					  [$GridContainer/tile30, $GridContainer/tile31, $GridContainer/tile32, $GridContainer/tile33]]
+
+@export var tile_size := 90.0 #todo: prenderle dalla GUI
+@export var tile_spacing := 10.0 #todo: prenderle dalla GUI
+
+signal attempt_changed(add_char: bool, char: String)
+signal attempt_emitted(word: String)
+signal clear()
 
 var attempt_tiles: Array[Object]
 var ready_for_attempt = false
@@ -42,25 +44,25 @@ func _ready() -> void:
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	if rot_on != 0:
-		$GridContainer.rotation += delta * rot_speed * rot_on
+		grid_obj.rotation += delta * rot_speed * rot_on
 		
 		var rot_target = rot_last + (PI / 2 * rot_on)
 		
 		# Verifica se l'angolo ha superato il limite
-		if (rot_on == 1 and $GridContainer.rotation > rot_target) or (rot_on == -1 and $GridContainer.rotation < rot_target):
+		if (rot_on == 1 and grid_obj.rotation > rot_target) or (rot_on == -1 and grid_obj.rotation < rot_target):
 			# Correggi l'angolo
-			$GridContainer.rotation = rot_target
+			grid_obj.rotation = rot_target
 			rot_last = rot_target
 			rot_on = 0  # Ferma la rotazione
 			ready_for_attempt = true;
 
 		for tile in get_tree().get_nodes_in_group("tiles_group"):
-				tile.rotation = -$GridContainer.rotation
+				tile.rotation = -grid_obj.rotation
 
 
 func _input(event):
 	if event.is_action_released("click"):
-		if not valid_attempt and $Timer.is_stopped():
+		if not valid_attempt and timer_obj.is_stopped():
 			#potrei avere un path plottato
 			path.mod_clear_points()
 			path.default_color = Color.YELLOW
@@ -84,7 +86,7 @@ func instantiate(data: Dictionary) -> void:
 	
 	# Aggiorno la griglia
 	get_tree().call_group("tiles_group", "number_update", yesterday_mode)
-	$Timer.start()
+	timer_obj.start()
 
 
 func _on_tile_attempt_start(recived_tile: Object, letter: String) -> void:
@@ -94,7 +96,7 @@ func _on_tile_attempt_start(recived_tile: Object, letter: String) -> void:
 		valid_attempt = true
 		
 		#aggiungo selezione
-		path.mod_add_point(recived_tile.position + recived_tile.size / 2 + $GridContainer.position)
+		path.mod_add_point(recived_tile.position + recived_tile.size / 2)
 		attempt_tiles.append(recived_tile)
 		recived_tile.selection_ok()
 		
@@ -116,7 +118,7 @@ func _on_tile_selection_attempt(recived_tile: Object, selected: bool, letter: St
 		else:
 			if recived_tile.grid_vect.distance_to(attempt_tiles[-1].grid_vect) < 1.5:
 				#aggiungo selezione
-				path.mod_add_point(recived_tile.position + recived_tile.size / 2 + $GridContainer.position)
+				path.mod_add_point(recived_tile.position + recived_tile.size / 2)
 				attempt_tiles.append(recived_tile)
 				recived_tile.selection_ok()
 				if attempt_len > 0:
@@ -143,7 +145,7 @@ func set_answer(result: AttemptResult, word: String) -> void:
 	valid_attempt = false
 	get_tree().call_group("tiles_group", "set_result", result, word, color)
 	# aspetto il tempo di mostrare il risultato
-	$Timer.start()
+	timer_obj.start()
 
 
 func _on_rotate_clockwise_pressed() -> void:
@@ -161,7 +163,7 @@ func show_path(grid_coords: Array) -> void:
 		path.default_color = Color(0.3, 0.5, 1)
 		for i_coord in grid_coords:
 			var i_tile = tiles[i_coord.x][i_coord.y]
-			path.mod_add_point(i_tile.position + i_tile.size / 2 + $GridContainer.position)
+			path.mod_add_point(i_tile.position + i_tile.size / 2)
 
 
 func _on_progress_bar_initials_threshold_signal() -> void:

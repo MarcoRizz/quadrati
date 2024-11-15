@@ -4,8 +4,8 @@ const parola_obj = preload("res://scenes/wordpanel_parola.tscn")
 
 signal show_path(word: String)
 
-@onready var vbox = $ScrollContainer/VBoxContainer
-@onready var scroll_container = $ScrollContainer
+@onready var vbox_obj = $ScrollContainer/VBoxContainer
+@onready var button_obj = $Button
 
 var yesterday_mode = false
 
@@ -73,37 +73,37 @@ func instantiate(json: Dictionary) -> void:
 	
 	for size_n in box_parole:
 		if box_parole[size_n]["n_max"] == 0:
-			vbox.remove_child(vbox.get_node(size_n + "_titolo"))
-			vbox.remove_child(vbox.get_node(size_n + "_box"))
+			vbox_obj.remove_child(vbox_obj.get_node(size_n + "_titolo"))
+			vbox_obj.remove_child(vbox_obj.get_node(size_n + "_box"))
 		else:
 			# Inizializzo il titolo
 			if not size_n == "bonus":
-				vbox.get_node(size_n + "_titolo").text = size_n + "-lettere: 0/" + str(box_parole[size_n]["n_max"])
+				vbox_obj.get_node(size_n + "_titolo").text = size_n + "-lettere: 0/" + str(box_parole[size_n]["n_max"])
 			else:
-				vbox.get_node(size_n + "_titolo").text = "Bonus: 0/" + str(box_parole[size_n]["n_max"])
+				vbox_obj.get_node(size_n + "_titolo").text = "Bonus: 0/" + str(box_parole[size_n]["n_max"])
 
 
 func add_word(word: String):
 	var lunghezza_char = str(word.length())
 	
-	all_words.get_node("_" + word).reparent(vbox.get_node(lunghezza_char + "_box"))
+	all_words.get_node("_" + word).reparent(vbox_obj.get_node(lunghezza_char + "_box"))
 	
 	# Aggiorna il conteggio delle parole trovate
 	var n = box_parole[lunghezza_char]["n"] + 1
 	var n_max = box_parole[lunghezza_char]["n_max"]
-	var title = vbox.get_node(str(lunghezza_char) + "_titolo")
+	var title = vbox_obj.get_node(str(lunghezza_char) + "_titolo")
 	box_parole[lunghezza_char]["n"] = n
 	title.text = lunghezza_char + "-lettere: " + str(n) + "/" + str(box_parole[lunghezza_char]["n_max"])
 	if n >= n_max:
 		title.set("theme_override_colors/font_color", Color.AQUAMARINE)
 
 func add_bonus(word: String):	
-	all_words.get_node("_" + word).reparent(vbox.get_node("bonus_box"))
+	all_words.get_node("_" + word).reparent(vbox_obj.get_node("bonus_box"))
 	
 	# Aggiorna il conteggio delle parole trovate
 	var n = box_parole["bonus"]["n"] + 1
 	var n_max = box_parole["bonus"]["n_max"]
-	var title = vbox.get_node("bonus_titolo")
+	var title = vbox_obj.get_node("bonus_titolo")
 	box_parole["bonus"]["n"] = n
 	title.text = "Bonus: " + str(n) + "/" + str(box_parole["bonus"]["n_max"])
 	if n >= n_max:
@@ -112,12 +112,12 @@ func add_bonus(word: String):
 
 func reveal_remaining_words() -> void:
 	for word_obj in all_words.get_children():
-		word_obj.reparent(vbox.get_node(str(word_obj.name.length() - 1) + "_box"))
+		word_obj.reparent(vbox_obj.get_node(str(word_obj.name.length() - 1) + "_box"))
 		word_obj.set_revealed_word()
 
 
 func _on_button_pressed() -> void:
-	$Button.rotation = (0.0 if moving_up else PI)
+	button_obj.rotation = (0.0 if moving_up else PI)
 	moving_up = not moving_up
 
 
@@ -128,11 +128,11 @@ func _input(event):
 			var mouse_pos = get_global_mouse_position()
 			var panel_rect = Rect2(global_position, size)
 			# Usa la trasformazione globale per verificare la posizione del mouse rispetto al Button
-			var button_global_position = $Button.get_global_position()
-			var button_rect = Rect2(button_global_position - (Vector2() if $Button.rotation == 0 else $Button.size), $Button.size)
+			var button_global_position = button_obj.get_global_position()
+			var button_rect = Rect2(button_global_position - (Vector2() if button_obj.rotation == 0 else button_obj.size), button_obj.size)
 			
 			if not panel_rect.has_point(mouse_pos) and not button_rect.has_point(mouse_pos):
-				$Button.rotation = 0
+				button_obj.rotation = 0
 				moving_up = false
 
 
@@ -142,4 +142,4 @@ func _on_parola_show_path(word: String) -> void:
 
 func set_yesterday_mode() -> void:
 	yesterday_mode = true
-	$Button.hide()
+	button_obj.hide()

@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://dtciitusji7kn"]
+[gd_scene load_steps=9 format=3 uid="uid://dtciitusji7kn"]
 
 [ext_resource type="PackedScene" uid="uid://knuk1qdilmis" path="res://scenes/grid.tscn" id="1_uubdm"]
 [ext_resource type="Script" path="res://scripts/main_game.gd" id="1_woek1"]
@@ -6,7 +6,10 @@
 [ext_resource type="Script" path="res://scripts/progress_bar.gd" id="4_gwx55"]
 [ext_resource type="PackedScene" uid="uid://cbbhu4y4ff6ye" path="res://scenes/wordpanel.tscn" id="5_o0gvf"]
 [ext_resource type="Texture2D" uid="uid://cohsvggssqult" path="res://assets/rotate.png" id="6_va4aj"]
-[ext_resource type="Texture2D" uid="uid://bsau5q5jk82dt" path="res://assets/derotate.png" id="7_j0vcn"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_e7gxh"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_xpera"]
 
 [node name="Game" type="Control"]
 layout_mode = 3
@@ -15,62 +18,84 @@ anchor_right = 1.0
 grow_horizontal = 2
 script = ExtResource("1_woek1")
 
-[node name="Grid" parent="." instance=ExtResource("1_uubdm")]
-offset_left = 200.0
-offset_top = 250.0
-offset_right = 200.0
-offset_bottom = 250.0
-scale = Vector2(0.9, 0.9)
+[node name="VBox" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 72.0
+grow_horizontal = 2
 
-[node name="RotateClockwise" type="Button" parent="."]
-layout_mode = 0
-offset_left = 327.0
-offset_top = 437.0
-offset_right = 400.0
-offset_bottom = 510.0
-scale = Vector2(0.6, 0.6)
-focus_mode = 0
-icon = ExtResource("6_va4aj")
+[node name="ProgressBar" type="ProgressBar" parent="VBox"]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+max_value = 0.0
+show_percentage = false
+script = ExtResource("4_gwx55")
 
-[node name="RotateCounterClockwise" type="Button" parent="."]
-layout_mode = 0
-offset_left = 271.0
-offset_top = 437.0
-offset_right = 344.0
-offset_bottom = 510.0
-scale = Vector2(0.6, 0.6)
-focus_mode = 0
-icon = ExtResource("7_j0vcn")
-
-[node name="WordPanel" parent="." instance=ExtResource("5_o0gvf")]
-layout_mode = 0
-offset_left = 10.0
-offset_top = 490.0
-offset_right = 390.0
-offset_bottom = 610.0
-
-[node name="Display" type="Label" parent="."]
-layout_mode = 0
-offset_top = 20.0
-offset_right = 400.0
-offset_bottom = 70.0
+[node name="Display" type="Label" parent="VBox"]
+layout_mode = 2
 theme_override_font_sizes/font_size = 35
 horizontal_alignment = 1
 vertical_alignment = 1
 script = ExtResource("3_2dkqv")
 
-[node name="ProgressBar" type="ProgressBar" parent="."]
-layout_mode = 0
-offset_right = 400.0
-offset_bottom = 20.0
-max_value = 0.0
-show_percentage = false
-script = ExtResource("4_gwx55")
+[node name="Grid" parent="VBox" instance=ExtResource("1_uubdm")]
+layout_mode = 2
+size_flags_horizontal = 4
 
-[connection signal="attempt_changed" from="Grid" to="Display" method="_on_grid_attempt_changed"]
-[connection signal="clear" from="Grid" to="." method="_on_grid_clear"]
-[connection signal="clear" from="Grid" to="Display" method="_on_grid_clear"]
-[connection signal="pressed" from="RotateClockwise" to="Grid" method="_on_rotate_clockwise_pressed"]
-[connection signal="pressed" from="RotateCounterClockwise" to="Grid" method="_on_rotate_counter_clockwise_pressed"]
-[connection signal="show_path" from="WordPanel" to="." method="_on_wordpanel_show_path"]
-[connection signal="initials_threshold_signal" from="ProgressBar" to="Grid" method="_on_progress_bar_initials_threshold_signal"]
+[node name="HSeparator" type="HSeparator" parent="VBox"]
+custom_minimum_size = Vector2(0, 5)
+layout_mode = 2
+theme_override_styles/separator = SubResource("StyleBoxEmpty_e7gxh")
+
+[node name="HBox" type="HBoxContainer" parent="VBox"]
+layout_mode = 2
+theme_override_constants/separation = 10
+alignment = 2
+
+[node name="RotateCounterClockwise" type="TextureButton" parent="VBox/HBox"]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+focus_mode = 0
+texture_normal = ExtResource("6_va4aj")
+texture_pressed = ExtResource("6_va4aj")
+texture_hover = ExtResource("6_va4aj")
+texture_disabled = ExtResource("6_va4aj")
+texture_focused = ExtResource("6_va4aj")
+ignore_texture_size = true
+stretch_mode = 0
+flip_h = true
+
+[node name="RotateClockwise" type="TextureButton" parent="VBox/HBox"]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+focus_mode = 0
+texture_normal = ExtResource("6_va4aj")
+texture_pressed = ExtResource("6_va4aj")
+texture_hover = ExtResource("6_va4aj")
+texture_disabled = ExtResource("6_va4aj")
+texture_focused = ExtResource("6_va4aj")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="VSeparator" type="VSeparator" parent="VBox/HBox"]
+custom_minimum_size = Vector2(30, 0)
+layout_mode = 2
+theme_override_styles/separator = SubResource("StyleBoxEmpty_xpera")
+
+[node name="HSeparator2" type="HSeparator" parent="VBox"]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
+theme_override_styles/separator = SubResource("StyleBoxEmpty_e7gxh")
+
+[node name="WordPanel" parent="VBox" instance=ExtResource("5_o0gvf")]
+custom_minimum_size = Vector2(380, 120)
+layout_mode = 2
+
+[connection signal="initials_threshold_signal" from="VBox/ProgressBar" to="VBox/Grid" method="_on_progress_bar_initials_threshold_signal"]
+[connection signal="attempt_changed" from="VBox/Grid" to="VBox/Display" method="_on_grid_attempt_changed"]
+[connection signal="clear" from="VBox/Grid" to="." method="_on_grid_clear"]
+[connection signal="clear" from="VBox/Grid" to="VBox/Display" method="_on_grid_clear"]
+[connection signal="pressed" from="VBox/HBox/RotateCounterClockwise" to="VBox/Grid" method="_on_rotate_counter_clockwise_pressed"]
+[connection signal="pressed" from="VBox/HBox/RotateClockwise" to="VBox/Grid" method="_on_rotate_clockwise_pressed"]
+[connection signal="show_path" from="VBox/WordPanel" to="." method="_on_wordpanel_show_path"]

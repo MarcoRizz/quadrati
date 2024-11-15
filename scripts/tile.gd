@@ -7,6 +7,10 @@ enum AttemptResult {
 	BONUS     #parola bonus
 }
 
+@onready var button_obj = $Button
+@onready var lettera_obj = $Lettera
+@onready var numero_obj = $Numero
+
 signal attempt_start(tile: Object, letter: String)
 signal selection_attempt(tile: Object, selected: bool, letter: String)
 
@@ -20,15 +24,15 @@ var startingWords = [] #archivio le parole che possono iniziare dalla tile
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	$Button.mouse_filter = Control.MOUSE_FILTER_PASS
+	button_obj.mouse_filter = Control.MOUSE_FILTER_PASS
 
 
 func set_letter(letters: Array) -> void:
-	$Lettera.text = letters[grid_vect.x][grid_vect.y]
+	lettera_obj.text = letters[grid_vect.x][grid_vect.y]
 
 
 func get_letter() -> String:
-	return $Lettera.text
+	return lettera_obj.text
 
 
 func set_passingWords(indexes: Array, words: Array) -> void:
@@ -38,13 +42,13 @@ func set_passingWords(indexes: Array, words: Array) -> void:
 
 func number_update(yesterday_mode: bool) -> void:
 	var new_number = startingWords.size();
-	$Numero.text = str(new_number)
+	numero_obj.text = str(new_number)
 	if yesterday_mode:
-		$Numero.hide()
+		numero_obj.hide()
 		modulate = Color.LIGHT_SLATE_GRAY
 		return
 	if not new_number:
-		$Numero.hide()
+		numero_obj.hide()
 	if not passingWords.size():
 		self_modulate = Color(1, 1, 1)
 		modulate = Color(1, 1, 1, 0.4)
@@ -80,15 +84,15 @@ func clear(yesterday_mode: bool) -> void:
 
 func show_number(show_it: bool) -> void:
 	if show_it and not startingWords.is_empty():
-		$Numero.show()
+		numero_obj.show()
 	else:
-		$Numero.hide()
+		numero_obj.hide()
 
 
 func _on_button_button_down() -> void:
-	attempt_start.emit(self, $Lettera.text)
+	attempt_start.emit(self, lettera_obj.text)
 
 
 func _on_internal_area_mouse_entered() -> void:
 	if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
-		selection_attempt.emit(self, selected, $Lettera.text)
+		selection_attempt.emit(self, selected, lettera_obj.text)
