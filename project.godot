@@ -20,7 +20,12 @@ config/icon="res://icon.svg"
 window/size/viewport_width=400
 window/size/viewport_height=670
 window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
 window/handheld/orientation=5
+
+[gui]
+
+theme/default_font_multichannel_signed_distance_field=true
 
 [input]
 

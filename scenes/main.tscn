@@ -4,12 +4,14 @@
 [ext_resource type="Script" path="res://scripts/display.gd" id="2_eg268"]
 [ext_resource type="PackedScene" uid="uid://dtciitusji7kn" path="res://scenes/main_game.tscn" id="3_kli33"]
 
-[node name="MainWindow" type="Node2D"]
+[node name="MainWindow" type="CanvasLayer"]
 script = ExtResource("1_nxi1l")
 
 [node name="Title" type="Label" parent="."]
-offset_right = 400.0
+anchors_preset = 10
+anchor_right = 1.0
 offset_bottom = 50.0
+grow_horizontal = 2
 theme_override_font_sizes/font_size = 35
 text = "QUADRATI"
 horizontal_alignment = 1
@@ -25,24 +27,36 @@ toggle_mode = true
 text = "<"
 
 [node name="Game" parent="." instance=ExtResource("3_kli33")]
-position = Vector2(0, 50)
+offset_top = 50.0
+offset_right = -400.0
+offset_bottom = 50.0
 
 [node name="MidText" type="Label" parent="."]
 visible = false
 self_modulate = Color(0, 0, 0, 1)
 z_index = 3
-offset_top = 230.0
-offset_right = 400.0
-offset_bottom = 280.0
+anchors_preset = 14
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_top = -85.0
+offset_bottom = -36.0
+grow_horizontal = 2
+grow_vertical = 2
 theme_override_font_sizes/font_size = 35
 text = "Caricamento..."
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Background" type="Polygon2D" parent="MidText"]
+[node name="Background" type="ColorRect" parent="MidText"]
 z_index = -1
-color = Color(0.808998, 0.808998, 0.808998, 1)
-polygon = PackedVector2Array(0, 0, 400, 0, 400, 50, 0, 50)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.807843, 0.807843, 0.807843, 1)
 
 [connection signal="toggled" from="YesterdayButton" to="." method="_on_yesterday_button_toggled"]
 [connection signal="attempt_result" from="Game" to="." method="_on_game_attempt_result"]

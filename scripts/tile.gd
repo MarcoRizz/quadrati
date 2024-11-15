@@ -1,4 +1,4 @@
-extends Node2D
+extends TextureRect
 
 enum AttemptResult {
 	NEW_FIND, #nuova parola trovata
@@ -7,8 +7,8 @@ enum AttemptResult {
 	BONUS     #parola bonus
 }
 
-signal attempt_start(tile: Node2D, letter: String)
-signal selection_attempt(tile: Node2D, selected: bool, letter: String)
+signal attempt_start(tile: Object, letter: String)
+signal selection_attempt(tile: Object, selected: bool, letter: String)
 
 @export var grid_vect = Vector2()
 
@@ -18,19 +18,17 @@ var look_forward = Vector2() #durante un attempt attivo, indica la tile successi
 var passingWords = [] #archivio le parole che possono passare per la tile
 var startingWords = [] #archivio le parole che possono iniziare dalla tile
 
-@onready var grid = $".."   #TODO: <-- da timuovere rif a grid
-
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	$Sprite2D/Button.mouse_filter = Control.MOUSE_FILTER_PASS
+	$Button.mouse_filter = Control.MOUSE_FILTER_PASS
 
 
 func set_letter(letters: Array) -> void:
-	$Sprite2D/Lettera.text = letters[grid_vect.x][grid_vect.y]
+	$Lettera.text = letters[grid_vect.x][grid_vect.y]
 
 
 func get_letter() -> String:
-	return $Sprite2D/Lettera.text
+	return $Lettera.text
 
 
 func set_passingWords(indexes: Array, words: Array) -> void:
@@ -38,36 +36,36 @@ func set_passingWords(indexes: Array, words: Array) -> void:
 		passingWords.append(words[i])
 
 
-func number_update() -> void:
+func number_update(yesterday_mode: bool) -> void:
 	var new_number = startingWords.size();
-	$Sprite2D/Numero.text = str(new_number)
-	if grid.yesterday_mode:    #TODO: <-- da timuovere rif a grid
-		$Sprite2D/Numero.hide()
-		$Sprite2D.modulate = Color.LIGHT_SLATE_GRAY
+	$Numero.text = str(new_number)
+	if yesterday_mode:
+		$Numero.hide()
+		modulate = Color.LIGHT_SLATE_GRAY
 		return
 	if not new_number:
-		$Sprite2D/Numero.hide()
+		$Numero.hide()
 	if not passingWords.size():
-		$Sprite2D.self_modulate = Color(1, 1, 1)
-		$Sprite2D.modulate = Color(1, 1, 1, 0.4)
+		self_modulate = Color(1, 1, 1)
+		modulate = Color(1, 1, 1, 0.4)
 	else:
-		$Sprite2D.modulate = Color(1, 1, 1, 1)
+		modulate = Color(1, 1, 1, 1)
 
 
 func selection_ok() -> void:
 	selected = true
-	$Sprite2D.self_modulate = Color(1, 1, 0.6)
+	self_modulate = Color(1, 1, 0.6)
 
 
 func remove_selection() -> void:
 	selected = false
 	look_forward = Vector2()
-	$Sprite2D.self_modulate = Color(1, 1, 1)
+	self_modulate = Color(1, 1, 1)
 
 
 func set_result(attempt_result: AttemptResult, word: String, color: Color) -> void:
 	if selected:
-		$Sprite2D.self_modulate = color
+		self_modulate = color
 	if attempt_result == AttemptResult.NEW_FIND:
 		if passingWords.has(word):
 			passingWords.erase(word)
@@ -75,22 +73,22 @@ func set_result(attempt_result: AttemptResult, word: String, color: Color) -> vo
 			startingWords.erase(word)
 
 
-func clear() -> void:
+func clear(yesterday_mode: bool) -> void:
 	remove_selection()
-	number_update()
+	number_update(yesterday_mode)
 
 
 func show_number(show_it: bool) -> void:
 	if show_it and not startingWords.is_empty():
-		$Sprite2D/Numero.show()
+		$Numero.show()
 	else:
-		$Sprite2D/Numero.hide()
-
-
-func _on_area_2d_mouse_entered() -> void:
-	if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
-		selection_attempt.emit(self, selected, $Sprite2D/Lettera.text)
+		$Numero.hide()
 
 
 func _on_button_button_down() -> void:
-	attempt_start.emit(self, $Sprite2D/Lettera.text)
+	attempt_start.emit(self, $Lettera.text)
+
+
+func _on_internal_area_mouse_entered() -> void:
+	if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+		selection_attempt.emit(self, selected, $Lettera.text)

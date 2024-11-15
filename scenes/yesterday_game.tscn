@@ -5,21 +5,30 @@
 [ext_resource type="PackedScene" uid="uid://cbbhu4y4ff6ye" path="res://scenes/wordpanel.tscn" id="5_25nog"]
 [ext_resource type="Script" path="res://scripts/progress_bar.gd" id="7_ncndv"]
 
-[node name="Game" type="Node2D"]
+[node name="Game" type="Control"]
+layout_mode = 3
+anchors_preset = 10
+anchor_right = 1.0
+grow_horizontal = 2
 script = ExtResource("1_04fum")
 
 [node name="Grid" parent="." instance=ExtResource("2_qucot")]
 modulate = Color(0.625597, 0.625597, 0.625597, 1)
-position = Vector2(200, 130)
+offset_left = 200.0
+offset_top = 130.0
+offset_right = 200.0
+offset_bottom = 130.0
 scale = Vector2(0.5, 0.5)
 
 [node name="WordPanel" parent="." instance=ExtResource("5_25nog")]
+layout_mode = 0
 offset_left = 10.0
 offset_top = 260.0
 offset_right = 390.0
 offset_bottom = 610.0
 
 [node name="ProgressBar" type="ProgressBar" parent="."]
+layout_mode = 0
 offset_right = 400.0
 offset_bottom = 20.0
 max_value = 0.0

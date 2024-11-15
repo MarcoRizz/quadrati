@@ -1,4 +1,4 @@
-extends Node2D
+extends Control
 
 enum AttemptResult {
 	NEW_FIND, #nuova parola trovata
@@ -16,22 +16,21 @@ signal clear()
 @export var tile_size := 90.0 #todo: prenderle dalla GUI
 @export var tile_spacing := 10.0 #todo: prenderle dalla GUI
 
-@onready var path: Line2D = $Path
+@onready var path: Line2D = $GridContainer/Path
 
-@onready var tiles = [[$tile00, $tile01, $tile02, $tile03],
-					  [$tile10, $tile11, $tile12, $tile13],
-					  [$tile20, $tile21, $tile22, $tile23],
-					  [$tile30, $tile31, $tile32, $tile33]]
+@onready var tiles = [[$GridContainer/tile00, $GridContainer/tile01, $GridContainer/tile02, $GridContainer/tile03],
+					  [$GridContainer/tile10, $GridContainer/tile11, $GridContainer/tile12, $GridContainer/tile13],
+					  [$GridContainer/tile20, $GridContainer/tile21, $GridContainer/tile22, $GridContainer/tile23],
+					  [$GridContainer/tile30, $GridContainer/tile31, $GridContainer/tile32, $GridContainer/tile33]]
 
-var attempt_tiles: Array[Node2D]
+var attempt_tiles: Array[Object]
 var ready_for_attempt = false
 var valid_attempt = false
 var number_shown = false
 
 var rot_on = 0 #comando di rotazione: -1 antiorario, 0 fermo, +1 orario
-var rot_pos = 0 #ultimo angolo statico [0, 270]
+var rot_last = 0 #ultimo angolo statico [0, 270]
 var rot_speed = 2.0
-var rot_angle = 0.0
 
 var yesterday_mode = false
 
@@ -43,28 +42,20 @@ func _ready() -> void:
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	if rot_on != 0:
-		rot_angle += delta * rot_speed * rot_on
+		$GridContainer.rotation += delta * rot_speed * rot_on
 		
-		var rotation_limit = rot_pos + (PI / 2 * rot_on)
+		var rot_target = rot_last + (PI / 2 * rot_on)
 		
 		# Verifica se l'angolo ha superato il limite
-		if (rot_on == 1 and rot_angle > rotation_limit) or (rot_on == -1 and rot_angle < rotation_limit):
+		if (rot_on == 1 and $GridContainer.rotation > rot_target) or (rot_on == -1 and $GridContainer.rotation < rot_target):
 			# Correggi l'angolo
-			rot_angle = rotation_limit
-			rot_pos = rot_angle
-			ready_for_attempt = true;
+			$GridContainer.rotation = rot_target
+			rot_last = rot_target
 			rot_on = 0  # Ferma la rotazione
-			
-			# Applica la rotazione corretta ai tile usando il valore ridotto di rotazione
-			for y in range(grid_size):
-				for x in range(grid_size):
-					tiles[x][y].position = elaborate_tile_coordinate(Vector2(x, y))  #corregge gli errori causati dalla chiamata di position.rotated  #TODO: spostare a chiata di group??
+			ready_for_attempt = true;
 
-		else:
-			# Aggiorna la posizione delle tile ruotandole normalmente
-			for y in range(grid_size):
-				for x in range(grid_size):
-					tiles[x][y].position = tiles[x][y].position.rotated(delta * rot_speed * rot_on) #TODO: spostare a chiata di group??
+		for tile in get_tree().get_nodes_in_group("tiles_group"):
+				tile.rotation = -$GridContainer.rotation
 
 
 func _input(event):
@@ -72,7 +63,7 @@ func _input(event):
 		if not valid_attempt and $Timer.is_stopped():
 			#potrei avere un path plottato
 			path.mod_clear_points()
-			$Path.default_color = Color.YELLOW
+			path.default_color = Color.YELLOW
 		
 		elif valid_attempt:
 			attempt_emitted.emit()
@@ -92,32 +83,25 @@ func instantiate(data: Dictionary) -> void:
 	get_tree().call_group("tiles_group", "set_passingWords", data.passingLinks, data.words)
 	
 	# Aggiorno la griglia
-	get_tree().call_group("tiles_group", "number_update")
+	get_tree().call_group("tiles_group", "number_update", yesterday_mode)
 	$Timer.start()
 
 
-func elaborate_tile_coordinate(grid_vector: Vector2) -> Vector2:
-	return Vector2(
-		(tile_size + tile_spacing) * (grid_vector.x - 1.5),
-		(tile_size + tile_spacing) * (grid_vector.y - 1.5)
-	).rotated(rot_pos)
-
-
-func _on_tile_attempt_start(recived_tile: Node2D, letter: String) -> void:
+func _on_tile_attempt_start(recived_tile: Object, letter: String) -> void:
 	if ready_for_attempt:
 		path.mod_clear_points()
-		$Path.default_color = Color.YELLOW
+		path.default_color = Color.YELLOW
 		valid_attempt = true
 		
 		#aggiungo selezione
-		path.mod_add_point(recived_tile.position)
+		path.mod_add_point(recived_tile.position + recived_tile.size / 2 + $GridContainer.position)
 		attempt_tiles.append(recived_tile)
 		recived_tile.selection_ok()
 		
 		#attivo il segnale attempt_changed
 		attempt_changed.emit(true, letter)
 
-func _on_tile_selection_attempt(recived_tile: Node2D, selected: bool, letter: String):
+func _on_tile_selection_attempt(recived_tile: Object, selected: bool, letter: String):
 	if valid_attempt:
 		var attempt_len = attempt_tiles.size()
 		#capisco se sto tornando indietro o progredendo
@@ -132,7 +116,7 @@ func _on_tile_selection_attempt(recived_tile: Node2D, selected: bool, letter: St
 		else:
 			if recived_tile.grid_vect.distance_to(attempt_tiles[-1].grid_vect) < 1.5:
 				#aggiungo selezione
-				path.mod_add_point(elaborate_tile_coordinate(recived_tile.grid_vect))
+				path.mod_add_point(recived_tile.position + recived_tile.size / 2 + $GridContainer.position)
 				attempt_tiles.append(recived_tile)
 				recived_tile.selection_ok()
 				if attempt_len > 0:
@@ -154,7 +138,7 @@ func set_answer(result: AttemptResult, word: String) -> void:
 		AttemptResult.BONUS:
 			color = Color.LIGHT_SEA_GREEN
 	
-	$Path.default_color = color
+	path.default_color = color
 	ready_for_attempt = false
 	valid_attempt = false
 	get_tree().call_group("tiles_group", "set_result", result, word, color)
@@ -172,11 +156,12 @@ func _on_rotate_counter_clockwise_pressed() -> void:
 	ready_for_attempt = false;
 
 
-func show_path(path_tiles: Array) -> void:
+func show_path(grid_coords: Array) -> void:
 	if rot_on == 0:
-		$Path.default_color = Color(0.3, 0.5, 1)
-		for i_tile in path_tiles:
-			path.mod_add_point(elaborate_tile_coordinate(i_tile))
+		path.default_color = Color(0.3, 0.5, 1)
+		for i_coord in grid_coords:
+			var i_tile = tiles[i_coord.x][i_coord.y]
+			path.mod_add_point(i_tile.position + i_tile.size / 2 + $GridContainer.position)
 
 
 func _on_progress_bar_initials_threshold_signal() -> void:
@@ -185,8 +170,8 @@ func _on_progress_bar_initials_threshold_signal() -> void:
 
 func _on_timer_timeout() -> void:
 	attempt_tiles.clear()
-	$Path.mod_clear_points()
-	get_tree().call_group("tiles_group", "clear")
+	path.mod_clear_points()
+	get_tree().call_group("tiles_group", "clear", yesterday_mode)
 	get_tree().call_group("tiles_group", "show_number", number_shown and not yesterday_mode)
 	clear.emit()
 		

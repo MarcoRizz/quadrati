@@ -1,4 +1,4 @@
-extends Node2D
+extends Control
 
 enum AttemptResult {
 	NEW_FIND, #nuova parola trovata

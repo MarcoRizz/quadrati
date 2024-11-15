@@ -4,112 +4,133 @@
 [ext_resource type="Script" path="res://scripts/path.gd" id="2_03yts"]
 [ext_resource type="PackedScene" uid="uid://c7ftdk55r810x" path="res://scenes/tile.tscn" id="2_ayh7i"]
 
-[node name="Grid" type="Node2D"]
+[node name="Grid" type="Control"]
+layout_mode = 3
+anchors_preset = 0
 script = ExtResource("1_bmk3s")
 
-[node name="Path" type="Line2D" parent="."]
+[node name="GridContainer" type="GridContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -195.0
+offset_top = -195.0
+offset_right = 195.0
+offset_bottom = 195.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(195, 195)
+theme_override_constants/h_separation = 10
+theme_override_constants/v_separation = 10
+columns = 4
+
+[node name="Path" type="Line2D" parent="GridContainer"]
 z_index = 1
+position = Vector2(195, 195)
 width = 30.0
 default_color = Color(1, 1, 0, 1)
 script = ExtResource("2_03yts")
 
-[node name="tile00" parent="." groups=["tiles_group"] instance=ExtResource("2_ayh7i")]
-position = Vector2(-150, -150)
+[node name="tile00" parent="GridContainer" groups=["tiles_group"] instance=ExtResource("2_ayh7i")]
+layout_mode = 2
 
-[node name="tile10" parent="." groups=["tiles_group"] instance=ExtResource("2_ayh7i")]
-position = Vector2(-50, -150)
+[node name="tile10" parent="GridContainer" groups=["tiles_group"] instance=ExtResource("2_ayh7i")]
+layout_mode = 2
 grid_vect = Vector2(1, 0)
 
-[node name="tile20" parent="." groups=["tiles_group"] instance=ExtResource("2_ayh7i")]
-position = Vector2(50, -150)
+[node name="tile20" parent="GridContainer" groups=["tiles_group"] instance=ExtResource("2_ayh7i")]
+layout_mode = 2
 grid_vect = Vector2(2, 0)
 
-[node name="tile30" parent="." groups=["tiles_group"] instance=ExtResource("2_ayh7i")]
-position = Vector2(150, -150)
+[node name="tile30" parent="GridContainer" groups=["tiles_group"] instance=ExtResource("2_ayh7i")]
+layout_mode = 2
 grid_vect = Vector2(3, 0)
 
-[node name="tile01" parent="." groups=["tiles_group"] instance=ExtResource("2_ayh7i")]
-position = Vector2(-150, -50)
+[node name="tile01" parent="GridContainer" groups=["tiles_group"] instance=ExtResource("2_ayh7i")]
+layout_mode = 2
 grid_vect = Vector2(0, 1)
 
-[node name="tile11" parent="." groups=["tiles_group"] instance=ExtResource("2_ayh7i")]
-position = Vector2(-50, -50)
+[node name="tile11" parent="GridContainer" groups=["tiles_group"] instance=ExtResource("2_ayh7i")]
+layout_mode = 2
 grid_vect = Vector2(1, 1)
 
-[node name="tile21" parent="." groups=["tiles_group"] instance=ExtResource("2_ayh7i")]
-position = Vector2(50, -50)
+[node name="tile21" parent="GridContainer" groups=["tiles_group"] instance=ExtResource("2_ayh7i")]
+layout_mode = 2
 grid_vect = Vector2(2, 1)
 
-[node name="tile31" parent="." groups=["tiles_group"] instance=ExtResource("2_ayh7i")]
-position = Vector2(150, -50)
+[node name="tile31" parent="GridContainer" groups=["tiles_group"] instance=ExtResource("2_ayh7i")]
+layout_mode = 2
 grid_vect = Vector2(3, 1)
 
-[node name="tile02" parent="." groups=["tiles_group"] instance=ExtResource("2_ayh7i")]
-position = Vector2(-150, 50)
+[node name="tile02" parent="GridContainer" groups=["tiles_group"] instance=ExtResource("2_ayh7i")]
+layout_mode = 2
 grid_vect = Vector2(0, 2)
 
-[node name="tile12" parent="." groups=["tiles_group"] instance=ExtResource("2_ayh7i")]
-position = Vector2(-50, 50)
+[node name="tile12" parent="GridContainer" groups=["tiles_group"] instance=ExtResource("2_ayh7i")]
+layout_mode = 2
 grid_vect = Vector2(1, 2)
 
-[node name="tile22" parent="." groups=["tiles_group"] instance=ExtResource("2_ayh7i")]
-position = Vector2(50, 50)
+[node name="tile22" parent="GridContainer" groups=["tiles_group"] instance=ExtResource("2_ayh7i")]
+layout_mode = 2
 grid_vect = Vector2(2, 2)
 
-[node name="tile32" parent="." groups=["tiles_group"] instance=ExtResource("2_ayh7i")]
-position = Vector2(150, 50)
+[node name="tile32" parent="GridContainer" groups=["tiles_group"] instance=ExtResource("2_ayh7i")]
+layout_mode = 2
 grid_vect = Vector2(3, 2)
 
-[node name="tile03" parent="." groups=["tiles_group"] instance=ExtResource("2_ayh7i")]
-position = Vector2(-150, 150)
+[node name="tile03" parent="GridContainer" groups=["tiles_group"] instance=ExtResource("2_ayh7i")]
+layout_mode = 2
 grid_vect = Vector2(0, 3)
 
-[node name="tile13" parent="." groups=["tiles_group"] instance=ExtResource("2_ayh7i")]
-position = Vector2(-50, 150)
+[node name="tile13" parent="GridContainer" groups=["tiles_group"] instance=ExtResource("2_ayh7i")]
+layout_mode = 2
 grid_vect = Vector2(1, 3)
 
-[node name="tile23" parent="." groups=["tiles_group"] instance=ExtResource("2_ayh7i")]
-position = Vector2(50, 150)
+[node name="tile23" parent="GridContainer" groups=["tiles_group"] instance=ExtResource("2_ayh7i")]
+layout_mode = 2
 grid_vect = Vector2(2, 3)
 
-[node name="tile33" parent="." groups=["tiles_group"] instance=ExtResource("2_ayh7i")]
-position = Vector2(150, 150)
+[node name="tile33" parent="GridContainer" groups=["tiles_group"] instance=ExtResource("2_ayh7i")]
+layout_mode = 2
 grid_vect = Vector2(3, 3)
 
 [node name="Timer" type="Timer" parent="."]
 wait_time = 0.5
 one_shot = true
 
-[connection signal="attempt_start" from="tile00" to="." method="_on_tile_attempt_start"]
-[connection signal="selection_attempt" from="tile00" to="." method="_on_tile_selection_attempt"]
-[connection signal="attempt_start" from="tile10" to="." method="_on_tile_attempt_start"]
-[connection signal="selection_attempt" from="tile10" to="." method="_on_tile_selection_attempt"]
-[connection signal="attempt_start" from="tile20" to="." method="_on_tile_attempt_start"]
-[connection signal="selection_attempt" from="tile20" to="." method="_on_tile_selection_attempt"]
-[connection signal="attempt_start" from="tile30" to="." method="_on_tile_attempt_start"]
-[connection signal="selection_attempt" from="tile30" to="." method="_on_tile_selection_attempt"]
-[connection signal="attempt_start" from="tile01" to="." method="_on_tile_attempt_start"]
-[connection signal="selection_attempt" from="tile01" to="." method="_on_tile_selection_attempt"]
-[connection signal="attempt_start" from="tile11" to="." method="_on_tile_attempt_start"]
-[connection signal="selection_attempt" from="tile11" to="." method="_on_tile_selection_attempt"]
-[connection signal="attempt_start" from="tile21" to="." method="_on_tile_attempt_start"]
-[connection signal="selection_attempt" from="tile21" to="." method="_on_tile_selection_attempt"]
-[connection signal="attempt_start" from="tile31" to="." method="_on_tile_attempt_start"]
-[connection signal="selection_attempt" from="tile31" to="." method="_on_tile_selection_attempt"]
-[connection signal="attempt_start" from="tile02" to="." method="_on_tile_attempt_start"]
-[connection signal="selection_attempt" from="tile02" to="." method="_on_tile_selection_attempt"]
-[connection signal="attempt_start" from="tile12" to="." method="_on_tile_attempt_start"]
-[connection signal="selection_attempt" from="tile12" to="." method="_on_tile_selection_attempt"]
-[connection signal="attempt_start" from="tile22" to="." method="_on_tile_attempt_start"]
-[connection signal="selection_attempt" from="tile22" to="." method="_on_tile_selection_attempt"]
-[connection signal="attempt_start" from="tile32" to="." method="_on_tile_attempt_start"]
-[connection signal="selection_attempt" from="tile32" to="." method="_on_tile_selection_attempt"]
-[connection signal="attempt_start" from="tile03" to="." method="_on_tile_attempt_start"]
-[connection signal="selection_attempt" from="tile03" to="." method="_on_tile_selection_attempt"]
-[connection signal="attempt_start" from="tile13" to="." method="_on_tile_attempt_start"]
-[connection signal="selection_attempt" from="tile13" to="." method="_on_tile_selection_attempt"]
-[connection signal="attempt_start" from="tile23" to="." method="_on_tile_attempt_start"]
-[connection signal="selection_attempt" from="tile23" to="." method="_on_tile_selection_attempt"]
-[connection signal="attempt_start" from="tile33" to="." method="_on_tile_attempt_start"]
-[connection signal="selection_attempt" from="tile33" to="." method="_on_tile_selection_attempt"]
+[connection signal="attempt_start" from="GridContainer/tile00" to="." method="_on_tile_attempt_start"]
+[connection signal="selection_attempt" from="GridContainer/tile00" to="." method="_on_tile_selection_attempt"]
+[connection signal="attempt_start" from="GridContainer/tile10" to="." method="_on_tile_attempt_start"]
+[connection signal="selection_attempt" from="GridContainer/tile10" to="." method="_on_tile_selection_attempt"]
+[connection signal="attempt_start" from="GridContainer/tile20" to="." method="_on_tile_attempt_start"]
+[connection signal="selection_attempt" from="GridContainer/tile20" to="." method="_on_tile_selection_attempt"]
+[connection signal="attempt_start" from="GridContainer/tile30" to="." method="_on_tile_attempt_start"]
+[connection signal="selection_attempt" from="GridContainer/tile30" to="." method="_on_tile_selection_attempt"]
+[connection signal="attempt_start" from="GridContainer/tile01" to="." method="_on_tile_attempt_start"]
+[connection signal="selection_attempt" from="GridContainer/tile01" to="." method="_on_tile_selection_attempt"]
+[connection signal="attempt_start" from="GridContainer/tile11" to="." method="_on_tile_attempt_start"]
+[connection signal="selection_attempt" from="GridContainer/tile11" to="." method="_on_tile_selection_attempt"]
+[connection signal="attempt_start" from="GridContainer/tile21" to="." method="_on_tile_attempt_start"]
+[connection signal="selection_attempt" from="GridContainer/tile21" to="." method="_on_tile_selection_attempt"]
+[connection signal="attempt_start" from="GridContainer/tile31" to="." method="_on_tile_attempt_start"]
+[connection signal="selection_attempt" from="GridContainer/tile31" to="." method="_on_tile_selection_attempt"]
+[connection signal="attempt_start" from="GridContainer/tile02" to="." method="_on_tile_attempt_start"]
+[connection signal="selection_attempt" from="GridContainer/tile02" to="." method="_on_tile_selection_attempt"]
+[connection signal="attempt_start" from="GridContainer/tile12" to="." method="_on_tile_attempt_start"]
+[connection signal="selection_attempt" from="GridContainer/tile12" to="." method="_on_tile_selection_attempt"]
+[connection signal="attempt_start" from="GridContainer/tile22" to="." method="_on_tile_attempt_start"]
+[connection signal="selection_attempt" from="GridContainer/tile22" to="." method="_on_tile_selection_attempt"]
+[connection signal="attempt_start" from="GridContainer/tile32" to="." method="_on_tile_attempt_start"]
+[connection signal="selection_attempt" from="GridContainer/tile32" to="." method="_on_tile_selection_attempt"]
+[connection signal="attempt_start" from="GridContainer/tile03" to="." method="_on_tile_attempt_start"]
+[connection signal="selection_attempt" from="GridContainer/tile03" to="." method="_on_tile_selection_attempt"]
+[connection signal="attempt_start" from="GridContainer/tile13" to="." method="_on_tile_attempt_start"]
+[connection signal="selection_attempt" from="GridContainer/tile13" to="." method="_on_tile_selection_attempt"]
+[connection signal="attempt_start" from="GridContainer/tile23" to="." method="_on_tile_attempt_start"]
+[connection signal="selection_attempt" from="GridContainer/tile23" to="." method="_on_tile_selection_attempt"]
+[connection signal="attempt_start" from="GridContainer/tile33" to="." method="_on_tile_attempt_start"]
+[connection signal="selection_attempt" from="GridContainer/tile33" to="." method="_on_tile_selection_attempt"]
 [connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
