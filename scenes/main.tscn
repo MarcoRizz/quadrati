@@ -60,6 +60,24 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.807843, 0.807843, 0.807843, 1)
 
+[node name="HideButton" type="Button" parent="MidText"]
+visible = false
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -90.0
+offset_top = 1.0
+offset_right = -20.0
+offset_bottom = 26.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 12
+text = "CONTINUE"
+
 [connection signal="toggled" from="VBox/Title/YesterdayButton" to="." method="_on_yesterday_button_toggled"]
 [connection signal="attempt_result" from="VBox/Game" to="." method="_on_game_attempt_result"]
 [connection signal="game_complete" from="VBox/Game" to="." method="_on_game_game_complete"]
+[connection signal="pressed" from="MidText/HideButton" to="." method="_on_hide_button_pressed"]

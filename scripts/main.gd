@@ -17,6 +17,7 @@ const fileName_old_results := "user://lastsavedgame.save"
 @onready var vbox_obj = $VBox
 @onready var game_obj = $VBox/Game
 @onready var midText_obj = $MidText
+@onready var midText_HideButt = $MidText/HideButton
 @onready var title_obj = $VBox/Title
 @onready var yesterdayButton_obj = $VBox/Title/YesterdayButton
 
@@ -239,6 +240,7 @@ func _on_game_game_complete() -> void:
 	midText_obj.text = "Complimenti, hai vinto!"
 	midText_obj.get_node("Background").self_modulate = Color.SKY_BLUE
 	midText_obj.show()
+	midText_HideButt.show()
 
 
 func _on_game_attempt_result(word_finded: AttemptResult, word: String) -> void:
@@ -248,3 +250,7 @@ func _on_game_attempt_result(word_finded: AttemptResult, word: String) -> void:
 	elif word_finded == AttemptResult.BONUS:
 		todaysSave.bonusFinded.append(word)
 		save_dictionary_file(todaysSave, fileName_actual_results)
+
+
+func _on_hide_button_pressed() -> void:
+	midText_obj.hide()
