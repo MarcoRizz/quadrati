@@ -5,22 +5,25 @@
 [node name="WordPanel" type="Panel"]
 z_index = 1
 custom_minimum_size = Vector2(0, 120)
-anchors_preset = 12
-anchor_top = 1.0
+anchors_preset = 10
 anchor_right = 1.0
-anchor_bottom = 1.0
 grow_horizontal = 2
-grow_vertical = 0
 script = ExtResource("1_trugh")
 
-[node name="Button" type="Button" parent="."]
-layout_mode = 0
+[node name="ExpandButton" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 1.0
+anchor_bottom = 1.0
 offset_left = 5.0
-offset_top = -45.0
 offset_right = 50.0
+offset_bottom = 45.0
+grow_vertical = 0
+rotation = 3.14159
 pivot_offset = Vector2(22.5, 22.5)
 focus_mode = 0
 text = "^"
+metadata/_edit_use_anchors_ = true
 
 [node name="ScrollContainer" type="ScrollContainer" parent="."]
 layout_mode = 1
@@ -165,4 +168,4 @@ text = "Bonus: 0/0"
 custom_minimum_size = Vector2(0, 32)
 layout_mode = 2
 
-[connection signal="pressed" from="Button" to="." method="_on_button_pressed"]
+[connection signal="pressed" from="ExpandButton" to="." method="_on_button_pressed"]

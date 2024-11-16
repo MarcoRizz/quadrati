@@ -13,17 +13,20 @@
 
 [node name="Game" type="Control"]
 layout_mode = 3
-anchors_preset = 10
+anchors_preset = 15
 anchor_right = 1.0
+anchor_bottom = 1.0
 grow_horizontal = 2
+grow_vertical = 2
 script = ExtResource("1_woek1")
 
 [node name="VBox" type="VBoxContainer" parent="."]
 layout_mode = 1
-anchors_preset = 10
+anchors_preset = 15
 anchor_right = 1.0
-offset_bottom = 72.0
+anchor_bottom = 1.0
 grow_horizontal = 2
+grow_vertical = 2
 
 [node name="ProgressBar" type="ProgressBar" parent="VBox"]
 custom_minimum_size = Vector2(0, 20)
@@ -32,7 +35,13 @@ max_value = 0.0
 show_percentage = false
 script = ExtResource("4_gwx55")
 
+[node name="WordPanel" parent="VBox" instance=ExtResource("5_o0gvf")]
+custom_minimum_size = Vector2(380, 120)
+layout_mode = 2
+size_flags_vertical = 3
+
 [node name="Display" type="Label" parent="VBox"]
+custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
 theme_override_font_sizes/font_size = 35
 horizontal_alignment = 1
@@ -88,14 +97,11 @@ custom_minimum_size = Vector2(0, 10)
 layout_mode = 2
 theme_override_styles/separator = SubResource("StyleBoxEmpty_e7gxh")
 
-[node name="WordPanel" parent="VBox" instance=ExtResource("5_o0gvf")]
-custom_minimum_size = Vector2(380, 120)
-layout_mode = 2
-
 [connection signal="initials_threshold_signal" from="VBox/ProgressBar" to="VBox/Grid" method="_on_progress_bar_initials_threshold_signal"]
+[connection signal="expand" from="VBox/WordPanel" to="." method="_on_word_panel_expand"]
+[connection signal="show_path" from="VBox/WordPanel" to="." method="_on_wordpanel_show_path"]
 [connection signal="attempt_changed" from="VBox/Grid" to="VBox/Display" method="_on_grid_attempt_changed"]
 [connection signal="clear" from="VBox/Grid" to="." method="_on_grid_clear"]
 [connection signal="clear" from="VBox/Grid" to="VBox/Display" method="_on_grid_clear"]
 [connection signal="pressed" from="VBox/HBox/RotateCounterClockwise" to="VBox/Grid" method="_on_rotate_counter_clockwise_pressed"]
 [connection signal="pressed" from="VBox/HBox/RotateClockwise" to="VBox/Grid" method="_on_rotate_clockwise_pressed"]
-[connection signal="show_path" from="VBox/WordPanel" to="." method="_on_wordpanel_show_path"]

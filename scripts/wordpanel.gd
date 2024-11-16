@@ -3,9 +3,10 @@ extends Panel
 const parola_obj = preload("res://scenes/wordpanel_parola.tscn")
 
 signal show_path(word: String)
+signal expand(expansion_toggle: bool)
 
 @onready var vbox_obj = $ScrollContainer/VBoxContainer
-@onready var button_obj = $Button
+@onready var button_obj = $ExpandButton
 
 var yesterday_mode = false
 
@@ -27,29 +28,11 @@ var box_parole = {
 }
 var all_words = Node.new() #qui salvo tutte le parole
 
-# Variabili per l'espansione animata
-var original_size_y = size.y
-const extended_size_y = 350
-const moving_vel = 500.0
-var panel_y_bottom #la assegno in _ready()
-var moving_up = false
+var expanded = false
 
 func _ready() -> void:
 	#impedisco il click delle lettere se Panel è esteso
 	mouse_filter = Control.MOUSE_FILTER_STOP
-	#rilevo la posizione globale
-	panel_y_bottom = position.y + original_size_y
-
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
-	# Esegui il calcolo solo se è necessario espandere o ridurre il pannello
-	if not yesterday_mode and ((moving_up and size.y < extended_size_y) or (not moving_up and size.y > original_size_y)):
-		# Aggiorna size.y e applica il clamp per mantenerlo nei limiti
-		size.y = clamp(size.y + moving_vel * delta * (1 if moving_up else -1), original_size_y, extended_size_y)
-		
-		# Aggiorna la posizione solo se size.y cambia
-		position.y = panel_y_bottom - size.y
 
 
 func instantiate(json: Dictionary) -> void:
@@ -117,23 +100,10 @@ func reveal_remaining_words() -> void:
 
 
 func _on_button_pressed() -> void:
-	button_obj.rotation = (0.0 if moving_up else PI)
-	moving_up = not moving_up
-
-
-	# Gestisci i clic fuori dal Panel
-func _input(event):
-	if size.y == extended_size_y and event is InputEventMouseButton and event.pressed:
-			# Controlla se il clic è avvenuto fuori dal Panel
-			var mouse_pos = get_global_mouse_position()
-			var panel_rect = Rect2(global_position, size)
-			# Usa la trasformazione globale per verificare la posizione del mouse rispetto al Button
-			var button_global_position = button_obj.get_global_position()
-			var button_rect = Rect2(button_global_position - (Vector2() if button_obj.rotation == 0 else button_obj.size), button_obj.size)
-			
-			if not panel_rect.has_point(mouse_pos) and not button_rect.has_point(mouse_pos):
-				button_obj.rotation = 0
-				moving_up = false
+	button_obj.rotation = (PI if expanded else 0.0)
+	expanded = not expanded
+	expand.emit(expanded)
+	print("expand emitted: ", expanded)
 
 
 func _on_parola_show_path(word: String) -> void:

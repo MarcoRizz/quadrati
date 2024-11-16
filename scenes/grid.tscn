@@ -28,7 +28,6 @@ columns = 4
 
 [node name="Path" type="Line2D" parent="GridContainer"]
 z_index = 1
-position = Vector2(195, 195)
 width = 30.0
 default_color = Color(1, 1, 0, 1)
 script = ExtResource("2_03yts")

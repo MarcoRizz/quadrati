@@ -18,9 +18,6 @@ const grid_size := 4
 					  [$GridContainer/tile20, $GridContainer/tile21, $GridContainer/tile22, $GridContainer/tile23],
 					  [$GridContainer/tile30, $GridContainer/tile31, $GridContainer/tile32, $GridContainer/tile33]]
 
-@export var tile_size := 90.0 #todo: prenderle dalla GUI
-@export var tile_spacing := 10.0 #todo: prenderle dalla GUI
-
 signal attempt_changed(add_char: bool, char: String)
 signal attempt_emitted(word: String)
 signal clear()
@@ -178,6 +175,7 @@ func _on_timer_timeout() -> void:
 	clear.emit()
 		
 	ready_for_attempt = not yesterday_mode
+
 
 func set_yesterday_mode() -> void:
 	yesterday_mode = true

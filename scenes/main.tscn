@@ -33,6 +33,7 @@ text = "<"
 
 [node name="Game" parent="VBox" instance=ExtResource("3_kli33")]
 layout_mode = 2
+size_flags_vertical = 3
 
 [node name="MidText" type="Label" parent="."]
 self_modulate = Color(0, 0, 0, 1)

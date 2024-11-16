@@ -14,6 +14,7 @@ const fileName_actual_results := "user://savegame.save"
 const fileName_old_grid := "user://lastsavedjson.save"
 const fileName_old_results := "user://lastsavedgame.save"
 
+@onready var vbox_obj = $VBox
 @onready var game_obj = $VBox/Game
 @onready var midText_obj = $MidText
 @onready var title_obj = $VBox/Title
@@ -22,11 +23,8 @@ const fileName_old_results := "user://lastsavedgame.save"
 var todaysJson : Dictionary
 var todaysSave : Dictionary = {"wordsFinded" = [], "bonusFinded" = []}
 
-var game_obj_position # Lo assegno in _ready
-
 
 func _ready() -> void:
-	game_obj_position = game_obj.position
 	#leggo il file json di oggi
 	# Create an HTTP request node and connect its completion signal.
 	var http_request = HTTPRequest.new()
@@ -188,19 +186,19 @@ func _on_yesterday_button_toggled(toggled_on: bool) -> void:
 		NodeGrid = preload("res://scenes/main_game.tscn")
 	
 	# Cancello Game vecchio e ne istanzio uno nuovo
-	#game_obj.queue_free()
 	game_obj.free()
 	var new_grid = NodeGrid.instantiate()
-	add_child(new_grid)
+	vbox_obj.add_child(new_grid)
 	game_obj = new_grid
-	game_obj.position = game_obj_position
+	game_obj.size_flags_vertical = Control.SIZE_EXPAND_FILL #opzione Expand in Container Sizing
 	
 	title_obj.text = "QUADRATI#" + str(game_to_load.todaysNum)
 	game_obj.yesterday_mode = toggled_on
 	game_obj.load_game(game_to_load)
 	game_obj.load_results(save_to_load)
-	game_obj.yesterday_mode = toggled_on
-	if not toggled_on:
+	if toggled_on:
+		game_obj.grid_target_scale = Vector2(0.5, 0.5)
+	else:
 		game_obj.attempt_result.connect(_on_game_attempt_result)
 		game_obj.game_complete.connect(_on_game_game_complete)
 

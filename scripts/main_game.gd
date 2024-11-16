@@ -8,6 +8,7 @@ enum AttemptResult {
 }
 
 @onready var grid_obj = $VBox/Grid
+@onready var grid_gridCont_obj = $VBox/Grid/GridContainer
 @onready var display_obj = $VBox/Display
 @onready var wordPanel_obj = $VBox/WordPanel
 @onready var progressBar_obj = $VBox/ProgressBar
@@ -24,6 +25,28 @@ var bonus = [] #colleziono tutte le parole bonus
 var words_finded = [] #colleziono le parole trovate
 var bonus_finded = [] #colleziono le parole bonus trovate
 
+var grid_target_scale = Vector2.ONE #serve per l'animazione del dimensionamento
+var scaling_vel = 0.5
+
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(delta: float) -> void:
+	if not grid_gridCont_obj.scale == grid_target_scale:
+		# Se sono in yesterday_mode salto l'animazione
+		if yesterday_mode:
+			grid_gridCont_obj.scale = grid_target_scale
+		
+		elif grid_target_scale > grid_gridCont_obj.scale:
+			grid_gridCont_obj.scale += Vector2.ONE * delta * scaling_vel
+			if grid_gridCont_obj.scale > grid_target_scale:
+				grid_gridCont_obj.scale = grid_target_scale
+		else:
+			grid_gridCont_obj.scale -= Vector2.ONE * delta * scaling_vel
+			if grid_gridCont_obj.scale < grid_target_scale:
+				grid_gridCont_obj.scale = grid_target_scale
+		
+		grid_obj.custom_minimum_size = grid_gridCont_obj.size * grid_gridCont_obj.scale
+	
 
 func _input(event: InputEvent) -> void:
 	if event.is_action_released("click") and grid_obj.is_visible_in_tree(): #TODO: assegnare a Grid?
@@ -153,3 +176,7 @@ func find_path_recursive_step(starting_tile: Array[Vector2], step: int, word: St
 func _on_grid_clear() -> void:
 	if progressBar_obj.value >= progressBar_obj.max_value and not grid_obj.yesterday_mode:
 		game_complete.emit()
+
+
+func _on_word_panel_expand(expansion_toggle: bool) -> void:
+	grid_target_scale = Vector2.ONE * (0.5 if expansion_toggle else 1.0)
