@@ -73,6 +73,9 @@ func _ready() -> void:
 
 # Called when the HTTP request is completed.
 func _http_request_completed(result, response_code, headers, body):
+	# Disabilito la chisira automatica per permettere il salvataggio delle stats
+	get_tree().auto_accept_quit = false
+	
 	if not result == 0:
 		print("An error occurred in the HTTP request, error " + str(result))
 		if FileAccess.file_exists(fileName_actual_grid):
@@ -152,6 +155,17 @@ func load_todays_data_to_game():
 	midText_obj.hide()
 
 
+func _notification(what: int) -> void:
+	# Se ricevi una notifica di chiusura salvo le stats
+	if what == NOTIFICATION_WM_CLOSE_REQUEST or what == NOTIFICATION_APPLICATION_PAUSED:
+		
+		if not game_obj.yesterday_mode:
+			todaysSave.stats = game_obj.get_stats()
+			save_dictionary_file(todaysSave, fileName_actual_results)
+		
+		get_tree().quit()
+
+
 func valid_game_file(file: Dictionary) -> bool:
 	return file.has("grid") and file.has("words") and file.has("passingLinks") and file.has("startingLinks") and file.has("todaysNum")
 
@@ -173,6 +187,11 @@ func _on_yesterday_button_toggled(toggled_on: bool) -> void:
 			#TODO: messaggio a schermo
 			print("corrupted old json file, old results view canceled")
 			return
+		
+		# Sono sicuro di procedere, salvo le stats della partita in corso
+		todaysSave.stats = game_obj.get_stats()
+		save_dictionary_file(todaysSave, fileName_actual_results)
+		
 		save_to_load = load_json_file(fileName_old_results)
 		if not valid_save_file(save_to_load) or not save_to_load.todaysNum == game_to_load.todaysNum:
 			if not valid_save_file(save_to_load) and not save_to_load == {}:
@@ -243,12 +262,14 @@ func _on_game_game_complete() -> void:
 	midText_HideButt.show()
 
 
-func _on_game_attempt_result(word_finded: AttemptResult, word: String) -> void:
-	if word_finded == AttemptResult.NEW_FIND:
-		todaysSave.wordsFinded.append(word)
-		save_dictionary_file(todaysSave, fileName_actual_results)
-	elif word_finded == AttemptResult.BONUS:
-		todaysSave.bonusFinded.append(word)
+func _on_game_attempt_result(result: AttemptResult, word: String) -> void:
+	if result == AttemptResult.NEW_FIND or result == AttemptResult.BONUS:
+		if result == AttemptResult.NEW_FIND:
+			todaysSave.wordsFinded.append(word)
+		elif result == AttemptResult.BONUS:
+			todaysSave.bonusFinded.append(word)
+		
+		todaysSave.stats = game_obj.get_stats()
 		save_dictionary_file(todaysSave, fileName_actual_results)
 
 

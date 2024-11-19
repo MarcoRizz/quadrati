@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://dtciitusji7kn"]
+[gd_scene load_steps=10 format=3 uid="uid://dtciitusji7kn"]
 
 [ext_resource type="PackedScene" uid="uid://knuk1qdilmis" path="res://scenes/grid.tscn" id="1_uubdm"]
 [ext_resource type="Script" path="res://scripts/main_game.gd" id="1_woek1"]
@@ -6,6 +6,7 @@
 [ext_resource type="Script" path="res://scripts/progress_bar.gd" id="4_gwx55"]
 [ext_resource type="PackedScene" uid="uid://cbbhu4y4ff6ye" path="res://scenes/wordpanel.tscn" id="5_o0gvf"]
 [ext_resource type="Texture2D" uid="uid://cohsvggssqult" path="res://assets/rotate.png" id="6_va4aj"]
+[ext_resource type="PackedScene" uid="uid://50quxcmfn0nb" path="res://scenes/stats.tscn" id="7_js6ms"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_e7gxh"]
 
@@ -36,7 +37,7 @@ show_percentage = false
 script = ExtResource("4_gwx55")
 
 [node name="WordPanel" parent="VBox" instance=ExtResource("5_o0gvf")]
-custom_minimum_size = Vector2(380, 120)
+custom_minimum_size = Vector2(0, 0)
 layout_mode = 2
 size_flags_vertical = 3
 
@@ -96,6 +97,9 @@ theme_override_styles/separator = SubResource("StyleBoxEmpty_xpera")
 custom_minimum_size = Vector2(0, 10)
 layout_mode = 2
 theme_override_styles/separator = SubResource("StyleBoxEmpty_e7gxh")
+
+[node name="Stats" parent="VBox" instance=ExtResource("7_js6ms")]
+layout_mode = 2
 
 [connection signal="initials_threshold_signal" from="VBox/ProgressBar" to="VBox/Grid" method="_on_progress_bar_initials_threshold_signal"]
 [connection signal="expand" from="VBox/WordPanel" to="." method="_on_word_panel_expand"]

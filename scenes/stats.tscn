@@ -1,0 +1,30 @@
+[gd_scene load_steps=2 format=3 uid="uid://50quxcmfn0nb"]
+
+[ext_resource type="Script" path="res://scripts/stats.gd" id="1_188w2"]
+
+[node name="PanelContainer" type="PanelContainer"]
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -23.0
+grow_horizontal = 2
+grow_vertical = 0
+scale = Vector2(1, 1.00412)
+script = ExtResource("1_188w2")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_right = 5
+
+[node name="Time" type="Label" parent="MarginContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+text = "00h00:00"
+
+[node name="Tentativi" type="Label" parent="MarginContainer"]
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+size_flags_horizontal = 8
+text = "T:000"

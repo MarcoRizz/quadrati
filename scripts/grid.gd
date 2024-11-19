@@ -19,7 +19,6 @@ const grid_size := 4
 					  [$GridContainer/tile30, $GridContainer/tile31, $GridContainer/tile32, $GridContainer/tile33]]
 
 signal attempt_changed(add_char: bool, char: String)
-signal attempt_emitted(word: String)
 signal clear()
 
 var attempt_tiles: Array[Object]
@@ -63,9 +62,6 @@ func _input(event):
 			#potrei avere un path plottato
 			path.mod_clear_points()
 			path.default_color = Color.YELLOW
-		
-		elif valid_attempt:
-			attempt_emitted.emit()
 
 
 func instantiate(data: Dictionary) -> void:

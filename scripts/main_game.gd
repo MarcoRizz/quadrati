@@ -12,6 +12,7 @@ enum AttemptResult {
 @onready var display_obj = $VBox/Display
 @onready var wordPanel_obj = $VBox/WordPanel
 @onready var progressBar_obj = $VBox/ProgressBar
+@onready var stats_obj = $VBox/Stats
 
 signal attempt_result(word_finded: AttemptResult, word: String)
 signal game_complete()
@@ -68,6 +69,7 @@ func _input(event: InputEvent) -> void:
 			
 			var word = display_obj.text
 			grid_obj.set_answer(result, word)
+			stats_obj.add_attempt(result, word)
 			if result == AttemptResult.NEW_FIND:
 				wordPanel_obj.add_word(word)
 				progressBar_obj.increase(word)
@@ -81,6 +83,7 @@ func load_game(data: Dictionary):
 	if yesterday_mode:
 		grid_obj.set_yesterday_mode()
 		wordPanel_obj.set_yesterday_mode()
+		stats_obj.set_yesterday_mode()
 	# Aggiungi le parole
 	for i_parola in data.words:
 		words.append(i_parola)
@@ -113,6 +116,11 @@ func load_results(save: Dictionary):
 			bonus_finded.append(i_parola)
 			wordPanel_obj.add_bonus(i_parola)
 			progressBar_obj.increase_bonus(i_parola)
+	
+	# Carico le statistiche
+	if save.has("stats"):
+		stats_obj.time = save.stats.timer
+		stats_obj.set_attempts(save.stats.attempts_n)
 	
 	# Se sono in yesterday_mode rivelo le rimanenti
 	if yesterday_mode:
@@ -180,3 +188,7 @@ func _on_grid_clear() -> void:
 
 func _on_word_panel_expand(expansion_toggle: bool) -> void:
 	grid_target_scale = Vector2.ONE * (0.5 if expansion_toggle else 1.0)
+
+
+func get_stats() -> Dictionary:
+	return {"timer" = stats_obj.time, "attempts_n" = stats_obj.attempts_n}
