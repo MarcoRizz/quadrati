@@ -1,0 +1,14 @@
+[gd_scene load_steps=2 format=3 uid="uid://dymocognk601v"]
+
+[ext_resource type="Script" path="res://scripts/wordpanel_parola.gd" id="1_omrdl"]
+
+[node name="Parola" type="Button"]
+offset_right = 8.0
+offset_bottom = 8.0
+focus_mode = 0
+mouse_filter = 1
+text = "PAROLA"
+script = ExtResource("1_omrdl")
+
+[connection signal="button_down" from="." to="." method="_on_button_down"]
+[connection signal="pressed" from="." to="." method="_on_pressed"]

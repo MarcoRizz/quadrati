@@ -1,0 +1,171 @@
+[gd_scene load_steps=2 format=3 uid="uid://cbbhu4y4ff6ye"]
+
+[ext_resource type="Script" path="res://scripts/wordpanel.gd" id="1_trugh"]
+
+[node name="WordPanel" type="Panel"]
+z_index = 1
+custom_minimum_size = Vector2(0, 120)
+anchors_preset = 10
+anchor_right = 1.0
+grow_horizontal = 2
+script = ExtResource("1_trugh")
+
+[node name="ExpandButton" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 5.0
+offset_right = 50.0
+offset_bottom = 45.0
+grow_vertical = 0
+rotation = 3.14159
+pivot_offset = Vector2(22.5, 22.5)
+focus_mode = 0
+text = "^"
+metadata/_edit_use_anchors_ = true
+
+[node name="ScrollContainer" type="ScrollContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 5.0
+offset_top = 5.0
+offset_right = -5.0
+offset_bottom = -5.0
+grow_horizontal = 2
+grow_vertical = 2
+horizontal_scroll_mode = 0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ScrollContainer"]
+custom_minimum_size = Vector2(362, 0)
+layout_mode = 2
+
+[node name="4_titolo" type="Label" parent="ScrollContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.922, 0.804, 1)
+text = "4-lettere: 0/0"
+
+[node name="4_box" type="HFlowContainer" parent="ScrollContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+
+[node name="5_titolo" type="Label" parent="ScrollContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.921569, 0.803922, 1)
+text = "5-lettere: 0/0"
+
+[node name="5_box" type="HFlowContainer" parent="ScrollContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+
+[node name="6_titolo" type="Label" parent="ScrollContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.921569, 0.803922, 1)
+text = "6-lettere: 0/0"
+
+[node name="6_box" type="HFlowContainer" parent="ScrollContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+
+[node name="7_titolo" type="Label" parent="ScrollContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.921569, 0.803922, 1)
+text = "7-lettere: 0/0"
+
+[node name="7_box" type="HFlowContainer" parent="ScrollContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+
+[node name="8_titolo" type="Label" parent="ScrollContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.921569, 0.803922, 1)
+text = "8-lettere: 0/0"
+
+[node name="8_box" type="HFlowContainer" parent="ScrollContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+
+[node name="9_titolo" type="Label" parent="ScrollContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.921569, 0.803922, 1)
+text = "9-lettere: 0/0"
+
+[node name="9_box" type="HFlowContainer" parent="ScrollContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+
+[node name="10_titolo" type="Label" parent="ScrollContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.921569, 0.803922, 1)
+text = "10-lettere: 0/0"
+
+[node name="10_box" type="HFlowContainer" parent="ScrollContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+
+[node name="11_titolo" type="Label" parent="ScrollContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.921569, 0.803922, 1)
+text = "11-lettere: 0/0"
+
+[node name="11_box" type="HFlowContainer" parent="ScrollContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+
+[node name="12_titolo" type="Label" parent="ScrollContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.921569, 0.803922, 1)
+text = "12-lettere: 0/0"
+
+[node name="12_box" type="HFlowContainer" parent="ScrollContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+
+[node name="13_titolo" type="Label" parent="ScrollContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.921569, 0.803922, 1)
+text = "13-lettere: 0/0"
+
+[node name="13_box" type="HFlowContainer" parent="ScrollContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+
+[node name="14_titolo" type="Label" parent="ScrollContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.921569, 0.803922, 1)
+text = "14-lettere: 0/0"
+
+[node name="14_box" type="HFlowContainer" parent="ScrollContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+
+[node name="15_titolo" type="Label" parent="ScrollContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.921569, 0.803922, 1)
+text = "15-lettere: 0/0"
+
+[node name="15_box" type="HFlowContainer" parent="ScrollContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+
+[node name="16_titolo" type="Label" parent="ScrollContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.921569, 0.803922, 1)
+text = "16-lettere: 0/0"
+
+[node name="16_box" type="HFlowContainer" parent="ScrollContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+
+[node name="bonus_titolo" type="Label" parent="ScrollContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.921569, 0.803922, 1)
+text = "Bonus: 0/0"
+
+[node name="bonus_box" type="HFlowContainer" parent="ScrollContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+
+[connection signal="pressed" from="ExpandButton" to="." method="_on_button_pressed"]

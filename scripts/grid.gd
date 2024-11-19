@@ -1,174 +1,144 @@
-extends Node2D
+extends Control
+
+enum AttemptResult {
+	NEW_FIND, #nuova parola trovata
+	WRONG,    #parola sbagliata
+	REPEATED, #parola già trovata in precedenza
+	BONUS     #parola bonus
+}
 
 const grid_size := 4
 
-signal attempt_result(word_finded: int, word: String, color: Color)
-signal attempt_changed(word: String)
-signal clear_grid
-signal show_number(show: bool)
+@onready var path: Line2D = $GridContainer/Path
+@onready var grid_obj = $GridContainer
+@onready var timer_obj = $Timer
 
-@export var tile_size := 90.0 #todo: prenderle dalla GUI
-@export var tile_spacing := 10.0 #todo: prenderle dalla GUI
+@onready var tiles = [[$GridContainer/tile00, $GridContainer/tile01, $GridContainer/tile02, $GridContainer/tile03],
+					  [$GridContainer/tile10, $GridContainer/tile11, $GridContainer/tile12, $GridContainer/tile13],
+					  [$GridContainer/tile20, $GridContainer/tile21, $GridContainer/tile22, $GridContainer/tile23],
+					  [$GridContainer/tile30, $GridContainer/tile31, $GridContainer/tile32, $GridContainer/tile33]]
 
-@onready var path: Line2D = $Path
+signal attempt_changed(add_char: bool, char: String)
+signal clear()
 
-@onready var tiles = [[$tile00, $tile01, $tile02, $tile03],
-					  [$tile10, $tile11, $tile12, $tile13],
-					  [$tile20, $tile21, $tile22, $tile23],
-					  [$tile30, $tile31, $tile32, $tile33]]
-
-var attempt = {"letter": [], "xy": []}
-var ready_for_attempt = true
+var attempt_tiles: Array[Object]
+var ready_for_attempt = false
 var valid_attempt = false
 var number_shown = false
 
 var rot_on = 0 #comando di rotazione: -1 antiorario, 0 fermo, +1 orario
-var rot_pos = 0 #ultimo angolo statico [0, 270]
+var rot_last = 0 #ultimo angolo statico [0, 270]
 var rot_speed = 2.0
-var rot_angle = 0.0
 
-var history_mode = false
+var yesterday_mode = false
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	for y in range(grid_size):
-		for x in range(grid_size):
-			#automatizzo i collegamenti
-			connect("attempt_result", tiles[x][y]._on_grid_attempt_result)
-			connect("clear_grid", tiles[x][y]._on_grid_clear_grid)
-			connect("show_number", tiles[x][y]._on_grid_show_number)
-			tiles[x][y].connect("selection_attempt", _on_tile_selection_attempt)
-	show_number.emit(number_shown)
+	get_tree().call_group("tiles_group", "show_number", number_shown)
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	if rot_on != 0:
-		rot_angle += delta * rot_speed * rot_on
+		grid_obj.rotation += delta * rot_speed * rot_on
 		
-		var rotation_limit = rot_pos + (PI / 2 * rot_on)
+		var rot_target = rot_last + (PI / 2 * rot_on)
 		
 		# Verifica se l'angolo ha superato il limite
-		if (rot_on == 1 and rot_angle > rotation_limit) or (rot_on == -1 and rot_angle < rotation_limit):
+		if (rot_on == 1 and grid_obj.rotation > rot_target) or (rot_on == -1 and grid_obj.rotation < rot_target):
 			# Correggi l'angolo
-			rot_angle = rotation_limit
-			rot_pos = rot_angle
-			ready_for_attempt = true;
+			grid_obj.rotation = rot_target
+			rot_last = rot_target
 			rot_on = 0  # Ferma la rotazione
-			
-			# Applica la rotazione corretta ai tile usando il valore ridotto di rotazione
-			for y in range(grid_size):
-				for x in range(grid_size):
-					tiles[x][y].position = elaborate_tile_coordinate(Vector2(x, y))  #corregge gli errori causati dalla chiamata di position.rotated
+			ready_for_attempt = true;
 
-		else:
-			# Aggiorna la posizione delle tile ruotandole normalmente
-			for y in range(grid_size):
-				for x in range(grid_size):
-					tiles[x][y].position = tiles[x][y].position.rotated(delta * rot_speed * rot_on)
-
-
-func instantiate(json_data) -> void:
-	var index = 0
-	# Per ogni startingLinks assegno a tile.startingWords la parola
-	for i_tile in json_data.startingLinks:
-		tiles[i_tile[0]][i_tile[1]].startingWords.append(json_data.words[index])
-		index += 1
-	
-	for y in range(grid_size):
-		for x in range(grid_size):
-			#assegno le lettere
-			tiles[x][y].get_node("Sprite2D").get_node("Lettera").text = json_data.grid[x][y]
-			# Per ogni passingLinks assegno a tile.passingWords la parola
-			for i_parola in json_data.passingLinks[x][y]:
-				tiles[x][y].passingWords.append(json_data.words[i_parola])
-			
-			tiles[x][y].number_update()
-
-
-func deinstantiate() -> void:
-	for y in range(grid_size):
-		for x in range(grid_size):
-			tiles[x][y].passingWords.clear()
-			tiles[x][y].startingWords.clear()
-			# tiles[x][y].number_update()  #per ora non serve
+		for tile in get_tree().get_nodes_in_group("tiles_group"):
+				tile.rotation = -grid_obj.rotation
 
 
 func _input(event):
-	if event is InputEventMouseButton and event.pressed:
+	if event.is_action_released("click"):
+		if not valid_attempt and timer_obj.is_stopped():
+			#potrei avere un path plottato
+			path.mod_clear_points()
+			path.default_color = Color.YELLOW
+
+
+func instantiate(data: Dictionary) -> void:
+	# Assegno le lettere
+	get_tree().call_group("tiles_group", "set_letter", data.grid)
+	
+	# Assegno le tessere iniziali
+	var index = 0
+	for tile in data.startingLinks:
+		tiles[tile[0]][tile[1]].startingWords.append(data.words[index])
+		index += 1
+	
+	# Assegno le parole di passaggio
+	get_tree().call_group("tiles_group", "set_passingWords", data.passingLinks, data.words)
+	
+	# Aggiorno la griglia
+	get_tree().call_group("tiles_group", "number_update", yesterday_mode)
+	timer_obj.start()
+
+
+func _on_tile_attempt_start(recived_tile: Object, letter: String) -> void:
+	if ready_for_attempt:
 		path.mod_clear_points()
-		$Path.default_color = Color(1, 1, 0)
-
-func elaborate_tile_coordinate(grid_vector: Vector2) -> Vector2:
-	return Vector2(
-		(tile_size + tile_spacing) * (grid_vector.x - 1.5),
-		(tile_size + tile_spacing) * (grid_vector.y - 1.5)
-	).rotated(rot_pos)
-
-
-func i_tile_from_attempt(i: int) -> Node2D:
-	return tiles[attempt.xy[i].x][attempt.xy[i].y]
-
-
-func _on_tile_selection_attempt(recived_vector, selected, letter):
-	print("selection " + letter)
-	print("position: " + str(recived_vector.x) + ", " + str(recived_vector.y))
-	
-	valid_attempt= true
-	
-	var attempt_len = len(attempt.xy)
-	#capisco se sto tornando indietro o progredendo
-	if not selected and (len(attempt.xy) == 0 or recived_vector.distance_to(attempt.xy[-1]) < 1.5):
+		path.default_color = Color.YELLOW
+		valid_attempt = true
+		
 		#aggiungo selezione
-		path.mod_add_point(elaborate_tile_coordinate(recived_vector))
-		attempt.letter.append(letter)
-		attempt.xy.append(recived_vector)
-		i_tile_from_attempt(-1).selection_ok()
-		if attempt_len > 0:
-			i_tile_from_attempt(-2).look_forward = attempt.xy[-1] - attempt.xy[-2]
+		path.mod_add_point(recived_tile.position + recived_tile.size / 2)
+		attempt_tiles.append(recived_tile)
+		recived_tile.selection_ok()
+		
+		#attivo il segnale attempt_changed
+		attempt_changed.emit(true, letter)
 
-	if selected and attempt_len > 1:
-		if recived_vector - attempt.xy[-1] == - i_tile_from_attempt(-2).look_forward:
-			#undo ultima selezione
-			path.mod_remove_point(path.get_point_count() - 1)
-			i_tile_from_attempt(-1).remove_selection()
-			attempt.letter.resize(attempt_len - 1)
-			attempt.xy.resize(attempt_len - 1)
-	
-	#attivo il segnale attempt_changed
-	var nuova_parola: String = ""
-	for each_letter in attempt.letter:
-		nuova_parola += each_letter
-	attempt_changed.emit(nuova_parola)
+func _on_tile_selection_attempt(recived_tile: Object, selected: bool, letter: String):
+	if valid_attempt:
+		var attempt_len = attempt_tiles.size()
+		#capisco se sto tornando indietro o progredendo
+		if selected:
+			if attempt_len > 1 and recived_tile.grid_vect + attempt_tiles[-2].look_forward == attempt_tiles[-1].grid_vect:
+				# Se la tile selezionata sta guardando in direzione dell'ultima tile in attempt significa che sto tornando indietro --> undo ultima selezione
+				path.mod_remove_point(path.get_point_count() - 1)
+				attempt_tiles[-1].remove_selection()
+				attempt_tiles.resize(attempt_len - 1)
+				
+				attempt_changed.emit(not selected, letter)
+		else:
+			if recived_tile.grid_vect.distance_to(attempt_tiles[-1].grid_vect) < 1.5:
+				#aggiungo selezione
+				path.mod_add_point(recived_tile.position + recived_tile.size / 2)
+				attempt_tiles.append(recived_tile)
+				recived_tile.selection_ok()
+				if attempt_len > 0:
+					#assegno look_forward per avere memoria di dove prosegue il path
+					attempt_tiles[-2].look_forward = attempt_tiles[-1].grid_vect - attempt_tiles[-2].grid_vect
+				
+				attempt_changed.emit(not selected, letter)
 
 
-func _on_main_attempt_result(result: int, word: String) -> void:
+func set_answer(result: AttemptResult, word: String) -> void:
 	var color
 	match result:
-		0:
+		AttemptResult.WRONG:
 			color = Color(1, 0.6, 0.6)
-		1:
+		AttemptResult.NEW_FIND:
 			color = Color(0.6, 1, 0.6)
-		2:
+		AttemptResult.REPEATED:
 			color = Color(0.6, 0.6, 0.6)
+		AttemptResult.BONUS:
+			color = Color.LIGHT_SEA_GREEN
 	
-	$Path.default_color = color
-	attempt_result.emit(result, word, color)
-	print(attempt)
+	path.default_color = color
 	ready_for_attempt = false
 	valid_attempt = false
-	$Timer.start()
-
-
-func _on_timer_timeout() -> void:
-	path.mod_clear_points()
-	attempt.letter.clear()
-	attempt.xy.clear()
-	$Path.default_color = Color(1, 1, 0)
-	clear_grid.emit()
-	show_number.emit(number_shown and not history_mode)
-		
-	ready_for_attempt = not history_mode
+	get_tree().call_group("tiles_group", "set_result", result, word, color)
+	# aspetto il tempo di mostrare il risultato
+	timer_obj.start()
 
 
 func _on_rotate_clockwise_pressed() -> void:
@@ -181,7 +151,27 @@ func _on_rotate_counter_clockwise_pressed() -> void:
 	ready_for_attempt = false;
 
 
-func _on_main_show_path(path_tiles: Array) -> void:
-	$Path.default_color = Color(0.3, 0.5, 1)
-	for i_tile in path_tiles:
-		path.mod_add_point(elaborate_tile_coordinate(i_tile))
+func show_path(grid_coords: Array) -> void:
+	if rot_on == 0:
+		path.default_color = Color(0.3, 0.5, 1)
+		for i_coord in grid_coords:
+			var i_tile = tiles[i_coord.x][i_coord.y]
+			path.mod_add_point(i_tile.position + i_tile.size / 2)
+
+
+func _on_progress_bar_initials_threshold_signal() -> void:
+	number_shown = true
+
+
+func _on_timer_timeout() -> void:
+	attempt_tiles.clear()
+	path.mod_clear_points()
+	get_tree().call_group("tiles_group", "clear", yesterday_mode)
+	get_tree().call_group("tiles_group", "show_number", number_shown and not yesterday_mode)
+	clear.emit()
+		
+	ready_for_attempt = not yesterday_mode
+
+
+func set_yesterday_mode() -> void:
+	yesterday_mode = true

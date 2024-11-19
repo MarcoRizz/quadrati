@@ -3,65 +3,72 @@
 [ext_resource type="Texture2D" uid="uid://c4pjdx1dag458" path="res://assets/tile.png" id="1_cngsq"]
 [ext_resource type="Script" path="res://scripts/tile.gd" id="2_kmar1"]
 
-[node name="tile" type="Node2D"]
+[node name="tile" type="TextureRect"]
+custom_minimum_size = Vector2(80, 80)
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -200.0
+offset_top = -335.0
+offset_right = -120.0
+offset_bottom = -255.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(40, 40)
+texture = ExtResource("1_cngsq")
+expand_mode = 1
 script = ExtResource("2_kmar1")
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
-scale = Vector2(0.36, 0.36)
-texture = ExtResource("1_cngsq")
-
-[node name="Lettera" type="Label" parent="Sprite2D"]
+[node name="Lettera" type="Label" parent="."]
 z_index = 1
+layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -125.0
-offset_top = -125.0
-offset_right = -125.0
-offset_bottom = -125.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_font_sizes/font_size = 100
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 36
 text = "M"
 horizontal_alignment = 1
 vertical_alignment = 1
-metadata/_edit_use_anchors_ = true
 
-[node name="Numero" type="Label" parent="Sprite2D"]
+[node name="Numero" type="Label" parent="."]
 modulate = Color(0.2, 0.2, 0.2, 1)
-anchors_preset = 2
-anchor_top = 1.0
-anchor_bottom = 1.0
-offset_left = -110.0
-offset_top = -210.0
-offset_right = -70.0
-offset_bottom = -140.0
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.05
+anchor_top = 0.95
+anchor_right = 0.05
+anchor_bottom = 0.95
 grow_vertical = 0
-theme_override_font_sizes/font_size = 50
+theme_override_font_sizes/font_size = 18
 text = "0"
 horizontal_alignment = 1
 vertical_alignment = 1
 metadata/_edit_use_anchors_ = true
 
-[node name="Area2D" type="Area2D" parent="Sprite2D"]
-scale = Vector2(2.77778, 2.77778)
-
-[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Sprite2D/Area2D"]
-polygon = PackedVector2Array(-30, -30, -30, 30, 30, 30, 30, -30)
-
-[node name="Button" type="Button" parent="Sprite2D"]
+[node name="Button" type="Button" parent="."]
 self_modulate = Color(1, 1, 1, 0)
+layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -125.0
-offset_top = -125.0
-offset_right = -125.0
-offset_bottom = -125.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[connection signal="mouse_entered" from="Sprite2D/Area2D" to="." method="_on_area_2d_mouse_entered"]
-[connection signal="button_down" from="Sprite2D/Button" to="." method="_on_button_button_down"]
+[node name="InternalArea" type="Control" parent="Button"]
+layout_mode = 1
+anchor_left = 0.16
+anchor_top = 0.16
+anchor_right = 0.84
+anchor_bottom = 0.84
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+
+[connection signal="button_down" from="Button" to="." method="_on_button_button_down"]
+[connection signal="mouse_entered" from="Button/InternalArea" to="." method="_on_internal_area_mouse_entered"]

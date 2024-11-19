@@ -1,0 +1,54 @@
+[gd_scene load_steps=7 format=3 uid="uid://dqt6404pkxko2"]
+
+[ext_resource type="Script" path="res://scripts/main_game.gd" id="1_04fum"]
+[ext_resource type="PackedScene" uid="uid://knuk1qdilmis" path="res://scenes/grid.tscn" id="2_qucot"]
+[ext_resource type="Script" path="res://scripts/display.gd" id="4_wdbl3"]
+[ext_resource type="PackedScene" uid="uid://cbbhu4y4ff6ye" path="res://scenes/wordpanel.tscn" id="5_25nog"]
+[ext_resource type="PackedScene" uid="uid://50quxcmfn0nb" path="res://scenes/stats.tscn" id="6_s5kpk"]
+[ext_resource type="Script" path="res://scripts/progress_bar.gd" id="7_ncndv"]
+
+[node name="Game" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_04fum")
+
+[node name="VBox" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ProgressBar" type="ProgressBar" parent="VBox"]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+max_value = 0.0
+show_percentage = false
+script = ExtResource("7_ncndv")
+
+[node name="WordPanel" parent="VBox" instance=ExtResource("5_25nog")]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Display" type="Label" parent="VBox"]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+horizontal_alignment = 1
+vertical_alignment = 1
+script = ExtResource("4_wdbl3")
+
+[node name="Grid" parent="VBox" instance=ExtResource("2_qucot")]
+modulate = Color(0.625597, 0.625597, 0.625597, 1)
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="Stats" parent="VBox" instance=ExtResource("6_s5kpk")]
+layout_mode = 2
+
+[connection signal="initials_threshold_signal" from="VBox/ProgressBar" to="VBox/Grid" method="_on_progress_bar_initials_threshold_signal"]
+[connection signal="show_path" from="VBox/WordPanel" to="." method="_on_wordpanel_show_path"]

@@ -1,80 +1,98 @@
-extends Node2D
+extends TextureRect
 
-#const myenums = preload("res://scripts/enum.gd")
+enum AttemptResult {
+	NEW_FIND, #nuova parola trovata
+	WRONG,    #parola sbagliata
+	REPEATED, #parola già trovata in precedenza
+	BONUS     #parola bonus
+}
 
-signal selection_attempt(grid_vector, selected, letter)
+@onready var button_obj = $Button
+@onready var lettera_obj = $Lettera
+@onready var numero_obj = $Numero
 
-@export var grid_x: int = 0
-@export var grid_y: int = 0
+signal attempt_start(tile: Object, letter: String)
+signal selection_attempt(tile: Object, selected: bool, letter: String)
+
+@export var grid_vect = Vector2()
 
 var selected: bool = false
-var look_forward = Vector2(0, 0) #durante un tentativo indica la tile successiva
+var look_forward = Vector2() #durante un attempt attivo, indica la tile successiva
 
 var passingWords = [] #archivio le parole che possono passare per la tile
 var startingWords = [] #archivio le parole che possono iniziare dalla tile
 
-@onready var grid = $".."
-
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	$Sprite2D/Button.mouse_filter = Control.MOUSE_FILTER_PASS
+	button_obj.mouse_filter = Control.MOUSE_FILTER_PASS
 
 
-func number_update() -> void:
-	var new_number = len(startingWords);
-	$Sprite2D/Numero.text = str(new_number)
-	if grid.history_mode:
-		$Sprite2D/Numero.hide()
-		$Sprite2D.modulate = Color.LIGHT_SLATE_GRAY
+func set_letter(letters: Array) -> void:
+	lettera_obj.text = letters[grid_vect.x][grid_vect.y]
+
+
+func get_letter() -> String:
+	return lettera_obj.text
+
+
+func set_passingWords(indexes: Array, words: Array) -> void:
+	for i in indexes[grid_vect.x][grid_vect.y]:
+		passingWords.append(words[i])
+
+
+func number_update(yesterday_mode: bool) -> void:
+	var new_number = startingWords.size();
+	numero_obj.text = str(new_number)
+	if yesterday_mode:
+		numero_obj.hide()
+		modulate = Color.LIGHT_SLATE_GRAY
 		return
 	if not new_number:
-		$Sprite2D/Numero.hide()
-	if not len(passingWords):
-		$Sprite2D.self_modulate = Color(1, 1, 1)
-		$Sprite2D.modulate = Color(1, 1, 1, 0.4)
+		numero_obj.hide()
+	if not passingWords.size():
+		self_modulate = Color(1, 1, 1)
+		modulate = Color(1, 1, 1, 0.4)
 	else:
-		$Sprite2D.modulate = Color(1, 1, 1, 1)
+		modulate = Color(1, 1, 1, 1)
 
 
 func selection_ok() -> void:
 	selected = true
-	$Sprite2D.self_modulate = Color(1, 1, 0.6)
+	self_modulate = Color(1, 1, 0.6)
 
 
 func remove_selection() -> void:
 	selected = false
-	look_forward = Vector2(0, 0)
-	$Sprite2D.self_modulate = Color(1, 1, 1)
+	look_forward = Vector2()
+	self_modulate = Color(1, 1, 1)
 
 
-func _on_grid_attempt_result(attempt_result: int, word: String, color: Color) -> void:
+func set_result(attempt_result: AttemptResult, word: String, color: Color) -> void:
 	if selected:
-		$Sprite2D.self_modulate = color
-	if attempt_result == 1:
+		self_modulate = color
+	if attempt_result == AttemptResult.NEW_FIND:
 		if passingWords.has(word):
 			passingWords.erase(word)
 		if startingWords.has(word):
 			startingWords.erase(word)
 
 
-func _on_grid_clear_grid() -> void:
+func clear(yesterday_mode: bool) -> void:
 	remove_selection()
-	number_update()
+	number_update(yesterday_mode)
 
 
-func _on_grid_show_number(to_show: bool) -> void:
-	if to_show and len(startingWords) != 0:
-		$Sprite2D/Numero.show()
+func show_number(show_it: bool) -> void:
+	if show_it and not startingWords.is_empty():
+		numero_obj.show()
 	else:
-		$Sprite2D/Numero.hide()
-
-
-func _on_area_2d_mouse_entered() -> void:
-	if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT) and grid.valid_attempt:
-		print("passed on {", grid_x, ", ", grid_y, "}")
-		selection_attempt.emit(Vector2(grid_x, grid_y), selected, $Sprite2D/Lettera.text)
+		numero_obj.hide()
 
 
 func _on_button_button_down() -> void:
-	if grid.ready_for_attempt:
-		selection_attempt.emit(Vector2(grid_x, grid_y), selected, $Sprite2D/Lettera.text)
+	attempt_start.emit(self, lettera_obj.text)
+
+
+func _on_internal_area_mouse_entered() -> void:
+	if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+		selection_attempt.emit(self, selected, lettera_obj.text)
