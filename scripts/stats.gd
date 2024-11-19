@@ -29,13 +29,13 @@ func _process(delta: float) -> void:
 
 
 func set_attempts(value: int) -> void:
-	tentativi_obj.text = "T:%03d" % value
+	attempts_n = value
+	tentativi_obj.text = "T:%03d" % attempts_n
 
 
 func add_attempt(_result, word) -> void:
 	if word.length() > 3:
-		attempts_n += 1
-		set_attempts(attempts_n)
+		set_attempts(attempts_n + 1)
 
 func set_yesterday_mode() -> void:
 	set_process(false)
