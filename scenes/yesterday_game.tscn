@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://dqt6404pkxko2"]
+[gd_scene load_steps=8 format=3 uid="uid://dqt6404pkxko2"]
 
 [ext_resource type="Script" path="res://scripts/main_game.gd" id="1_04fum"]
 [ext_resource type="PackedScene" uid="uid://knuk1qdilmis" path="res://scenes/grid.tscn" id="2_qucot"]
@@ -6,6 +6,8 @@
 [ext_resource type="PackedScene" uid="uid://cbbhu4y4ff6ye" path="res://scenes/wordpanel.tscn" id="5_25nog"]
 [ext_resource type="PackedScene" uid="uid://50quxcmfn0nb" path="res://scenes/stats.tscn" id="6_s5kpk"]
 [ext_resource type="Script" path="res://scripts/progress_bar.gd" id="7_ncndv"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_5dadv"]
 
 [node name="Game" type="Control"]
 layout_mode = 3
@@ -31,6 +33,29 @@ max_value = 0.0
 show_percentage = false
 script = ExtResource("7_ncndv")
 
+[node name="CenterContainer" type="CenterContainer" parent="VBox/ProgressBar"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBox/ProgressBar/CenterContainer"]
+layout_mode = 2
+
+[node name="ProgressPoints" type="Label" parent="VBox/ProgressBar/CenterContainer/HBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+text = "0/0"
+
+[node name="ProgressBonusPoints" type="Label" parent="VBox/ProgressBar/CenterContainer/HBoxContainer"]
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(0.12549, 0.698039, 0.666667, 1)
+theme_override_font_sizes/font_size = 13
+text = "+(0)"
+
 [node name="WordPanel" parent="VBox" instance=ExtResource("5_25nog")]
 layout_mode = 2
 size_flags_vertical = 3
@@ -46,6 +71,11 @@ script = ExtResource("4_wdbl3")
 modulate = Color(0.625597, 0.625597, 0.625597, 1)
 layout_mode = 2
 size_flags_horizontal = 4
+
+[node name="HSeparator2" type="HSeparator" parent="VBox"]
+layout_mode = 2
+theme_override_constants/separation = 20
+theme_override_styles/separator = SubResource("StyleBoxEmpty_5dadv")
 
 [node name="Stats" parent="VBox" instance=ExtResource("6_s5kpk")]
 layout_mode = 2

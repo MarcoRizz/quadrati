@@ -40,6 +40,6 @@ func reset():
 
 func update_labels():
 	progress_points_obj.text = "%01d/%01d" % [value - bonus_points, max_value - bonus_points]
-	progress_bonus_points_obj.text = "+ (%01d)" % bonus_points
+	progress_bonus_points_obj.text = "+ %01d" % bonus_points
 	
 	progress_bonus_points_obj.visible = not bonus_points == 0

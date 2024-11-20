@@ -108,11 +108,10 @@ one_shot = true
 [node name="Grid" parent="VBox" instance=ExtResource("1_uubdm")]
 layout_mode = 2
 size_flags_horizontal = 4
-size_flags_vertical = 1
 
 [node name="HSeparator" type="HSeparator" parent="VBox"]
-custom_minimum_size = Vector2(0, 5)
 layout_mode = 2
+theme_override_constants/separation = 5
 theme_override_styles/separator = SubResource("StyleBoxEmpty_e7gxh")
 
 [node name="HBox" type="HBoxContainer" parent="VBox"]
@@ -146,13 +145,13 @@ ignore_texture_size = true
 stretch_mode = 0
 
 [node name="VSeparator" type="VSeparator" parent="VBox/HBox"]
-custom_minimum_size = Vector2(30, 0)
 layout_mode = 2
+theme_override_constants/separation = 30
 theme_override_styles/separator = SubResource("StyleBoxEmpty_xpera")
 
 [node name="HSeparator2" type="HSeparator" parent="VBox"]
-custom_minimum_size = Vector2(0, 10)
 layout_mode = 2
+theme_override_constants/separation = 10
 theme_override_styles/separator = SubResource("StyleBoxEmpty_e7gxh")
 
 [node name="Stats" parent="VBox" instance=ExtResource("7_js6ms")]
