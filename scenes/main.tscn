@@ -1,7 +1,6 @@
-[gd_scene load_steps=4 format=3 uid="uid://ctsuofbrx0vtb"]
+[gd_scene load_steps=3 format=3 uid="uid://ctsuofbrx0vtb"]
 
 [ext_resource type="Script" path="res://scripts/main.gd" id="1_nxi1l"]
-[ext_resource type="Script" path="res://scripts/display.gd" id="2_eg268"]
 [ext_resource type="PackedScene" uid="uid://dtciitusji7kn" path="res://scenes/main_game.tscn" id="3_kli33"]
 
 [node name="MainWindow" type="CanvasLayer"]
@@ -25,7 +24,6 @@ theme_override_font_sizes/font_size = 35
 text = "QUADRATI"
 horizontal_alignment = 1
 vertical_alignment = 1
-script = ExtResource("2_eg268")
 
 [node name="YesterdayButton" type="Button" parent="VBox/Title"]
 layout_mode = 0

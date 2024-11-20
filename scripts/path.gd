@@ -1,6 +1,6 @@
 extends Line2D
 
-@export var r_circle := 35
+@export var r_circle := 32
 
 func mod_add_point(coords: Vector2) -> void:
 	add_point(coords)
