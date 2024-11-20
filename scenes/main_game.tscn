@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://dtciitusji7kn"]
+[gd_scene load_steps=11 format=3 uid="uid://dtciitusji7kn"]
 
 [ext_resource type="PackedScene" uid="uid://knuk1qdilmis" path="res://scenes/grid.tscn" id="1_uubdm"]
 [ext_resource type="Script" path="res://scripts/main_game.gd" id="1_woek1"]
@@ -7,6 +7,13 @@
 [ext_resource type="PackedScene" uid="uid://cbbhu4y4ff6ye" path="res://scenes/wordpanel.tscn" id="5_o0gvf"]
 [ext_resource type="Texture2D" uid="uid://cohsvggssqult" path="res://assets/rotate.png" id="6_va4aj"]
 [ext_resource type="PackedScene" uid="uid://50quxcmfn0nb" path="res://scenes/stats.tscn" id="7_js6ms"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_iiiim"]
+bg_color = Color(0.125, 0.698, 0.667, 1)
+corner_radius_top_left = 15
+corner_radius_top_right = 15
+corner_radius_bottom_right = 15
+corner_radius_bottom_left = 15
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_e7gxh"]
 
@@ -36,6 +43,29 @@ max_value = 0.0
 show_percentage = false
 script = ExtResource("4_gwx55")
 
+[node name="CenterContainer" type="CenterContainer" parent="VBox/ProgressBar"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBox/ProgressBar/CenterContainer"]
+layout_mode = 2
+
+[node name="ProgressPoints" type="Label" parent="VBox/ProgressBar/CenterContainer/HBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+text = "0/0"
+
+[node name="ProgressBonusPoints" type="Label" parent="VBox/ProgressBar/CenterContainer/HBoxContainer"]
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(0.12549, 0.698039, 0.666667, 1)
+theme_override_font_sizes/font_size = 13
+text = "+(0)"
+
 [node name="WordPanel" parent="VBox" instance=ExtResource("5_o0gvf")]
 custom_minimum_size = Vector2(0, 0)
 layout_mode = 2
@@ -48,6 +78,32 @@ theme_override_font_sizes/font_size = 35
 horizontal_alignment = 1
 vertical_alignment = 1
 script = ExtResource("3_2dkqv")
+
+[node name="PanelBonus" type="PanelContainer" parent="VBox/Display"]
+visible = false
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.954
+anchor_top = 1.128
+anchor_right = 0.954
+anchor_bottom = 1.128
+offset_left = -81.6
+offset_top = -36.4
+offset_right = 3.39996
+offset_bottom = -6.4
+rotation = -0.349066
+pivot_offset = Vector2(35, 12)
+theme_override_styles/panel = SubResource("StyleBoxFlat_iiiim")
+
+[node name="LabelBonus" type="Label" parent="VBox/Display/PanelBonus"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "BONUS"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TimerBonus" type="Timer" parent="VBox/Display/PanelBonus"]
+one_shot = true
 
 [node name="Grid" parent="VBox" instance=ExtResource("1_uubdm")]
 layout_mode = 2
@@ -104,6 +160,8 @@ layout_mode = 2
 [connection signal="initials_threshold_signal" from="VBox/ProgressBar" to="VBox/Grid" method="_on_progress_bar_initials_threshold_signal"]
 [connection signal="expand" from="VBox/WordPanel" to="." method="_on_word_panel_expand"]
 [connection signal="show_path" from="VBox/WordPanel" to="." method="_on_wordpanel_show_path"]
+[connection signal="visibility_changed" from="VBox/Display/PanelBonus" to="VBox/Display" method="_on_panel_bonus_visibility_changed"]
+[connection signal="timeout" from="VBox/Display/PanelBonus/TimerBonus" to="VBox/Display" method="_on_timer_bonus_timeout"]
 [connection signal="attempt_changed" from="VBox/Grid" to="VBox/Display" method="_on_grid_attempt_changed"]
 [connection signal="clear" from="VBox/Grid" to="." method="_on_grid_clear"]
 [connection signal="clear" from="VBox/Grid" to="VBox/Display" method="_on_grid_clear"]

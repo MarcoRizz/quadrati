@@ -13,6 +13,7 @@ enum AttemptResult {
 @onready var wordPanel_obj = $VBox/WordPanel
 @onready var progressBar_obj = $VBox/ProgressBar
 @onready var stats_obj = $VBox/Stats
+@onready var panel_bonus_obj: PanelContainer = $VBox/Display/PanelBonus
 
 signal attempt_result(word_finded: AttemptResult, word: String)
 signal game_complete()
@@ -72,10 +73,11 @@ func _input(event: InputEvent) -> void:
 			stats_obj.add_attempt(result, word)
 			if result == AttemptResult.NEW_FIND:
 				wordPanel_obj.add_word(word)
-				progressBar_obj.increase(word)
+				progressBar_obj.increase(word.length())
 			elif result == AttemptResult.BONUS:
 				wordPanel_obj.add_bonus(word)
-				progressBar_obj.increase_bonus(word)
+				progressBar_obj.increase_bonus(word.length())
+				panel_bonus_obj.show()
 			attempt_result.emit(result, word)
 
 
@@ -87,7 +89,7 @@ func load_game(data: Dictionary):
 	# Aggiungi le parole
 	for i_parola in data.words:
 		words.append(i_parola)
-		progressBar_obj.max_value += i_parola.length()
+		progressBar_obj.increase_max_value(i_parola.length())
 	
 	# Salvo le posizioni iniziali
 	for i_start in data.startingLinks:
@@ -108,17 +110,17 @@ func load_results(save: Dictionary):
 		for i_parola in save.wordsFinded:
 			words_finded.append(i_parola)
 			wordPanel_obj.add_word(i_parola)
-			progressBar_obj.increase(i_parola)
+			progressBar_obj.increase(i_parola.length())
 			grid_obj.set_answer(AttemptResult.NEW_FIND, i_parola)
 	
 	if save.has("bonusFinded"):
 		for i_parola in save.bonusFinded:
 			bonus_finded.append(i_parola)
 			wordPanel_obj.add_bonus(i_parola)
-			progressBar_obj.increase_bonus(i_parola)
+			progressBar_obj.increase_bonus(i_parola.length())
 	
 	# Carico le statistiche
-	if save.has("stats"):
+	if save.has("stats") and not save["stats"].is_empty():
 		stats_obj.time = save.stats.timer
 		stats_obj.set_attempts(save.stats.attempts_n)
 	
@@ -153,7 +155,7 @@ func find_path_from_json(word: String) -> Array[Vector2]:
 		# Per le parole bonus non ho startingWords, devo trovarla manualmente
 		for x in range(0, 4):
 			for y in range(0, 4):
-				var path
+				var path : Array[Vector2] = []
 				if grid_obj.tiles[x][y].get_letter() == word[0]:
 					path = find_path_recursive_step([Vector2(x, y)], 0, word)
 				if not path.is_empty():
@@ -183,6 +185,7 @@ func find_path_recursive_step(starting_tile: Array[Vector2], step: int, word: St
 
 func _on_grid_clear() -> void:
 	if progressBar_obj.value >= progressBar_obj.max_value and not grid_obj.yesterday_mode:
+		stats_obj.set_process(false)
 		game_complete.emit()
 
 

@@ -1,5 +1,8 @@
 extends Label
 
+@onready var timer_obj: Timer = $PanelBonus/TimerBonus
+@onready var panel_bonus_obj: PanelContainer = $PanelBonus
+
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -15,3 +18,12 @@ func _on_grid_attempt_changed(add_char: bool, letter: String) -> void:
 
 func _on_grid_clear() -> void:
 	text = ""
+
+
+func _on_panel_bonus_visibility_changed() -> void:
+	if panel_bonus_obj.visible:
+		timer_obj.start()
+
+
+func _on_timer_bonus_timeout() -> void:
+	panel_bonus_obj.hide()
