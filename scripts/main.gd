@@ -21,9 +21,10 @@ const fileName_old_results := "user://lastsavedgame.save"
 @onready var title_obj = $VBox/Title
 @onready var yesterdayButton_obj = $VBox/Title/YesterdayButton
 
-var todaysJson : Dictionary
-var todaysSave : Dictionary = {"wordsFinded" = [], "bonusFinded" = []}
+var todaysJson : Dictionary = {"todaysNum" = 0, "grid" = [], "words" = [], "startingLinks" = [], "passingLinks" = []}
+var todaysSave : Dictionary = {"todaysNum" = 0, "wordsFinded" = [], "bonusFinded" = [], "stats" = {}}
 
+var ready_to_play = false # Da quando la imposto true salvo la partita alla chiusura dell'app
 
 func _ready() -> void:
 	#leggo il file json di oggi
@@ -73,9 +74,6 @@ func _ready() -> void:
 
 # Called when the HTTP request is completed.
 func _http_request_completed(result, response_code, headers, body):
-	# Disabilito la chisira automatica per permettere il salvataggio delle stats
-	get_tree().auto_accept_quit = false
-	
 	if not result == 0:
 		print("An error occurred in the HTTP request, error " + str(result))
 		if FileAccess.file_exists(fileName_actual_grid):
@@ -146,6 +144,7 @@ func load_todays_data_to_game():
 		todaysSave.todaysNum = todaysJson.todaysNum
 		todaysSave.wordsFinded = []
 		todaysSave.bonusFinded = []
+		todaysSave.stats = {}
 	
 	# Carico la schermata
 	title_obj.text += "#" + str(todaysJson.todaysNum)
@@ -153,17 +152,15 @@ func load_todays_data_to_game():
 	game_obj.load_results(todaysSave)
 	game_obj.show()
 	midText_obj.hide()
+	ready_to_play = true
 
 
 func _notification(what: int) -> void:
 	# Se ricevi una notifica di chiusura salvo le stats
 	if what == NOTIFICATION_WM_CLOSE_REQUEST or what == NOTIFICATION_APPLICATION_PAUSED:
-		
-		if not game_obj.yesterday_mode:
+		if ready_to_play and not game_obj.yesterday_mode:
 			todaysSave.stats = game_obj.get_stats()
 			save_dictionary_file(todaysSave, fileName_actual_results)
-		
-		get_tree().quit()
 
 
 func valid_game_file(file: Dictionary) -> bool:
@@ -246,7 +243,6 @@ func save_dictionary_file(dizionario: Dictionary, file_path: String) -> bool:
 	if not file:
 		print("Errore: impossibile aprire il file per la scrittura.")
 		return false
-	
 	
 	# Salva la stringa JSON nel file
 	file.store_string(JSON.stringify(dizionario))
