@@ -23,6 +23,10 @@ window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
 window/handheld/orientation=5
 
+[global_group]
+
+tiles_group=""
+
 [gui]
 
 theme/default_font_multichannel_signed_distance_field=true

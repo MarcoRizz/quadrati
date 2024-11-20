@@ -108,6 +108,7 @@ one_shot = true
 [node name="Grid" parent="VBox" instance=ExtResource("1_uubdm")]
 layout_mode = 2
 size_flags_horizontal = 4
+size_flags_vertical = 1
 
 [node name="HSeparator" type="HSeparator" parent="VBox"]
 custom_minimum_size = Vector2(0, 5)
