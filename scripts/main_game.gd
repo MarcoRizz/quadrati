@@ -121,7 +121,7 @@ func load_results(save: Dictionary):
 	
 	# Carico le statistiche
 	if save.has("stats") and not save["stats"].is_empty():
-		stats_obj.time = save.stats.timer
+		stats_obj.set_timer(save.stats.timer)
 		stats_obj.set_attempts(save.stats.attempts_n)
 	
 	# Se sono in yesterday_mode rivelo le rimanenti

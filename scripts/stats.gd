@@ -17,15 +17,7 @@ func _ready() -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	time += delta
-	secs = int(fmod(time, 60))
-	mins = int(fmod(time, 3600) / 60)
-	hours = int(fmod(time, 86400) / 3600)
-	
-	if hours == 0:
-		label_obj.text = "%02d:%02d" % [mins, secs]
-	else:
-		label_obj.text = "%02dh%02d:%02d" % [hours, mins, secs]
+	set_timer(time + delta)
 
 
 func set_attempts(value: int) -> void:
@@ -36,6 +28,19 @@ func set_attempts(value: int) -> void:
 func add_attempt(_result, word) -> void:
 	if word.length() > 3:
 		set_attempts(attempts_n + 1)
+
+
+func set_timer(value: float) -> void:
+	time = value
+	secs = int(fmod(time, 60))
+	mins = int(fmod(time, 3600) / 60)
+	hours = int(fmod(time, 86400) / 3600)
+	
+	if hours == 0:
+		label_obj.text = "%02d:%02d" % [mins, secs]
+	else:
+		label_obj.text = "%02dh%02d:%02d" % [hours, mins, secs]
+
 
 func set_yesterday_mode() -> void:
 	set_process(false)
