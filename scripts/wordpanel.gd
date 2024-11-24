@@ -27,6 +27,7 @@ var box_parole = {
 	"bonus": {"n": 0, "n_max": 0, "title": Label.new(), "containers": []}
 }
 var all_words = Node.new() #qui salvo tutte le parole
+var all_bonus_words = Node.new() #qui salvo tutte le parole bonus
 
 var expanded = false
 
@@ -52,7 +53,7 @@ func instantiate(json: Dictionary) -> void:
 			new_parola.name = "_" + i_parola
 			new_parola.text = i_parola
 			new_parola.show_path.connect(_on_parola_show_path)
-			all_words.add_child(new_parola)
+			all_bonus_words.add_child(new_parola)
 	
 	for size_n in box_parole:
 		if box_parole[size_n]["n_max"] == 0:
@@ -81,7 +82,7 @@ func add_word(word: String):
 		title.set("theme_override_colors/font_color", Color.AQUAMARINE)
 
 func add_bonus(word: String):	
-	all_words.get_node("_" + word).reparent(vbox_obj.get_node("bonus_box"))
+	all_bonus_words.get_node("_" + word).reparent(vbox_obj.get_node("bonus_box"))
 	
 	# Aggiorna il conteggio delle parole trovate
 	var n = box_parole["bonus"]["n"] + 1
@@ -96,6 +97,9 @@ func add_bonus(word: String):
 func reveal_remaining_words() -> void:
 	for word_obj in all_words.get_children():
 		word_obj.reparent(vbox_obj.get_node(str(word_obj.name.length() - 1) + "_box"))
+		word_obj.set_revealed_word()
+	for word_obj in all_bonus_words.get_children():
+		word_obj.reparent(vbox_obj.get_node("bonus_box"))
 		word_obj.set_revealed_word()
 
 
