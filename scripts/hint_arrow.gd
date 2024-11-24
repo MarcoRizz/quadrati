@@ -1,12 +1,12 @@
 extends Node2D
 
-var center: Vector2 = Vector2(40, 40)
-var direction: Vector2 = Vector2(1, 0)
-var color: Color = Color.BISQUE
+var center = Vector2(40, 40)
+var direction = Vector2(1, 0)
+var color = Color.BISQUE
 
 func _draw() -> void:
-	var unit = 14
-	var L = 45
+	const  unit = 14
+	const L = 45
 	
 	draw_circle(Vector2(0, 0), 32, Color.BISQUE)
 	draw_polygon(PackedVector2Array([
@@ -23,7 +23,7 @@ func _draw() -> void:
 	position = center
 	rotation = direction.angle()
 
-func redraw(new_center: Vector2, new_direction: Vector2, new_color: Color) -> void:
+func place(new_center: Vector2, new_direction: Vector2, new_color: Color = Color.BISQUE) -> void:
 	center = new_center
 	direction = new_direction
 	color = new_color

@@ -195,3 +195,7 @@ func _on_word_panel_expand(expansion_toggle: bool) -> void:
 
 func get_stats() -> Dictionary:
 	return {"timer" = stats_obj.time, "attempts_n" = stats_obj.attempts_n}
+
+
+func _on_button_hint_pressed() -> void: #TODO
+	pass # Replace with function body.

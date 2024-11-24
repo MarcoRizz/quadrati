@@ -1,5 +1,7 @@
 extends Control
 
+const hint_obj = preload("res://scripts/hint_arrow.gd")
+
 enum AttemptResult {
 	NEW_FIND, #nuova parola trovata
 	WRONG,    #parola sbagliata
@@ -175,3 +177,13 @@ func _on_timer_timeout() -> void:
 
 func set_yesterday_mode() -> void:
 	yesterday_mode = true
+
+
+func add_hint() -> void:
+	var new_hint = hint_obj.new()
+	new_hint.place(tiles[3][1].position + tiles[3][1].size / 2, Vector2(-1, -1)) #TODO: calcolare che parametri dare
+	grid_obj.add_child(new_hint)
+
+
+func get_hints() -> void: #TODO
+	pass
