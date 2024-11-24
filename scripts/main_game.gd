@@ -20,15 +20,15 @@ signal game_complete()
 
 var yesterday_mode = false
 
-var words = [] #colleziono tutte le parole
-var startingWords = [] #colleziono tutti gli inizi delle parole
-var bonus = [] #colleziono tutte le parole bonus
+var words: PackedStringArray = [] #colleziono tutte le parole
+var startingWords: PackedVector2Array  = [] #colleziono tutti gli inizi delle parole
+var bonus: PackedStringArray  = [] #colleziono tutte le parole bonus
 
-var words_finded = [] #colleziono le parole trovate
-var bonus_finded = [] #colleziono le parole bonus trovate
+var words_finded: PackedStringArray  = [] #colleziono le parole trovate
+var bonus_finded: PackedStringArray  = [] #colleziono le parole bonus trovate
 
 var grid_target_scale = Vector2.ONE #serve per l'animazione del dimensionamento
-var scaling_vel = 0.5
+const scaling_vel = 0.5
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -93,7 +93,7 @@ func load_game(data: Dictionary):
 	
 	# Salvo le posizioni iniziali
 	for i_start in data.startingLinks:
-		startingWords.append(i_start)
+		startingWords.append(Vector2(i_start[0], i_start[1]))
 	
 	# salvo le parole bonus
 	if data.has("bonus"):
