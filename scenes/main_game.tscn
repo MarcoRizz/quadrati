@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://dtciitusji7kn"]
+[gd_scene load_steps=12 format=3 uid="uid://dtciitusji7kn"]
 
 [ext_resource type="PackedScene" uid="uid://knuk1qdilmis" path="res://scenes/grid.tscn" id="1_uubdm"]
 [ext_resource type="Script" path="res://scripts/main_game.gd" id="1_woek1"]
@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://cbbhu4y4ff6ye" path="res://scenes/wordpanel.tscn" id="5_o0gvf"]
 [ext_resource type="PackedScene" uid="uid://dvssoe67oyany" path="res://scenes/button_hint.tscn" id="6_lrsyo"]
 [ext_resource type="Texture2D" uid="uid://cohsvggssqult" path="res://assets/rotate.png" id="6_va4aj"]
+[ext_resource type="Texture2D" uid="uid://dyc17fma2i0qa" path="res://assets/hint_button.png" id="7_1ljac"]
 [ext_resource type="PackedScene" uid="uid://50quxcmfn0nb" path="res://scenes/stats.tscn" id="7_js6ms"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_iiiim"]
@@ -124,6 +125,11 @@ theme_override_constants/separation = 10
 
 [node name="ButtonHint" parent="VBox/MarginContainer/HBoxLeft" instance=ExtResource("6_lrsyo")]
 layout_mode = 2
+texture_normal = ExtResource("7_1ljac")
+texture_pressed = ExtResource("7_1ljac")
+texture_hover = ExtResource("7_1ljac")
+texture_disabled = ExtResource("7_1ljac")
+texture_focused = ExtResource("7_1ljac")
 
 [node name="HBoxRight" type="HBoxContainer" parent="VBox/MarginContainer/HBoxLeft"]
 layout_mode = 2
