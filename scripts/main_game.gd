@@ -14,6 +14,8 @@ enum AttemptResult {
 @onready var progressBar_obj = $VBox/ProgressBar
 @onready var stats_obj = $VBox/Stats
 @onready var panel_bonus_obj: PanelContainer = $VBox/Display/PanelBonus
+@onready var button_hint_obj: TextureButton = $VBox/MarginContainer/HBoxLeft/ButtonHint
+
 
 signal attempt_result(word_finded: AttemptResult, word: String)
 signal game_complete()
@@ -53,6 +55,7 @@ func _process(delta: float) -> void:
 func _input(event: InputEvent) -> void:
 	if event.is_action_released("click") and grid_obj.is_visible_in_tree(): #TODO: assegnare a Grid?
 		if grid_obj.valid_attempt:
+			# Elaboro il risulatto
 			var word_guessed = display_obj.text
 			var result : AttemptResult
 			if words_finded.has(word_guessed) or bonus_finded.has(word_guessed):
@@ -121,8 +124,9 @@ func load_results(save: Dictionary):
 	
 	# Carico le statistiche
 	if save.has("stats") and not save["stats"].is_empty():
-		stats_obj.set_timer(save.stats.timer)
-		stats_obj.set_attempts(save.stats.attempts_n)
+		stats_obj.set_timer(save.stats.get("timer", 0))
+		stats_obj.set_attempts(save.stats.get("attempts_n", 0))
+		button_hint_obj.set_hints_left(save.stats.get("hints_left", 3))
 	
 	# Se sono in yesterday_mode rivelo le rimanenti
 	if yesterday_mode:
@@ -194,8 +198,51 @@ func _on_word_panel_expand(expansion_toggle: bool) -> void:
 
 
 func get_stats() -> Dictionary:
-	return {"timer" = stats_obj.time, "attempts_n" = stats_obj.attempts_n}
+	return {"timer" = stats_obj.time, "attempts_n" = stats_obj.attempts_n, "hints_left" = button_hint_obj.hints_left}
 
 
-func _on_button_hint_pressed() -> void: #TODO
-	pass # Replace with function body.
+func _on_button_hint_pressed() -> void:
+	print("Nuovo indizio:")
+	# Recupero gli inidizi già mostrati
+	var hints_obj_list = grid_obj.get_hints()
+	
+	# Recupero le parole non ancora trovate
+	var words_hidden = Array()
+	for word_i in words:
+		if not words_finded.has(word_i):
+			words_hidden.append(word_i)
+	
+	# Elaboro un nuovo hint
+	while words_hidden.size() > 0:
+		var skip = false
+		var random_index = randi() % words_hidden.size()
+		var random_word = words_hidden[random_index]
+		print("random_word: ", random_word)
+		
+		for hint_i in hints_obj_list:
+			if hint_i.word == random_word:
+				skip = true
+		if skip: # Ho già un indizio associato alla parola prescelta
+			words_hidden.erase(random_word)
+			print("già pickkata, scarto")
+			continue
+		
+		var random_word_path = find_path_from_json(random_word)
+		var new_hint_center = random_word_path[0]
+		var new_hint_dir = random_word_path[1] - new_hint_center
+		print("new_hint_center: ", new_hint_center, "; new_hint_dir: ", new_hint_dir)
+		
+		for hint_i in hints_obj_list:
+			if hint_i.grid_pos == new_hint_center and hint_i.direction == new_hint_dir:
+				skip = true
+		if skip: # Ho già un indizio con questa posizione
+			words_hidden.erase(random_word)
+			print("indizio sovrapposto, scarto")
+			continue
+		else:
+			grid_obj.add_hint(new_hint_center, new_hint_dir, random_word)
+			print("indizio aggiunto")
+			return
+	
+	print("Parole disponibili finite")
+	return

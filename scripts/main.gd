@@ -159,8 +159,7 @@ func _notification(what: int) -> void:
 	# Se ricevi una notifica di chiusura salvo le stats
 	if what == NOTIFICATION_WM_CLOSE_REQUEST or what == NOTIFICATION_APPLICATION_PAUSED:
 		if ready_to_play and not game_obj.yesterday_mode:
-			todaysSave.stats = game_obj.get_stats()
-			save_dictionary_file(todaysSave, fileName_actual_results)
+			save_game()
 
 
 func valid_game_file(file: Dictionary) -> bool:
@@ -186,8 +185,7 @@ func _on_yesterday_button_toggled(toggled_on: bool) -> void:
 			return
 		
 		# Sono sicuro di procedere, salvo le stats della partita in corso
-		todaysSave.stats = game_obj.get_stats()
-		save_dictionary_file(todaysSave, fileName_actual_results)
+		save_game()
 		
 		save_to_load = load_json_file(fileName_old_results)
 		if not valid_save_file(save_to_load) or not save_to_load.todaysNum == game_to_load.todaysNum:
@@ -265,9 +263,13 @@ func _on_game_attempt_result(result: AttemptResult, word: String) -> void:
 		elif result == AttemptResult.BONUS:
 			todaysSave.bonusFinded.append(word)
 		
-		todaysSave.stats = game_obj.get_stats()
-		save_dictionary_file(todaysSave, fileName_actual_results)
+		save_game()
 
 
 func _on_hide_button_pressed() -> void:
 	midText_obj.hide()
+
+
+func save_game() -> void:
+	todaysSave.stats = game_obj.get_stats()
+	save_dictionary_file(todaysSave, fileName_actual_results)

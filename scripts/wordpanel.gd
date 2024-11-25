@@ -107,7 +107,6 @@ func _on_button_pressed() -> void:
 	button_obj.rotation = (PI if expanded else 0.0)
 	expanded = not expanded
 	expand.emit(expanded)
-	print("expand emitted: ", expanded)
 
 
 func _on_parola_show_path(word: String) -> void:

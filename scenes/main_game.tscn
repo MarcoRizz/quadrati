@@ -1,10 +1,11 @@
-[gd_scene load_steps=10 format=3 uid="uid://dtciitusji7kn"]
+[gd_scene load_steps=11 format=3 uid="uid://dtciitusji7kn"]
 
 [ext_resource type="PackedScene" uid="uid://knuk1qdilmis" path="res://scenes/grid.tscn" id="1_uubdm"]
 [ext_resource type="Script" path="res://scripts/main_game.gd" id="1_woek1"]
 [ext_resource type="Script" path="res://scripts/display.gd" id="3_2dkqv"]
 [ext_resource type="Script" path="res://scripts/progress_bar.gd" id="4_gwx55"]
 [ext_resource type="PackedScene" uid="uid://cbbhu4y4ff6ye" path="res://scenes/wordpanel.tscn" id="5_o0gvf"]
+[ext_resource type="PackedScene" uid="uid://dvssoe67oyany" path="res://scenes/button_hint.tscn" id="6_lrsyo"]
 [ext_resource type="Texture2D" uid="uid://cohsvggssqult" path="res://assets/rotate.png" id="6_va4aj"]
 [ext_resource type="PackedScene" uid="uid://50quxcmfn0nb" path="res://scenes/stats.tscn" id="7_js6ms"]
 
@@ -121,16 +122,8 @@ theme_override_constants/margin_right = 30
 layout_mode = 2
 theme_override_constants/separation = 10
 
-[node name="ButtonHint" type="TextureButton" parent="VBox/MarginContainer/HBoxLeft"]
-custom_minimum_size = Vector2(40, 40)
+[node name="ButtonHint" parent="VBox/MarginContainer/HBoxLeft" instance=ExtResource("6_lrsyo")]
 layout_mode = 2
-texture_normal = ExtResource("6_va4aj")
-texture_pressed = ExtResource("6_va4aj")
-texture_hover = ExtResource("6_va4aj")
-texture_disabled = ExtResource("6_va4aj")
-texture_focused = ExtResource("6_va4aj")
-ignore_texture_size = true
-stretch_mode = 0
 
 [node name="HBoxRight" type="HBoxContainer" parent="VBox/MarginContainer/HBoxLeft"]
 layout_mode = 2

@@ -9,8 +9,6 @@ enum AttemptResult {
 	BONUS     #parola bonus
 }
 
-const grid_size := 4
-
 @onready var path: Line2D = $GridContainer/Path
 @onready var grid_obj = $GridContainer
 @onready var timer_obj = $Timer
@@ -31,6 +29,8 @@ var number_shown = false
 var rot_on = 0 #comando di rotazione: -1 antiorario, 0 fermo, +1 orario
 var rot_last = 0 #ultimo angolo statico [0, 270]
 var rot_speed = 2.0
+
+var hints_list: Array[Node2D] = []
 
 var yesterday_mode = false
 
@@ -139,6 +139,15 @@ func set_answer(result: AttemptResult, word: String) -> void:
 	ready_for_attempt = false
 	valid_attempt = false
 	get_tree().call_group("tiles_group", "set_result", result, word, color)
+	
+	# se era presente un indizio collegato, lo elimino
+	if result == AttemptResult.NEW_FIND:
+		for hint_i in hints_list:
+			if word == hint_i.word or (attempt_tiles[0].grid_vect == hint_i.grid_pos and attempt_tiles[1].grid_vect - attempt_tiles[0].grid_vect == hint_i.direction):
+				hints_list.erase(hint_i)
+				grid_obj.remove_child(hint_i)
+				hint_i.queue_free()
+	
 	# aspetto il tempo di mostrare il risultato
 	timer_obj.start()
 
@@ -179,11 +188,15 @@ func set_yesterday_mode() -> void:
 	yesterday_mode = true
 
 
-func add_hint() -> void:
+func add_hint(center: Vector2, direction: Vector2, word: String) -> void:
 	var new_hint = hint_obj.new()
-	new_hint.place(tiles[3][1].position + tiles[3][1].size / 2, Vector2(-1, -1)) #TODO: calcolare che parametri dare
+	new_hint.place(tiles[center[0]][center[1]].position + tiles[center[0]][center[1]].size / 2, center, direction, word)
 	grid_obj.add_child(new_hint)
+	hints_list.append(new_hint)
 
 
-func get_hints() -> void: #TODO
-	pass
+func get_hints() -> Array:
+	var return_array: Array
+	for hint_i in hints_list:
+		return_array.append(hint_i)
+	return return_array
