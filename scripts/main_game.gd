@@ -126,7 +126,8 @@ func load_results(save: Dictionary):
 	if save.has("stats") and not save["stats"].is_empty():
 		stats_obj.set_timer(save.stats.get("timer", 0))
 		stats_obj.set_attempts(save.stats.get("attempts_n", 0))
-		button_hint_obj.set_hints_left(save.stats.get("hints_left", 3))
+		if not yesterday_mode:
+			button_hint_obj.set_hints_left(save.stats.get("hints_left", 3))
 	
 	# Se sono in yesterday_mode rivelo le rimanenti
 	if yesterday_mode:
